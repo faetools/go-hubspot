@@ -96,8 +96,8 @@ func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetPageApp(ctx context.Context, appId int32, params *GetPageAppParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageAppRequest(c.Server, appId, params)
+func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListAppRequest(c.Server, appId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -180,8 +180,8 @@ func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definition
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetPageFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageFunctionsRequest(c.Server, appId, definitionId)
+func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListFunctionsRequest(c.Server, appId, definitionId)
 	if err != nil {
 		return nil, err
 	}
@@ -264,8 +264,8 @@ func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId in
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetPageRevisions(ctx context.Context, appId int32, definitionId string, params *GetPageRevisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageRevisionsRequest(c.Server, appId, definitionId, params)
+func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListRevisionsRequest(c.Server, appId, definitionId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -375,8 +375,8 @@ func newCompleteCallbackRequestWithBody(server string, callbackId string, conten
 	return req, nil
 }
 
-// newGetPageAppRequest generates requests for GetPageApp
-func newGetPageAppRequest(server string, appId int32, params *GetPageAppParams) (*http.Request, error) {
+// newListAppRequest generates requests for ListApp
+func newListAppRequest(server string, appId int32, params *ListAppParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -656,8 +656,8 @@ func newUpdateDefinitionRequestWithBody(server string, appId int32, definitionId
 	return req, nil
 }
 
-// newGetPageFunctionsRequest generates requests for GetPageFunctions
-func newGetPageFunctionsRequest(server string, appId int32, definitionId string) (*http.Request, error) {
+// newListFunctionsRequest generates requests for ListFunctions
+func newListFunctionsRequest(server string, appId int32, definitionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1010,8 +1010,8 @@ func newCreateOrReplaceFunctionRequestWithBody(server string, appId int32, defin
 	return req, nil
 }
 
-// newGetPageRevisionsRequest generates requests for GetPageRevisions
-func newGetPageRevisionsRequest(server string, appId int32, definitionId string, params *GetPageRevisionsParams) (*http.Request, error) {
+// newListRevisionsRequest generates requests for ListRevisions
+func newListRevisionsRequest(server string, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1209,8 +1209,8 @@ type ClientInterface interface {
 	CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error)
 	CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error)
 
-	// GetPageApp request
-	GetPageApp(ctx context.Context, appId int32, params *GetPageAppParams, reqEditors ...RequestEditorFn) (*GetPageAppResponse, error)
+	// ListApp request
+	ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*ListAppResponse, error)
 
 	// CreateApp request with any body
 	CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAppResponse, error)
@@ -1226,8 +1226,8 @@ type ClientInterface interface {
 	UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error)
 	UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error)
 
-	// GetPageFunctions request
-	GetPageFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*GetPageFunctionsResponse, error)
+	// ListFunctions request
+	ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ListFunctionsResponse, error)
 
 	// ArchiveByFunctionType request
 	ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*ArchiveByFunctionTypeResponse, error)
@@ -1247,8 +1247,8 @@ type ClientInterface interface {
 	// CreateOrReplaceFunction request with any body
 	CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceFunctionResponse, error)
 
-	// GetPageRevisions request
-	GetPageRevisions(ctx context.Context, appId int32, definitionId string, params *GetPageRevisionsParams, reqEditors ...RequestEditorFn) (*GetPageRevisionsResponse, error)
+	// ListRevisions request
+	ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*ListRevisionsResponse, error)
 
 	// GetByIdRevision request
 	GetByIdRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetByIdRevisionResponse, error)
@@ -1296,14 +1296,14 @@ func (r CompleteCallbackResponse) StatusCode() int {
 	return 0
 }
 
-type GetPageAppResponse struct {
+type ListAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseExtensionActionDefinitionForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageAppResponse) Status() string {
+func (r ListAppResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1311,7 +1311,7 @@ func (r GetPageAppResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageAppResponse) StatusCode() int {
+func (r ListAppResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1405,14 +1405,14 @@ func (r UpdateDefinitionResponse) StatusCode() int {
 	return 0
 }
 
-type GetPageFunctionsResponse struct {
+type ListFunctionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseActionFunctionIdentifierNoPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageFunctionsResponse) Status() string {
+func (r ListFunctionsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1420,7 +1420,7 @@ func (r GetPageFunctionsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageFunctionsResponse) StatusCode() int {
+func (r ListFunctionsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1557,14 +1557,14 @@ func (r CreateOrReplaceFunctionResponse) StatusCode() int {
 	return 0
 }
 
-type GetPageRevisionsResponse struct {
+type ListRevisionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseActionRevisionForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageRevisionsResponse) Status() string {
+func (r ListRevisionsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1572,7 +1572,7 @@ func (r GetPageRevisionsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageRevisionsResponse) StatusCode() int {
+func (r ListRevisionsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1635,13 +1635,13 @@ func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body C
 	return parseCompleteCallbackResponse(rsp)
 }
 
-// GetPageApp request returning *GetPageAppResponse
-func (c *Client) GetPageApp(ctx context.Context, appId int32, params *GetPageAppParams, reqEditors ...RequestEditorFn) (*GetPageAppResponse, error) {
-	rsp, err := c.doGetPageApp(ctx, appId, params, reqEditors...)
+// ListApp request returning *ListAppResponse
+func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*ListAppResponse, error) {
+	rsp, err := c.doListApp(ctx, appId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageAppResponse(rsp)
+	return parseListAppResponse(rsp)
 }
 
 // CreateAppWithBody request with arbitrary body returning *CreateAppResponse
@@ -1696,13 +1696,13 @@ func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId
 	return parseUpdateDefinitionResponse(rsp)
 }
 
-// GetPageFunctions request returning *GetPageFunctionsResponse
-func (c *Client) GetPageFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*GetPageFunctionsResponse, error) {
-	rsp, err := c.doGetPageFunctions(ctx, appId, definitionId, reqEditors...)
+// ListFunctions request returning *ListFunctionsResponse
+func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ListFunctionsResponse, error) {
+	rsp, err := c.doListFunctions(ctx, appId, definitionId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageFunctionsResponse(rsp)
+	return parseListFunctionsResponse(rsp)
 }
 
 // ArchiveByFunctionType request returning *ArchiveByFunctionTypeResponse
@@ -1759,13 +1759,13 @@ func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int3
 	return parseCreateOrReplaceFunctionResponse(rsp)
 }
 
-// GetPageRevisions request returning *GetPageRevisionsResponse
-func (c *Client) GetPageRevisions(ctx context.Context, appId int32, definitionId string, params *GetPageRevisionsParams, reqEditors ...RequestEditorFn) (*GetPageRevisionsResponse, error) {
-	rsp, err := c.doGetPageRevisions(ctx, appId, definitionId, params, reqEditors...)
+// ListRevisions request returning *ListRevisionsResponse
+func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*ListRevisionsResponse, error) {
+	rsp, err := c.doListRevisions(ctx, appId, definitionId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageRevisionsResponse(rsp)
+	return parseListRevisionsResponse(rsp)
 }
 
 // GetByIdRevision request returning *GetByIdRevisionResponse
@@ -1809,15 +1809,15 @@ func parseCompleteCallbackResponse(rsp *http.Response) (*CompleteCallbackRespons
 	return response, nil
 }
 
-// parseGetPageAppResponse parses an HTTP response from a GetPageApp call.
-func parseGetPageAppResponse(rsp *http.Response) (*GetPageAppResponse, error) {
+// parseListAppResponse parses an HTTP response from a ListApp call.
+func parseListAppResponse(rsp *http.Response) (*ListAppResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageAppResponse{
+	response := &ListAppResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1925,15 +1925,15 @@ func parseUpdateDefinitionResponse(rsp *http.Response) (*UpdateDefinitionRespons
 	return response, nil
 }
 
-// parseGetPageFunctionsResponse parses an HTTP response from a GetPageFunctions call.
-func parseGetPageFunctionsResponse(rsp *http.Response) (*GetPageFunctionsResponse, error) {
+// parseListFunctionsResponse parses an HTTP response from a ListFunctions call.
+func parseListFunctionsResponse(rsp *http.Response) (*ListFunctionsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageFunctionsResponse{
+	response := &ListFunctionsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2082,15 +2082,15 @@ func parseCreateOrReplaceFunctionResponse(rsp *http.Response) (*CreateOrReplaceF
 	return response, nil
 }
 
-// parseGetPageRevisionsResponse parses an HTTP response from a GetPageRevisions call.
-func parseGetPageRevisionsResponse(rsp *http.Response) (*GetPageRevisionsResponse, error) {
+// parseListRevisionsResponse parses an HTTP response from a ListRevisions call.
+func parseListRevisionsResponse(rsp *http.Response) (*ListRevisionsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageRevisionsResponse{
+	response := &ListRevisionsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageObjectType(ctx context.Context, objectType string, params *GetPageObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageObjectTypeRequest(c.Server, objectType, params)
+func (c *Client) doListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -312,8 +312,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, objectType string,
 	return c.Client.Do(req)
 }
 
-// newGetPageObjectTypeRequest generates requests for GetPageObjectType
-func newGetPageObjectTypeRequest(server string, objectType string, params *GetPageObjectTypeParams) (*http.Request, error) {
+// newListObjectTypeRequest generates requests for ListObjectType
+func newListObjectTypeRequest(server string, objectType string, params *ListObjectTypeParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1255,8 +1255,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageObjectType request
-	GetPageObjectType(ctx context.Context, objectType string, params *GetPageObjectTypeParams, reqEditors ...RequestEditorFn) (*GetPageObjectTypeResponse, error)
+	// ListObjectType request
+	ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*ListObjectTypeResponse, error)
 
 	// CreateObjectType request with any body
 	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error)
@@ -1306,14 +1306,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageObjectTypeResponse struct {
+type ListObjectTypeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageObjectTypeResponse) Status() string {
+func (r ListObjectTypeResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1321,7 +1321,7 @@ func (r GetPageObjectTypeResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageObjectTypeResponse) StatusCode() int {
+func (r ListObjectTypeResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1613,13 +1613,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageObjectType request returning *GetPageObjectTypeResponse
-func (c *Client) GetPageObjectType(ctx context.Context, objectType string, params *GetPageObjectTypeParams, reqEditors ...RequestEditorFn) (*GetPageObjectTypeResponse, error) {
-	rsp, err := c.doGetPageObjectType(ctx, objectType, params, reqEditors...)
+// ListObjectType request returning *ListObjectTypeResponse
+func (c *Client) ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*ListObjectTypeResponse, error) {
+	rsp, err := c.doListObjectType(ctx, objectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageObjectTypeResponse(rsp)
+	return parseListObjectTypeResponse(rsp)
 }
 
 // CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
@@ -1803,15 +1803,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, objectType string, o
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageObjectTypeResponse parses an HTTP response from a GetPageObjectType call.
-func parseGetPageObjectTypeResponse(rsp *http.Response) (*GetPageObjectTypeResponse, error) {
+// parseListObjectTypeResponse parses an HTTP response from a ListObjectType call.
+func parseListObjectTypeResponse(rsp *http.Response) (*ListObjectTypeResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageObjectTypeResponse{
+	response := &ListObjectTypeResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -617,8 +617,8 @@ type CompleteBatchJSONBody BatchInputCallbackCompletionBatchRequest
 // CompleteCallbackJSONBody defines parameters for CompleteCallback.
 type CompleteCallbackJSONBody CallbackCompletionRequest
 
-// GetPageAppParams defines parameters for GetPageApp.
-type GetPageAppParams struct {
+// ListAppParams defines parameters for ListApp.
+type ListAppParams struct {
 	// Maximum number of results per page.
 	Limit *int32 `json:"limit,omitempty"`
 
@@ -659,8 +659,8 @@ type GetByIdFunctionParamsFunctionType string
 // CreateOrReplaceFunctionParamsFunctionType defines parameters for CreateOrReplaceFunction.
 type CreateOrReplaceFunctionParamsFunctionType string
 
-// GetPageRevisionsParams defines parameters for GetPageRevisions.
-type GetPageRevisionsParams struct {
+// ListRevisionsParams defines parameters for ListRevisions.
+type ListRevisionsParams struct {
 	// Maximum number of results per page.
 	Limit *int32 `json:"limit,omitempty"`
 

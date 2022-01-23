@@ -121,8 +121,8 @@ type PublicTeam struct {
 // PublicTeamMembership defines model for PublicTeam.Membership.
 type PublicTeamMembership string
 
-// GetPageParams defines parameters for GetPage.
-type GetPageParams struct {
+// ListParams defines parameters for List.
+type ListParams struct {
 	// Filter by email address (optional)
 	Email *string `json:"email,omitempty"`
 

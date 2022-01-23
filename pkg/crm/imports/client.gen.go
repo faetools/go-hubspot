@@ -47,8 +47,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPage(ctx context.Context, params *GetPageParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageRequest(c.Server, params)
+func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -107,8 +107,8 @@ func (c *Client) doGetErrors(ctx context.Context, importId int64, params *GetErr
 	return c.Client.Do(req)
 }
 
-// newGetPageRequest generates requests for GetPage
-func newGetPageRequest(server string, params *GetPageParams) (*http.Request, error) {
+// newListRequest generates requests for List
+func newListRequest(server string, params *ListParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -413,8 +413,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPage request
-	GetPage(ctx context.Context, params *GetPageParams, reqEditors ...RequestEditorFn) (*GetPageResponse, error)
+	// List request
+	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error)
 
 	// Create request with any body
 	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error)
@@ -429,14 +429,14 @@ type ClientInterface interface {
 	GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...RequestEditorFn) (*GetErrorsResponse, error)
 }
 
-type GetPageResponse struct {
+type ListResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponsePublicImportResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageResponse) Status() string {
+func (r ListResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -444,7 +444,7 @@ func (r GetPageResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageResponse) StatusCode() int {
+func (r ListResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -539,13 +539,13 @@ func (r GetErrorsResponse) StatusCode() int {
 	return 0
 }
 
-// GetPage request returning *GetPageResponse
-func (c *Client) GetPage(ctx context.Context, params *GetPageParams, reqEditors ...RequestEditorFn) (*GetPageResponse, error) {
-	rsp, err := c.doGetPage(ctx, params, reqEditors...)
+// List request returning *ListResponse
+func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error) {
+	rsp, err := c.doList(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageResponse(rsp)
+	return parseListResponse(rsp)
 }
 
 // CreateWithBody request with arbitrary body returning *CreateResponse
@@ -584,15 +584,15 @@ func (c *Client) GetErrors(ctx context.Context, importId int64, params *GetError
 	return parseGetErrorsResponse(rsp)
 }
 
-// parseGetPageResponse parses an HTTP response from a GetPage call.
-func parseGetPageResponse(rsp *http.Response) (*GetPageResponse, error) {
+// parseListResponse parses an HTTP response from a List call.
+func parseListResponse(rsp *http.Response) (*ListResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageResponse{
+	response := &ListResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageTickets(ctx context.Context, params *GetPageTicketsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageTicketsRequest(c.Server, params)
+func (c *Client) doListTickets(ctx context.Context, params *ListTicketsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListTicketsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, ticketId string, t
 	return c.Client.Do(req)
 }
 
-// newGetPageTicketsRequest generates requests for GetPageTickets
-func newGetPageTicketsRequest(server string, params *GetPageTicketsParams) (*http.Request, error) {
+// newListTicketsRequest generates requests for ListTickets
+func newListTicketsRequest(server string, params *ListTicketsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1093,8 +1093,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageTickets request
-	GetPageTickets(ctx context.Context, params *GetPageTicketsParams, reqEditors ...RequestEditorFn) (*GetPageTicketsResponse, error)
+	// ListTickets request
+	ListTickets(ctx context.Context, params *ListTicketsParams, reqEditors ...RequestEditorFn) (*ListTicketsResponse, error)
 
 	// CreateTickets request with any body
 	CreateTicketsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTicketsResponse, error)
@@ -1140,14 +1140,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, ticketId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageTicketsResponse struct {
+type ListTicketsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageTicketsResponse) Status() string {
+func (r ListTicketsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1155,7 +1155,7 @@ func (r GetPageTicketsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageTicketsResponse) StatusCode() int {
+func (r ListTicketsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1426,13 +1426,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageTickets request returning *GetPageTicketsResponse
-func (c *Client) GetPageTickets(ctx context.Context, params *GetPageTicketsParams, reqEditors ...RequestEditorFn) (*GetPageTicketsResponse, error) {
-	rsp, err := c.doGetPageTickets(ctx, params, reqEditors...)
+// ListTickets request returning *ListTicketsResponse
+func (c *Client) ListTickets(ctx context.Context, params *ListTicketsParams, reqEditors ...RequestEditorFn) (*ListTicketsResponse, error) {
+	rsp, err := c.doListTickets(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageTicketsResponse(rsp)
+	return parseListTicketsResponse(rsp)
 }
 
 // CreateTicketsWithBody request with arbitrary body returning *CreateTicketsResponse
@@ -1599,15 +1599,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, ticketId string, toO
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageTicketsResponse parses an HTTP response from a GetPageTickets call.
-func parseGetPageTicketsResponse(rsp *http.Response) (*GetPageTicketsResponse, error) {
+// parseListTicketsResponse parses an HTTP response from a ListTickets call.
+func parseListTicketsResponse(rsp *http.Response) (*ListTicketsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageTicketsResponse{
+	response := &ListTicketsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

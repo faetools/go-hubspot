@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageProducts(ctx context.Context, params *GetPageProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageProductsRequest(c.Server, params)
+func (c *Client) doListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListProductsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, productId string, 
 	return c.Client.Do(req)
 }
 
-// newGetPageProductsRequest generates requests for GetPageProducts
-func newGetPageProductsRequest(server string, params *GetPageProductsParams) (*http.Request, error) {
+// newListProductsRequest generates requests for ListProducts
+func newListProductsRequest(server string, params *ListProductsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1093,8 +1093,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageProducts request
-	GetPageProducts(ctx context.Context, params *GetPageProductsParams, reqEditors ...RequestEditorFn) (*GetPageProductsResponse, error)
+	// ListProducts request
+	ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*ListProductsResponse, error)
 
 	// CreateProducts request with any body
 	CreateProductsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateProductsResponse, error)
@@ -1140,14 +1140,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, productId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageProductsResponse struct {
+type ListProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageProductsResponse) Status() string {
+func (r ListProductsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1155,7 +1155,7 @@ func (r GetPageProductsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageProductsResponse) StatusCode() int {
+func (r ListProductsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1426,13 +1426,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageProducts request returning *GetPageProductsResponse
-func (c *Client) GetPageProducts(ctx context.Context, params *GetPageProductsParams, reqEditors ...RequestEditorFn) (*GetPageProductsResponse, error) {
-	rsp, err := c.doGetPageProducts(ctx, params, reqEditors...)
+// ListProducts request returning *ListProductsResponse
+func (c *Client) ListProducts(ctx context.Context, params *ListProductsParams, reqEditors ...RequestEditorFn) (*ListProductsResponse, error) {
+	rsp, err := c.doListProducts(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageProductsResponse(rsp)
+	return parseListProductsResponse(rsp)
 }
 
 // CreateProductsWithBody request with arbitrary body returning *CreateProductsResponse
@@ -1599,15 +1599,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, productId string, to
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageProductsResponse parses an HTTP response from a GetPageProducts call.
-func parseGetPageProductsResponse(rsp *http.Response) (*GetPageProductsResponse, error) {
+// parseListProductsResponse parses an HTTP response from a ListProducts call.
+func parseListProductsResponse(rsp *http.Response) (*ListProductsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageProductsResponse{
+	response := &ListProductsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

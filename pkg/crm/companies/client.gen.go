@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageCompanies(ctx context.Context, params *GetPageCompaniesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageCompaniesRequest(c.Server, params)
+func (c *Client) doListCompanies(ctx context.Context, params *ListCompaniesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListCompaniesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, companyId string, 
 	return c.Client.Do(req)
 }
 
-// newGetPageCompaniesRequest generates requests for GetPageCompanies
-func newGetPageCompaniesRequest(server string, params *GetPageCompaniesParams) (*http.Request, error) {
+// newListCompaniesRequest generates requests for ListCompanies
+func newListCompaniesRequest(server string, params *ListCompaniesParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1093,8 +1093,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageCompanies request
-	GetPageCompanies(ctx context.Context, params *GetPageCompaniesParams, reqEditors ...RequestEditorFn) (*GetPageCompaniesResponse, error)
+	// ListCompanies request
+	ListCompanies(ctx context.Context, params *ListCompaniesParams, reqEditors ...RequestEditorFn) (*ListCompaniesResponse, error)
 
 	// CreateCompanies request with any body
 	CreateCompaniesWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCompaniesResponse, error)
@@ -1140,14 +1140,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, companyId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageCompaniesResponse struct {
+type ListCompaniesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageCompaniesResponse) Status() string {
+func (r ListCompaniesResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1155,7 +1155,7 @@ func (r GetPageCompaniesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageCompaniesResponse) StatusCode() int {
+func (r ListCompaniesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1426,13 +1426,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageCompanies request returning *GetPageCompaniesResponse
-func (c *Client) GetPageCompanies(ctx context.Context, params *GetPageCompaniesParams, reqEditors ...RequestEditorFn) (*GetPageCompaniesResponse, error) {
-	rsp, err := c.doGetPageCompanies(ctx, params, reqEditors...)
+// ListCompanies request returning *ListCompaniesResponse
+func (c *Client) ListCompanies(ctx context.Context, params *ListCompaniesParams, reqEditors ...RequestEditorFn) (*ListCompaniesResponse, error) {
+	rsp, err := c.doListCompanies(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageCompaniesResponse(rsp)
+	return parseListCompaniesResponse(rsp)
 }
 
 // CreateCompaniesWithBody request with arbitrary body returning *CreateCompaniesResponse
@@ -1599,15 +1599,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, companyId string, to
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageCompaniesResponse parses an HTTP response from a GetPageCompanies call.
-func parseGetPageCompaniesResponse(rsp *http.Response) (*GetPageCompaniesResponse, error) {
+// parseListCompaniesResponse parses an HTTP response from a ListCompanies call.
+func parseListCompaniesResponse(rsp *http.Response) (*ListCompaniesResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageCompaniesResponse{
+	response := &ListCompaniesResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

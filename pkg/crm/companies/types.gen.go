@@ -481,8 +481,8 @@ type StandardError_Links struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
-// GetPageCompaniesParams defines parameters for GetPageCompanies.
-type GetPageCompaniesParams struct {
+// ListCompaniesParams defines parameters for ListCompanies.
+type ListCompaniesParams struct {
 	// The maximum number of results to display per page.
 	Limit *int32 `json:"limit,omitempty"`
 

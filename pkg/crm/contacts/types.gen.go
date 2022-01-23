@@ -487,8 +487,8 @@ type StandardError_Links struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
-// GetPageContactsParams defines parameters for GetPageContacts.
-type GetPageContactsParams struct {
+// ListContactsParams defines parameters for ListContacts.
+type ListContactsParams struct {
 	// The maximum number of results to display per page.
 	Limit *int32 `json:"limit,omitempty"`
 

@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageLineItems(ctx context.Context, params *GetPageLineItemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageLineItemsRequest(c.Server, params)
+func (c *Client) doListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListLineItemsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, lineItemId string,
 	return c.Client.Do(req)
 }
 
-// newGetPageLineItemsRequest generates requests for GetPageLineItems
-func newGetPageLineItemsRequest(server string, params *GetPageLineItemsParams) (*http.Request, error) {
+// newListLineItemsRequest generates requests for ListLineItems
+func newListLineItemsRequest(server string, params *ListLineItemsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1093,8 +1093,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageLineItems request
-	GetPageLineItems(ctx context.Context, params *GetPageLineItemsParams, reqEditors ...RequestEditorFn) (*GetPageLineItemsResponse, error)
+	// ListLineItems request
+	ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...RequestEditorFn) (*ListLineItemsResponse, error)
 
 	// CreateLineItems request with any body
 	CreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateLineItemsResponse, error)
@@ -1140,14 +1140,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageLineItemsResponse struct {
+type ListLineItemsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageLineItemsResponse) Status() string {
+func (r ListLineItemsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1155,7 +1155,7 @@ func (r GetPageLineItemsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageLineItemsResponse) StatusCode() int {
+func (r ListLineItemsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1426,13 +1426,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageLineItems request returning *GetPageLineItemsResponse
-func (c *Client) GetPageLineItems(ctx context.Context, params *GetPageLineItemsParams, reqEditors ...RequestEditorFn) (*GetPageLineItemsResponse, error) {
-	rsp, err := c.doGetPageLineItems(ctx, params, reqEditors...)
+// ListLineItems request returning *ListLineItemsResponse
+func (c *Client) ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...RequestEditorFn) (*ListLineItemsResponse, error) {
+	rsp, err := c.doListLineItems(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageLineItemsResponse(rsp)
+	return parseListLineItemsResponse(rsp)
 }
 
 // CreateLineItemsWithBody request with arbitrary body returning *CreateLineItemsResponse
@@ -1599,15 +1599,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, lineItemId string, t
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageLineItemsResponse parses an HTTP response from a GetPageLineItems call.
-func parseGetPageLineItemsResponse(rsp *http.Response) (*GetPageLineItemsResponse, error) {
+// parseListLineItemsResponse parses an HTTP response from a ListLineItems call.
+func parseListLineItemsResponse(rsp *http.Response) (*ListLineItemsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageLineItemsResponse{
+	response := &ListLineItemsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -480,8 +480,8 @@ type StandardError_Links struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
-// GetPageTicketsParams defines parameters for GetPageTickets.
-type GetPageTicketsParams struct {
+// ListTicketsParams defines parameters for ListTickets.
+type ListTicketsParams struct {
 	// The maximum number of results to display per page.
 	Limit *int32 `json:"limit,omitempty"`
 

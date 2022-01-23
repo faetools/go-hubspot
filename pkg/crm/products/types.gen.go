@@ -480,8 +480,8 @@ type StandardError_Links struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
-// GetPageProductsParams defines parameters for GetPageProducts.
-type GetPageProductsParams struct {
+// ListProductsParams defines parameters for ListProducts.
+type ListProductsParams struct {
 	// The maximum number of results to display per page.
 	Limit *int32 `json:"limit,omitempty"`
 

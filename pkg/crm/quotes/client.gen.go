@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageQuotes(ctx context.Context, params *GetPageQuotesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageQuotesRequest(c.Server, params)
+func (c *Client) doListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListQuotesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -132,8 +132,8 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, quoteId string, toObj
 	return c.Client.Do(req)
 }
 
-// newGetPageQuotesRequest generates requests for GetPageQuotes
-func newGetPageQuotesRequest(server string, params *GetPageQuotesParams) (*http.Request, error) {
+// newListQuotesRequest generates requests for ListQuotes
+func newListQuotesRequest(server string, params *ListQuotesParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -568,8 +568,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageQuotes request
-	GetPageQuotes(ctx context.Context, params *GetPageQuotesParams, reqEditors ...RequestEditorFn) (*GetPageQuotesResponse, error)
+	// ListQuotes request
+	ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*ListQuotesResponse, error)
 
 	// ReadBatch request with any body
 	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
@@ -586,14 +586,14 @@ type ClientInterface interface {
 	GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error)
 }
 
-type GetPageQuotesResponse struct {
+type ListQuotesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageQuotesResponse) Status() string {
+func (r ListQuotesResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -601,7 +601,7 @@ func (r GetPageQuotesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageQuotesResponse) StatusCode() int {
+func (r ListQuotesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -697,13 +697,13 @@ func (r GetAllToObjectTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageQuotes request returning *GetPageQuotesResponse
-func (c *Client) GetPageQuotes(ctx context.Context, params *GetPageQuotesParams, reqEditors ...RequestEditorFn) (*GetPageQuotesResponse, error) {
-	rsp, err := c.doGetPageQuotes(ctx, params, reqEditors...)
+// ListQuotes request returning *ListQuotesResponse
+func (c *Client) ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*ListQuotesResponse, error) {
+	rsp, err := c.doListQuotes(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageQuotesResponse(rsp)
+	return parseListQuotesResponse(rsp)
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
@@ -758,15 +758,15 @@ func (c *Client) GetAllToObjectType(ctx context.Context, quoteId string, toObjec
 	return parseGetAllToObjectTypeResponse(rsp)
 }
 
-// parseGetPageQuotesResponse parses an HTTP response from a GetPageQuotes call.
-func parseGetPageQuotesResponse(rsp *http.Response) (*GetPageQuotesResponse, error) {
+// parseListQuotesResponse parses an HTTP response from a ListQuotes call.
+func parseListQuotesResponse(rsp *http.Response) (*ListQuotesResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageQuotesResponse{
+	response := &ListQuotesResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

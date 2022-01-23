@@ -443,8 +443,8 @@ type StandardError_Links struct {
 	AdditionalProperties map[string]string `json:"-"`
 }
 
-// GetPageQuotesParams defines parameters for GetPageQuotes.
-type GetPageQuotesParams struct {
+// ListQuotesParams defines parameters for ListQuotes.
+type ListQuotesParams struct {
 	// The maximum number of results to display per page.
 	Limit *int32 `json:"limit,omitempty"`
 

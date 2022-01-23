@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageDeals(ctx context.Context, params *GetPageDealsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageDealsRequest(c.Server, params)
+func (c *Client) doListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListDealsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, dealId string, toO
 	return c.Client.Do(req)
 }
 
-// newGetPageDealsRequest generates requests for GetPageDeals
-func newGetPageDealsRequest(server string, params *GetPageDealsParams) (*http.Request, error) {
+// newListDealsRequest generates requests for ListDeals
+func newListDealsRequest(server string, params *ListDealsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1093,8 +1093,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageDeals request
-	GetPageDeals(ctx context.Context, params *GetPageDealsParams, reqEditors ...RequestEditorFn) (*GetPageDealsResponse, error)
+	// ListDeals request
+	ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*ListDealsResponse, error)
 
 	// CreateDeals request with any body
 	CreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDealsResponse, error)
@@ -1140,14 +1140,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageDealsResponse struct {
+type ListDealsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageDealsResponse) Status() string {
+func (r ListDealsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1155,7 +1155,7 @@ func (r GetPageDealsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageDealsResponse) StatusCode() int {
+func (r ListDealsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1426,13 +1426,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageDeals request returning *GetPageDealsResponse
-func (c *Client) GetPageDeals(ctx context.Context, params *GetPageDealsParams, reqEditors ...RequestEditorFn) (*GetPageDealsResponse, error) {
-	rsp, err := c.doGetPageDeals(ctx, params, reqEditors...)
+// ListDeals request returning *ListDealsResponse
+func (c *Client) ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*ListDealsResponse, error) {
+	rsp, err := c.doListDeals(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageDealsResponse(rsp)
+	return parseListDealsResponse(rsp)
 }
 
 // CreateDealsWithBody request with arbitrary body returning *CreateDealsResponse
@@ -1599,15 +1599,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, dealId string, toObj
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageDealsResponse parses an HTTP response from a GetPageDeals call.
-func parseGetPageDealsResponse(rsp *http.Response) (*GetPageDealsResponse, error) {
+// parseListDealsResponse parses an HTTP response from a ListDeals call.
+func parseListDealsResponse(rsp *http.Response) (*ListDealsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageDealsResponse{
+	response := &ListDealsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -48,8 +48,8 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 	}
 }
 
-func (c *Client) doGetPageContacts(ctx context.Context, params *GetPageContactsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPageContactsRequest(c.Server, params)
+func (c *Client) doListContacts(ctx context.Context, params *ListContactsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newListContactsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -312,8 +312,8 @@ func (c *Client) doCreateAssociationType(ctx context.Context, contactId string, 
 	return c.Client.Do(req)
 }
 
-// newGetPageContactsRequest generates requests for GetPageContacts
-func newGetPageContactsRequest(server string, params *GetPageContactsParams) (*http.Request, error) {
+// newListContactsRequest generates requests for ListContacts
+func newListContactsRequest(server string, params *ListContactsParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1157,8 +1157,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	// GetPageContacts request
-	GetPageContacts(ctx context.Context, params *GetPageContactsParams, reqEditors ...RequestEditorFn) (*GetPageContactsResponse, error)
+	// ListContacts request
+	ListContacts(ctx context.Context, params *ListContactsParams, reqEditors ...RequestEditorFn) (*ListContactsResponse, error)
 
 	// CreateContacts request with any body
 	CreateContactsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateContactsResponse, error)
@@ -1208,14 +1208,14 @@ type ClientInterface interface {
 	CreateAssociationType(ctx context.Context, contactId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
-type GetPageContactsResponse struct {
+type ListContactsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
 // Status returns HTTPResponse.Status
-func (r GetPageContactsResponse) Status() string {
+func (r ListContactsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1223,7 +1223,7 @@ func (r GetPageContactsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetPageContactsResponse) StatusCode() int {
+func (r ListContactsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1515,13 +1515,13 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 	return 0
 }
 
-// GetPageContacts request returning *GetPageContactsResponse
-func (c *Client) GetPageContacts(ctx context.Context, params *GetPageContactsParams, reqEditors ...RequestEditorFn) (*GetPageContactsResponse, error) {
-	rsp, err := c.doGetPageContacts(ctx, params, reqEditors...)
+// ListContacts request returning *ListContactsResponse
+func (c *Client) ListContacts(ctx context.Context, params *ListContactsParams, reqEditors ...RequestEditorFn) (*ListContactsResponse, error) {
+	rsp, err := c.doListContacts(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetPageContactsResponse(rsp)
+	return parseListContactsResponse(rsp)
 }
 
 // CreateContactsWithBody request with arbitrary body returning *CreateContactsResponse
@@ -1705,15 +1705,15 @@ func (c *Client) CreateAssociationType(ctx context.Context, contactId string, to
 	return parseCreateAssociationTypeResponse(rsp)
 }
 
-// parseGetPageContactsResponse parses an HTTP response from a GetPageContacts call.
-func parseGetPageContactsResponse(rsp *http.Response) (*GetPageContactsResponse, error) {
+// parseListContactsResponse parses an HTTP response from a ListContacts call.
+func parseListContactsResponse(rsp *http.Response) (*ListContactsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetPageContactsResponse{
+	response := &ListContactsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

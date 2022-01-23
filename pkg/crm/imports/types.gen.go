@@ -472,8 +472,8 @@ type PublicObjectListRecord struct {
 	ObjectType string `json:"objectType"`
 }
 
-// GetPageParams defines parameters for GetPage.
-type GetPageParams struct {
+// ListParams defines parameters for List.
+type ListParams struct {
 	// The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.
 	After  *string `json:"after,omitempty"`
 	Before *string `json:"before,omitempty"`
