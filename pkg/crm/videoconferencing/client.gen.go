@@ -68,21 +68,17 @@ func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJ
 
 // newArchiveAppRequest generates requests for ArchiveApp
 func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPathArchiveApp[0] == '/' {
-		opPathArchiveApp = "." + opPathArchiveApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -97,21 +93,17 @@ func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) 
 
 // newGetAppRequest generates requests for GetApp
 func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPathGetApp[0] == '/' {
-		opPathGetApp = "." + opPathGetApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -137,21 +129,17 @@ func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequ
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
 func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathReplaceApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPathReplaceApp[0] == '/' {
-		opPathReplaceApp = "." + opPathReplaceApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathReplaceApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

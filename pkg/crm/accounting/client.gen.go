@@ -451,21 +451,17 @@ func newCreateCustomerRequestRequest(baseURL *url.URL, requestId string, body Cr
 
 // newCreateCustomerRequestRequestWithBody generates requests for CreateCustomerRequest with any type of body
 func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateCustomerRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
-	if opPathCreateCustomerRequest[0] == '/' {
-		opPathCreateCustomerRequest = "." + opPathCreateCustomerRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateCustomerRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -493,21 +489,17 @@ func newDoCustomerSearchRequestRequest(baseURL *url.URL, requestId string, body 
 
 // newDoCustomerSearchRequestRequestWithBody generates requests for DoCustomerSearchRequest with any type of body
 func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDoCustomerSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
-	if opPathDoCustomerSearchRequest[0] == '/' {
-		opPathDoCustomerSearchRequest = "." + opPathDoCustomerSearchRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDoCustomerSearchRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -535,21 +527,17 @@ func newCreateExchangeRateRequestRequest(baseURL *url.URL, requestId string, bod
 
 // newCreateExchangeRateRequestRequestWithBody generates requests for CreateExchangeRateRequest with any type of body
 func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateExchangeRateRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
-	if opPathCreateExchangeRateRequest[0] == '/' {
-		opPathCreateExchangeRateRequest = "." + opPathCreateExchangeRateRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateExchangeRateRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -577,21 +565,17 @@ func newCreateInvoiceRequestRequest(baseURL *url.URL, requestId string, body Cre
 
 // newCreateInvoiceRequestRequestWithBody generates requests for CreateInvoiceRequest with any type of body
 func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateInvoiceRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
-	if opPathCreateInvoiceRequest[0] == '/' {
-		opPathCreateInvoiceRequest = "." + opPathCreateInvoiceRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateInvoiceRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -619,21 +603,17 @@ func newInvoicePdfRequestRequest(baseURL *url.URL, requestId string, body Invoic
 
 // newInvoicePdfRequestRequestWithBody generates requests for InvoicePdfRequest with any type of body
 func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathInvoicePdfRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
-	if opPathInvoicePdfRequest[0] == '/' {
-		opPathInvoicePdfRequest = "." + opPathInvoicePdfRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathInvoicePdfRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -661,21 +641,17 @@ func newDoInvoiceSearchRequestRequest(baseURL *url.URL, requestId string, body D
 
 // newDoInvoiceSearchRequestRequestWithBody generates requests for DoInvoiceSearchRequest with any type of body
 func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDoInvoiceSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
-	if opPathDoInvoiceSearchRequest[0] == '/' {
-		opPathDoInvoiceSearchRequest = "." + opPathDoInvoiceSearchRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDoInvoiceSearchRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -703,21 +679,17 @@ func newGetRequestRequest(baseURL *url.URL, requestId string, body GetRequestJSO
 
 // newGetRequestRequestWithBody generates requests for GetRequest with any type of body
 func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
-	if opPathGetRequest[0] == '/' {
-		opPathGetRequest = "." + opPathGetRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -745,21 +717,17 @@ func newDoProductSearchRequestRequest(baseURL *url.URL, requestId string, body D
 
 // newDoProductSearchRequestRequestWithBody generates requests for DoProductSearchRequest with any type of body
 func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDoProductSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
-	if opPathDoProductSearchRequest[0] == '/' {
-		opPathDoProductSearchRequest = "." + opPathDoProductSearchRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDoProductSearchRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -787,21 +755,17 @@ func newDoTaxSearchRequestRequest(baseURL *url.URL, requestId string, body DoTax
 
 // newDoTaxSearchRequestRequestWithBody generates requests for DoTaxSearchRequest with any type of body
 func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDoTaxSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
-	if opPathDoTaxSearchRequest[0] == '/' {
-		opPathDoTaxSearchRequest = "." + opPathDoTaxSearchRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDoTaxSearchRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -829,21 +793,17 @@ func newCreateTermRequestRequest(baseURL *url.URL, requestId string, body Create
 
 // newCreateTermRequestRequestWithBody generates requests for CreateTermRequest with any type of body
 func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateTermRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
-	if opPathCreateTermRequest[0] == '/' {
-		opPathCreateTermRequest = "." + opPathCreateTermRequest
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateTermRequest)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -860,21 +820,17 @@ func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, con
 
 // newGetInvoiceRequest generates requests for GetInvoice
 func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetInvoice := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if opPathGetInvoice[0] == '/' {
-		opPathGetInvoice = "." + opPathGetInvoice
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetInvoice)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -916,21 +872,17 @@ func newUpdateInvoiceRequest(baseURL *url.URL, invoiceId string, params *UpdateI
 
 // newUpdateInvoiceRequestWithBody generates requests for UpdateInvoice with any type of body
 func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateInvoice := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if opPathUpdateInvoice[0] == '/' {
-		opPathUpdateInvoice = "." + opPathUpdateInvoice
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateInvoice)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -974,21 +926,17 @@ func newCreatePaymentRequest(baseURL *url.URL, invoiceId string, params *CreateP
 
 // newCreatePaymentRequestWithBody generates requests for CreatePayment with any type of body
 func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreatePayment := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
-	if opPathCreatePayment[0] == '/' {
-		opPathCreatePayment = "." + opPathCreatePayment
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreatePayment)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1023,21 +971,17 @@ func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params 
 
 // newGetAppRequest generates requests for GetApp
 func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetApp := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if opPathGetApp[0] == '/' {
-		opPathGetApp = "." + opPathGetApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1063,21 +1007,17 @@ func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequ
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
 func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathReplaceApp := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if opPathReplaceApp[0] == '/' {
-		opPathReplaceApp = "." + opPathReplaceApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathReplaceApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1105,21 +1045,17 @@ func newCreateContactContactsRequest(baseURL *url.URL, appId int32, body CreateC
 
 // newCreateContactContactsRequestWithBody generates requests for CreateContactContacts with any type of body
 func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateContactContacts := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
-	if opPathCreateContactContacts[0] == '/' {
-		opPathCreateContactContacts = "." + opPathCreateContactContacts
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateContactContacts)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1147,21 +1083,17 @@ func newCreateProductProductsRequest(baseURL *url.URL, appId int32, body CreateP
 
 // newCreateProductProductsRequestWithBody generates requests for CreateProductProducts with any type of body
 func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateProductProducts := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
-	if opPathCreateProductProducts[0] == '/' {
-		opPathCreateProductProducts = "." + opPathCreateProductProducts
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateProductProducts)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1187,16 +1119,11 @@ func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSO
 	return newReplaceUserAccountsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathReplaceUserAccounts = "./crm/v3/extensions/accounting/user-accounts"
+var opPathReplaceUserAccounts = client.MustParseURL("./crm/v3/extensions/accounting/user-accounts")
 
 // newReplaceUserAccountsRequestWithBody generates requests for ReplaceUserAccounts with any type of body
 func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathReplaceUserAccounts)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathReplaceUserAccounts)
 
 	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
@@ -1210,21 +1137,17 @@ func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string,
 
 // newArchiveAccountRequest generates requests for ArchiveAccount
 func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveAccount := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
-	if opPathArchiveAccount[0] == '/' {
-		opPathArchiveAccount = "." + opPathArchiveAccount
+	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveAccount)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

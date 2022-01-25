@@ -236,21 +236,17 @@ func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipeline
 
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
 func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllObjectType := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if opPathGetAllObjectType[0] == '/' {
-		opPathGetAllObjectType = "." + opPathGetAllObjectType
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -294,21 +290,17 @@ func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body Create
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
 func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateObjectType := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if opPathCreateObjectType[0] == '/' {
-		opPathCreateObjectType = "." + opPathCreateObjectType
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -325,28 +317,22 @@ func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, con
 
 // newArchivePipelineRequest generates requests for ArchivePipeline
 func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchivePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPathArchivePipeline[0] == '/' {
-		opPathArchivePipeline = "." + opPathArchivePipeline
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchivePipeline)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -361,28 +347,22 @@ func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 
 // newGetPipelineRequest generates requests for GetPipeline
 func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetPipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPathGetPipeline[0] == '/' {
-		opPathGetPipeline = "." + opPathGetPipeline
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetPipeline)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -426,28 +406,22 @@ func newUpdatePipelineRequest(baseURL *url.URL, objectType string, pipelineId st
 
 // newUpdatePipelineRequestWithBody generates requests for UpdatePipeline with any type of body
 func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdatePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPathUpdatePipeline[0] == '/' {
-		opPathUpdatePipeline = "." + opPathUpdatePipeline
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdatePipeline)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -493,28 +467,22 @@ func newReplacePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 
 // newReplacePipelineRequestWithBody generates requests for ReplacePipeline with any type of body
 func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathReplacePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPathReplacePipeline[0] == '/' {
-		opPathReplacePipeline = "." + opPathReplacePipeline
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathReplacePipeline)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -531,28 +499,22 @@ func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipe
 
 // newGetAllStagesRequest generates requests for GetAllStages
 func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetAllStagesParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllStages := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if opPathGetAllStages[0] == '/' {
-		opPathGetAllStages = "." + opPathGetAllStages
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllStages)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -596,28 +558,22 @@ func newCreateStagesRequest(baseURL *url.URL, objectType string, pipelineId stri
 
 // newCreateStagesRequestWithBody generates requests for CreateStages with any type of body
 func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateStages := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if opPathCreateStages[0] == '/' {
-		opPathCreateStages = "." + opPathCreateStages
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateStages)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -634,35 +590,27 @@ func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelin
 
 // newArchiveStageRequest generates requests for ArchiveStage
 func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPathArchiveStage[0] == '/' {
-		opPathArchiveStage = "." + opPathArchiveStage
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveStage)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -677,35 +625,27 @@ func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 
 // newGetStageRequest generates requests for GetStage
 func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPathGetStage[0] == '/' {
-		opPathGetStage = "." + opPathGetStage
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetStage)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -749,35 +689,27 @@ func newUpdateStageRequest(baseURL *url.URL, objectType string, pipelineId strin
 
 // newUpdateStageRequestWithBody generates requests for UpdateStage with any type of body
 func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPathUpdateStage[0] == '/' {
-		opPathUpdateStage = "." + opPathUpdateStage
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateStage)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -823,35 +755,27 @@ func newReplaceStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 
 // newReplaceStageRequestWithBody generates requests for ReplaceStage with any type of body
 func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathReplaceStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPathReplaceStage[0] == '/' {
-		opPathReplaceStage = "." + opPathReplaceStage
+	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathReplaceStage)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

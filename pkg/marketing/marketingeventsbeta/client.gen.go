@@ -281,16 +281,11 @@ func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEvent
 	return newEventsMarketingEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathEventsMarketingEvents = "./marketing/v3/marketing-events/events"
+var opPathEventsMarketingEvents = client.MustParseURL("./marketing/v3/marketing-events/events")
 
 // newEventsMarketingEventsRequestWithBody generates requests for EventsMarketingEvents with any type of body
 func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathEventsMarketingEvents)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathEventsMarketingEvents)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -313,16 +308,11 @@ func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) 
 	return newDeleteEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathDeleteEvents = "./marketing/v3/marketing-events/events/delete"
+var opPathDeleteEvents = client.MustParseURL("./marketing/v3/marketing-events/events/delete")
 
 // newDeleteEventsRequestWithBody generates requests for DeleteEvents with any type of body
 func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathDeleteEvents)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathDeleteEvents)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -334,16 +324,11 @@ func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body i
 	return req, nil
 }
 
-const opPathSearchEvents = "./marketing/v3/marketing-events/events/search"
+var opPathSearchEvents = client.MustParseURL("./marketing/v3/marketing-events/events/search")
 
 // newSearchEventsRequest generates requests for SearchEvents
 func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathSearchEvents)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathSearchEvents)
 
 	queryValues := queryURL.Query()
 
@@ -380,16 +365,11 @@ func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) 
 	return newUpsertEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathUpsertEvents = "./marketing/v3/marketing-events/events/upsert"
+var opPathUpsertEvents = client.MustParseURL("./marketing/v3/marketing-events/events/upsert")
 
 // newUpsertEventsRequestWithBody generates requests for UpsertEvents with any type of body
 func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathUpsertEvents)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathUpsertEvents)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -403,21 +383,17 @@ func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body i
 
 // newDeleteExternalEventRequest generates requests for DeleteExternalEvent
 func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDeleteExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPathDeleteExternalEvent[0] == '/' {
-		opPathDeleteExternalEvent = "." + opPathDeleteExternalEvent
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDeleteExternalEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -448,21 +424,17 @@ func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, par
 
 // newGetExternalEventRequest generates requests for GetExternalEvent
 func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPathGetExternalEvent[0] == '/' {
-		opPathGetExternalEvent = "." + opPathGetExternalEvent
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetExternalEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -504,21 +476,17 @@ func newPatchExternalEventRequest(baseURL *url.URL, externalEventId string, para
 
 // newPatchExternalEventRequestWithBody generates requests for PatchExternalEvent with any type of body
 func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathPatchExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPathPatchExternalEvent[0] == '/' {
-		opPathPatchExternalEvent = "." + opPathPatchExternalEvent
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathPatchExternalEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -562,21 +530,17 @@ func newPutExternalEventRequest(baseURL *url.URL, externalEventId string, body P
 
 // newPutExternalEventRequestWithBody generates requests for PutExternalEvent with any type of body
 func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathPutExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPathPutExternalEvent[0] == '/' {
-		opPathPutExternalEvent = "." + opPathPutExternalEvent
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathPutExternalEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -593,21 +557,17 @@ func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string
 
 // newCancelExternalEventRequest generates requests for CancelExternalEvent
 func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCancelExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
-	if opPathCancelExternalEvent[0] == '/' {
-		opPathCancelExternalEvent = "." + opPathCancelExternalEvent
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCancelExternalEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -649,28 +609,22 @@ func newEmailUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId stri
 
 // newEmailUpsertSubscriberStateRequestWithBody generates requests for EmailUpsertSubscriberState with any type of body
 func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathEmailUpsertSubscriberState := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
-	if opPathEmailUpsertSubscriberState[0] == '/' {
-		opPathEmailUpsertSubscriberState = "." + opPathEmailUpsertSubscriberState
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathEmailUpsertSubscriberState)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -714,28 +668,22 @@ func newUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, s
 
 // newUpsertSubscriberStateRequestWithBody generates requests for UpsertSubscriberState with any type of body
 func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpsertSubscriberState := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
-	if opPathUpsertSubscriberState[0] == '/' {
-		opPathUpsertSubscriberState = "." + opPathUpsertSubscriberState
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpsertSubscriberState)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -768,21 +716,17 @@ func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId s
 
 // newGetAppSettingsRequest generates requests for GetAppSettings
 func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAppSettings := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if opPathGetAppSettings[0] == '/' {
-		opPathGetAppSettings = "." + opPathGetAppSettings
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAppSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -808,21 +752,17 @@ func newPostAppSettingsRequest(baseURL *url.URL, appId int32, body PostAppSettin
 
 // newPostAppSettingsRequestWithBody generates requests for PostAppSettings with any type of body
 func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathPostAppSettings := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if opPathPostAppSettings[0] == '/' {
-		opPathPostAppSettings = "." + opPathPostAppSettings
+	opPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathPostAppSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

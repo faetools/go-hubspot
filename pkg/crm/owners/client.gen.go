@@ -40,16 +40,11 @@ func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwner
 	return c.client.Do(req)
 }
 
-const opPathList = "./crm/v3/owners/"
+var opPathList = client.MustParseURL("./crm/v3/owners/")
 
 // newListRequest generates requests for List
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathList)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathList)
 
 	queryValues := queryURL.Query()
 
@@ -121,21 +116,17 @@ func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error)
 
 // newGetOwnerRequest generates requests for GetOwner
 func newGetOwnerRequest(baseURL *url.URL, ownerId int32, params *GetOwnerParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "ownerId", runtime.ParamLocationPath, ownerId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "ownerId", runtime.ParamLocationPath, ownerId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetOwner := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
-	if opPathGetOwner[0] == '/' {
-		opPathGetOwner = "." + opPathGetOwner
+	opPath := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetOwner)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

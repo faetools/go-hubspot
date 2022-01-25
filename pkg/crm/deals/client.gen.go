@@ -258,16 +258,11 @@ func (c *Client) doCreateAssociationType(ctx context.Context, dealId string, toO
 	return c.client.Do(req)
 }
 
-const opPathListDeals = "./crm/v3/objects/deals"
+var opPathListDeals = client.MustParseURL("./crm/v3/objects/deals")
 
 // newListDealsRequest generates requests for ListDeals
 func newListDealsRequest(baseURL *url.URL, params *ListDealsParams) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathListDeals)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathListDeals)
 
 	queryValues := queryURL.Query()
 
@@ -362,16 +357,11 @@ func newCreateDealsRequest(baseURL *url.URL, body CreateDealsJSONRequestBody) (*
 	return newCreateDealsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathCreateDeals = "./crm/v3/objects/deals"
+var opPathCreateDeals = client.MustParseURL("./crm/v3/objects/deals")
 
 // newCreateDealsRequestWithBody generates requests for CreateDeals with any type of body
 func newCreateDealsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreateDeals)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreateDeals)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -394,16 +384,11 @@ func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) 
 	return newArchiveBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathArchiveBatch = "./crm/v3/objects/deals/batch/archive"
+var opPathArchiveBatch = client.MustParseURL("./crm/v3/objects/deals/batch/archive")
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathArchiveBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathArchiveBatch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -426,16 +411,11 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathCreateBatch = "./crm/v3/objects/deals/batch/create"
+var opPathCreateBatch = client.MustParseURL("./crm/v3/objects/deals/batch/create")
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreateBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreateBatch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -458,16 +438,11 @@ func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBat
 	return newReadBatchRequestWithBody(baseURL, params, "application/json", bodyReader)
 }
 
-const opPathReadBatch = "./crm/v3/objects/deals/batch/read"
+var opPathReadBatch = client.MustParseURL("./crm/v3/objects/deals/batch/read")
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathReadBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathReadBatch)
 
 	queryValues := queryURL.Query()
 
@@ -508,16 +483,11 @@ func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*
 	return newUpdateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathUpdateBatch = "./crm/v3/objects/deals/batch/update"
+var opPathUpdateBatch = client.MustParseURL("./crm/v3/objects/deals/batch/update")
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathUpdateBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathUpdateBatch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -540,16 +510,11 @@ func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.R
 	return newDoSearchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathDoSearch = "./crm/v3/objects/deals/search"
+var opPathDoSearch = client.MustParseURL("./crm/v3/objects/deals/search")
 
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathDoSearch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathDoSearch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -563,21 +528,17 @@ func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Re
 
 // newArchiveDealRequest generates requests for ArchiveDeal
 func newArchiveDealRequest(baseURL *url.URL, dealId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveDeal := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
-	if opPathArchiveDeal[0] == '/' {
-		opPathArchiveDeal = "." + opPathArchiveDeal
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveDeal)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -592,21 +553,17 @@ func newArchiveDealRequest(baseURL *url.URL, dealId string) (*http.Request, erro
 
 // newGetDealRequest generates requests for GetDeal
 func newGetDealRequest(baseURL *url.URL, dealId string, params *GetDealParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetDeal := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
-	if opPathGetDeal[0] == '/' {
-		opPathGetDeal = "." + opPathGetDeal
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetDeal)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -692,21 +649,17 @@ func newUpdateDealRequest(baseURL *url.URL, dealId string, params *UpdateDealPar
 
 // newUpdateDealRequestWithBody generates requests for UpdateDeal with any type of body
 func newUpdateDealRequestWithBody(baseURL *url.URL, dealId string, params *UpdateDealParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateDeal := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
-	if opPathUpdateDeal[0] == '/' {
-		opPathUpdateDeal = "." + opPathUpdateDeal
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateDeal)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -741,28 +694,22 @@ func newUpdateDealRequestWithBody(baseURL *url.URL, dealId string, params *Updat
 
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
 func newGetAllToObjectTypeRequest(baseURL *url.URL, dealId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s", pathParam0, pathParam1)
-	if opPathGetAllToObjectType[0] == '/' {
-		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -809,42 +756,32 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, dealId string, toObjectType 
 
 // newArchiveAssociationTypeRequest generates requests for ArchiveAssociationType
 func newArchiveAssociationTypeRequest(baseURL *url.URL, dealId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveAssociationType := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPathArchiveAssociationType[0] == '/' {
-		opPathArchiveAssociationType = "." + opPathArchiveAssociationType
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveAssociationType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -859,42 +796,32 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, dealId string, toObjectT
 
 // newCreateAssociationTypeRequest generates requests for CreateAssociationType
 func newCreateAssociationTypeRequest(baseURL *url.URL, dealId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "dealId", runtime.ParamLocationPath, dealId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateAssociationType := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPathCreateAssociationType[0] == '/' {
-		opPathCreateAssociationType = "." + opPathCreateAssociationType
+	opPath := fmt.Sprintf("/crm/v3/objects/deals/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateAssociationType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

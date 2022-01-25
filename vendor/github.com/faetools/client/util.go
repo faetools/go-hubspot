@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -76,6 +77,16 @@ func WithBaseURL(baseURL string) Option {
 	}
 }
 
+// MustParseURL parses the URL. It panics if there is an error.
+func MustParseURL(rawURL string) *url.URL {
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		panic(fmt.Sprintf("OpenAPI contains unparsable operation path: %s", err))
+	}
+
+	return u
+}
+
 // AddQueryParam adds a certain parameter with its value to the query.
 func AddQueryParam(query url.Values, paramName string, value interface{}) error {
 	if value == nil {
@@ -107,11 +118,6 @@ func IsJSONResponseWithCode(rsp *http.Response, code int) bool {
 }
 
 // TODO:
-// - save parsed serverURL
-// serverURL, err := url.Parse(server)
-// 	if err != nil {
-// 		return nil, err
-// 	}
 // - make static paths constant
 // operationPath := fmt.Sprintf("/crm/v3/objects/contacts")
 // 	if operationPath[0] == '/' {

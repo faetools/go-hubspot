@@ -176,21 +176,17 @@ func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscrip
 
 // newClearSettingsRequest generates requests for ClearSettings
 func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathClearSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if opPathClearSettings[0] == '/' {
-		opPathClearSettings = "." + opPathClearSettings
+	opPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathClearSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -205,21 +201,17 @@ func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, erro
 
 // newGetAllSettingsRequest generates requests for GetAllSettings
 func newGetAllSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if opPathGetAllSettings[0] == '/' {
-		opPathGetAllSettings = "." + opPathGetAllSettings
+	opPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -245,21 +237,17 @@ func newConfigureSettingsRequest(baseURL *url.URL, appId int32, body ConfigureSe
 
 // newConfigureSettingsRequestWithBody generates requests for ConfigureSettings with any type of body
 func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathConfigureSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if opPathConfigureSettings[0] == '/' {
-		opPathConfigureSettings = "." + opPathConfigureSettings
+	opPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathConfigureSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -276,21 +264,17 @@ func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentT
 
 // newGetAllSubscriptionsRequest generates requests for GetAllSubscriptions
 func newGetAllSubscriptionsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllSubscriptions := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
-	if opPathGetAllSubscriptions[0] == '/' {
-		opPathGetAllSubscriptions = "." + opPathGetAllSubscriptions
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllSubscriptions)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -316,21 +300,17 @@ func newCreateSubscriptionsRequest(baseURL *url.URL, appId int32, body CreateSub
 
 // newCreateSubscriptionsRequestWithBody generates requests for CreateSubscriptions with any type of body
 func newCreateSubscriptionsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateSubscriptions := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
-	if opPathCreateSubscriptions[0] == '/' {
-		opPathCreateSubscriptions = "." + opPathCreateSubscriptions
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateSubscriptions)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -358,21 +338,17 @@ func newUpdateBatchRequest(baseURL *url.URL, appId int32, body UpdateBatchJSONRe
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateBatch := fmt.Sprintf("/webhooks/v3/%s/subscriptions/batch/update", pathParam0)
-	if opPathUpdateBatch[0] == '/' {
-		opPathUpdateBatch = "." + opPathUpdateBatch
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/batch/update", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateBatch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -389,28 +365,22 @@ func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType st
 
 // newArchiveSubscriptionRequest generates requests for ArchiveSubscription
 func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if opPathArchiveSubscription[0] == '/' {
-		opPathArchiveSubscription = "." + opPathArchiveSubscription
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveSubscription)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -425,28 +395,22 @@ func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId
 
 // newGetSubscriptionRequest generates requests for GetSubscription
 func newGetSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if opPathGetSubscription[0] == '/' {
-		opPathGetSubscription = "." + opPathGetSubscription
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetSubscription)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -472,28 +436,22 @@ func newUpdateSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId 
 
 // newUpdateSubscriptionRequestWithBody generates requests for UpdateSubscription with any type of body
 func newUpdateSubscriptionRequestWithBody(baseURL *url.URL, appId int32, subscriptionId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriptionId", runtime.ParamLocationPath, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if opPathUpdateSubscription[0] == '/' {
-		opPathUpdateSubscription = "." + opPathUpdateSubscription
+	opPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateSubscription)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

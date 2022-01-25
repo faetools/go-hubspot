@@ -92,21 +92,17 @@ func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateS
 
 // newArchiveSettingsRequest generates requests for ArchiveSettings
 func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPathArchiveSettings[0] == '/' {
-		opPathArchiveSettings = "." + opPathArchiveSettings
+	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -121,21 +117,17 @@ func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, er
 
 // newGetSettingsRequest generates requests for GetSettings
 func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPathGetSettings[0] == '/' {
-		opPathGetSettings = "." + opPathGetSettings
+	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -161,21 +153,17 @@ func newUpdateSettingsRequest(baseURL *url.URL, appId int32, body UpdateSettings
 
 // newUpdateSettingsRequestWithBody generates requests for UpdateSettings with any type of body
 func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPathUpdateSettings[0] == '/' {
-		opPathUpdateSettings = "." + opPathUpdateSettings
+	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -203,21 +191,17 @@ func newCreateSettingsRequest(baseURL *url.URL, appId int32, body CreateSettings
 
 // newCreateSettingsRequestWithBody generates requests for CreateSettings with any type of body
 func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPathCreateSettings[0] == '/' {
-		opPathCreateSettings = "." + opPathCreateSettings
+	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateSettings)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

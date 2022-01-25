@@ -114,16 +114,11 @@ func (c *Client) doUpdateCard(ctx context.Context, appId int32, cardId string, b
 	return c.client.Do(req)
 }
 
-const opPathGetCardsSampleResponseSampleResponse = "./crm/v3/extensions/cards/sample-response"
+var opPathGetCardsSampleResponseSampleResponse = client.MustParseURL("./crm/v3/extensions/cards/sample-response")
 
 // newGetCardsSampleResponseSampleResponseRequest generates requests for GetCardsSampleResponseSampleResponse
 func newGetCardsSampleResponseSampleResponseRequest(baseURL *url.URL) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathGetCardsSampleResponseSampleResponse)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathGetCardsSampleResponseSampleResponse)
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -135,21 +130,17 @@ func newGetCardsSampleResponseSampleResponseRequest(baseURL *url.URL) (*http.Req
 
 // newGetAllAppRequest generates requests for GetAllApp
 func newGetAllAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllApp := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
-	if opPathGetAllApp[0] == '/' {
-		opPathGetAllApp = "." + opPathGetAllApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -175,21 +166,17 @@ func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONReques
 
 // newCreateAppRequestWithBody generates requests for CreateApp with any type of body
 func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateApp := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
-	if opPathCreateApp[0] == '/' {
-		opPathCreateApp = "." + opPathCreateApp
+	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateApp)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -206,28 +193,22 @@ func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType stri
 
 // newArchiveCardRequest generates requests for ArchiveCard
 func newArchiveCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveCard := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPathArchiveCard[0] == '/' {
-		opPathArchiveCard = "." + opPathArchiveCard
+	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveCard)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -242,28 +223,22 @@ func newArchiveCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.
 
 // newGetCardRequest generates requests for GetCard
 func newGetCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetCard := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPathGetCard[0] == '/' {
-		opPathGetCard = "." + opPathGetCard
+	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetCard)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -289,28 +264,22 @@ func newUpdateCardRequest(baseURL *url.URL, appId int32, cardId string, body Upd
 
 // newUpdateCardRequestWithBody generates requests for UpdateCard with any type of body
 func newUpdateCardRequestWithBody(baseURL *url.URL, appId int32, cardId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateCard := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPathUpdateCard[0] == '/' {
-		opPathUpdateCard = "." + opPathUpdateCard
+	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateCard)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

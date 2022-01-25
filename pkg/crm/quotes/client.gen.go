@@ -102,16 +102,11 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, quoteId string, toObj
 	return c.client.Do(req)
 }
 
-const opPathListQuotes = "./crm/v3/objects/quotes"
+var opPathListQuotes = client.MustParseURL("./crm/v3/objects/quotes")
 
 // newListQuotesRequest generates requests for ListQuotes
 func newListQuotesRequest(baseURL *url.URL, params *ListQuotesParams) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathListQuotes)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathListQuotes)
 
 	queryValues := queryURL.Query()
 
@@ -206,16 +201,11 @@ func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBat
 	return newReadBatchRequestWithBody(baseURL, params, "application/json", bodyReader)
 }
 
-const opPathReadBatch = "./crm/v3/objects/quotes/batch/read"
+var opPathReadBatch = client.MustParseURL("./crm/v3/objects/quotes/batch/read")
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathReadBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathReadBatch)
 
 	queryValues := queryURL.Query()
 
@@ -256,16 +246,11 @@ func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.R
 	return newDoSearchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathDoSearch = "./crm/v3/objects/quotes/search"
+var opPathDoSearch = client.MustParseURL("./crm/v3/objects/quotes/search")
 
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathDoSearch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathDoSearch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -279,21 +264,17 @@ func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Re
 
 // newGetQuoteRequest generates requests for GetQuote
 func newGetQuoteRequest(baseURL *url.URL, quoteId string, params *GetQuoteParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "quoteId", runtime.ParamLocationPath, quoteId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "quoteId", runtime.ParamLocationPath, quoteId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetQuote := fmt.Sprintf("/crm/v3/objects/quotes/%s", pathParam0)
-	if opPathGetQuote[0] == '/' {
-		opPathGetQuote = "." + opPathGetQuote
+	opPath := fmt.Sprintf("/crm/v3/objects/quotes/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetQuote)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -368,28 +349,22 @@ func newGetQuoteRequest(baseURL *url.URL, quoteId string, params *GetQuoteParams
 
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
 func newGetAllToObjectTypeRequest(baseURL *url.URL, quoteId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "quoteId", runtime.ParamLocationPath, quoteId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "quoteId", runtime.ParamLocationPath, quoteId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/quotes/%s/associations/%s", pathParam0, pathParam1)
-	if opPathGetAllToObjectType[0] == '/' {
-		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/quotes/%s/associations/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

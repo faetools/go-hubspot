@@ -257,16 +257,11 @@ func newCreateEventsRequest(baseURL *url.URL, body CreateEventsJSONRequestBody) 
 	return newCreateEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathCreateEvents = "./crm/v3/timeline/events"
+var opPathCreateEvents = client.MustParseURL("./crm/v3/timeline/events")
 
 // newCreateEventsRequestWithBody generates requests for CreateEvents with any type of body
 func newCreateEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreateEvents)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreateEvents)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -289,16 +284,11 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathCreateBatch = "./crm/v3/timeline/events/batch/create"
+var opPathCreateBatch = client.MustParseURL("./crm/v3/timeline/events/batch/create")
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreateBatch)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreateBatch)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -312,28 +302,22 @@ func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io
 
 // newGetEventRequest generates requests for GetEvent
 func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetEvent := fmt.Sprintf("/crm/v3/timeline/events/%s/%s", pathParam0, pathParam1)
-	if opPathGetEvent[0] == '/' {
-		opPathGetEvent = "." + opPathGetEvent
+	opPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetEvent)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -348,28 +332,22 @@ func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string
 
 // newGetDetailByIdRequest generates requests for GetDetailById
 func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetDetailById := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/detail", pathParam0, pathParam1)
-	if opPathGetDetailById[0] == '/' {
-		opPathGetDetailById = "." + opPathGetDetailById
+	opPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/detail", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetDetailById)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -384,28 +362,22 @@ func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId s
 
 // newGetRenderByIdRequest generates requests for GetRenderById
 func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string, params *GetRenderByIdParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetRenderById := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/render", pathParam0, pathParam1)
-	if opPathGetRenderById[0] == '/' {
-		opPathGetRenderById = "." + opPathGetRenderById
+	opPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/render", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetRenderById)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -438,21 +410,17 @@ func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId s
 
 // newGetAllEventTemplatesRequest generates requests for GetAllEventTemplates
 func newGetAllEventTemplatesRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllEventTemplates := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
-	if opPathGetAllEventTemplates[0] == '/' {
-		opPathGetAllEventTemplates = "." + opPathGetAllEventTemplates
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllEventTemplates)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -478,21 +446,17 @@ func newCreateEventTemplatesRequest(baseURL *url.URL, appId int32, body CreateEv
 
 // newCreateEventTemplatesRequestWithBody generates requests for CreateEventTemplates with any type of body
 func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateEventTemplates := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
-	if opPathCreateEventTemplates[0] == '/' {
-		opPathCreateEventTemplates = "." + opPathCreateEventTemplates
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateEventTemplates)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -509,28 +473,22 @@ func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, conte
 
 // newArchiveEventTemplateRequest generates requests for ArchiveEventTemplate
 func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if opPathArchiveEventTemplate[0] == '/' {
-		opPathArchiveEventTemplate = "." + opPathArchiveEventTemplate
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveEventTemplate)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -545,28 +503,22 @@ func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplate
 
 // newGetEventTemplateRequest generates requests for GetEventTemplate
 func newGetEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if opPathGetEventTemplate[0] == '/' {
-		opPathGetEventTemplate = "." + opPathGetEventTemplate
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetEventTemplate)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -592,28 +544,22 @@ func newUpdateEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateI
 
 // newUpdateEventTemplateRequestWithBody generates requests for UpdateEventTemplate with any type of body
 func newUpdateEventTemplateRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if opPathUpdateEventTemplate[0] == '/' {
-		opPathUpdateEventTemplate = "." + opPathUpdateEventTemplate
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateEventTemplate)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -641,28 +587,22 @@ func newCreateTokensRequest(baseURL *url.URL, appId int32, eventTemplateId strin
 
 // newCreateTokensRequestWithBody generates requests for CreateTokens with any type of body
 func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateTokens := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens", pathParam0, pathParam1)
-	if opPathCreateTokens[0] == '/' {
-		opPathCreateTokens = "." + opPathCreateTokens
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateTokens)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -679,35 +619,27 @@ func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplate
 
 // newArchiveTokenNameRequest generates requests for ArchiveTokenName
 func newArchiveTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "tokenName", runtime.ParamLocationPath, tokenName)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "tokenName", runtime.ParamLocationPath, tokenName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveTokenName := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
-	if opPathArchiveTokenName[0] == '/' {
-		opPathArchiveTokenName = "." + opPathArchiveTokenName
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveTokenName)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -733,35 +665,27 @@ func newUpdateTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId st
 
 // newUpdateTokenNameRequestWithBody generates requests for UpdateTokenName with any type of body
 func newUpdateTokenNameRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "eventTemplateId", runtime.ParamLocationPath, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "tokenName", runtime.ParamLocationPath, tokenName)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "tokenName", runtime.ParamLocationPath, tokenName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateTokenName := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
-	if opPathUpdateTokenName[0] == '/' {
-		opPathUpdateTokenName = "." + opPathUpdateTokenName
+	opPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateTokenName)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

@@ -67,21 +67,17 @@ func (c *Client) doCreateTokenWithBody(ctx context.Context, contentType string, 
 
 // newGetAccessTokenRequest generates requests for GetAccessToken
 func newGetAccessTokenRequest(baseURL *url.URL, token string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAccessToken := fmt.Sprintf("/oauth/v1/access-tokens/%s", pathParam0)
-	if opPathGetAccessToken[0] == '/' {
-		opPathGetAccessToken = "." + opPathGetAccessToken
+	opPath := fmt.Sprintf("/oauth/v1/access-tokens/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAccessToken)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -96,21 +92,17 @@ func newGetAccessTokenRequest(baseURL *url.URL, token string) (*http.Request, er
 
 // newArchiveRefreshTokenRequest generates requests for ArchiveRefreshToken
 func newArchiveRefreshTokenRequest(baseURL *url.URL, token string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveRefreshToken := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
-	if opPathArchiveRefreshToken[0] == '/' {
-		opPathArchiveRefreshToken = "." + opPathArchiveRefreshToken
+	opPath := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveRefreshToken)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -125,21 +117,17 @@ func newArchiveRefreshTokenRequest(baseURL *url.URL, token string) (*http.Reques
 
 // newGetRefreshTokenRequest generates requests for GetRefreshToken
 func newGetRefreshTokenRequest(baseURL *url.URL, token string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "token", runtime.ParamLocationPath, token)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetRefreshToken := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
-	if opPathGetRefreshToken[0] == '/' {
-		opPathGetRefreshToken = "." + opPathGetRefreshToken
+	opPath := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetRefreshToken)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -152,16 +140,11 @@ func newGetRefreshTokenRequest(baseURL *url.URL, token string) (*http.Request, e
 	return req, nil
 }
 
-const opPathCreateToken = "./oauth/v1/token"
+var opPathCreateToken = client.MustParseURL("./oauth/v1/token")
 
 // newCreateTokenRequestWithBody generates requests for CreateToken with any type of body
 func newCreateTokenRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreateToken)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreateToken)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {

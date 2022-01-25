@@ -77,16 +77,11 @@ func (c *Client) doGetErrors(ctx context.Context, importId int64, params *GetErr
 	return c.client.Do(req)
 }
 
-const opPathList = "./crm/v3/imports/"
+var opPathList = client.MustParseURL("./crm/v3/imports/")
 
 // newListRequest generates requests for List
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathList)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathList)
 
 	queryValues := queryURL.Query()
 
@@ -142,16 +137,11 @@ func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error)
 	return req, nil
 }
 
-const opPathCreate = "./crm/v3/imports/"
+var opPathCreate = client.MustParseURL("./crm/v3/imports/")
 
 // newCreateRequestWithBody generates requests for Create with any type of body
 func newCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathCreate)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathCreate)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
@@ -165,21 +155,17 @@ func newCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Read
 
 // newGetImportRequest generates requests for GetImport
 func newGetImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetImport := fmt.Sprintf("/crm/v3/imports/%s", pathParam0)
-	if opPathGetImport[0] == '/' {
-		opPathGetImport = "." + opPathGetImport
+	opPath := fmt.Sprintf("/crm/v3/imports/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetImport)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -194,21 +180,17 @@ func newGetImportRequest(baseURL *url.URL, importId int64) (*http.Request, error
 
 // newCancelImportRequest generates requests for CancelImport
 func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCancelImport := fmt.Sprintf("/crm/v3/imports/%s/cancel", pathParam0)
-	if opPathCancelImport[0] == '/' {
-		opPathCancelImport = "." + opPathCancelImport
+	opPath := fmt.Sprintf("/crm/v3/imports/%s/cancel", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCancelImport)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -223,21 +205,17 @@ func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, er
 
 // newGetErrorsRequest generates requests for GetErrors
 func newGetErrorsRequest(baseURL *url.URL, importId int64, params *GetErrorsParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetErrors := fmt.Sprintf("/crm/v3/imports/%s/errors", pathParam0)
-	if opPathGetErrors[0] == '/' {
-		opPathGetErrors = "." + opPathGetErrors
+	opPath := fmt.Sprintf("/crm/v3/imports/%s/errors", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetErrors)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}

@@ -51,16 +51,11 @@ func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSO
 	return newGenerateTokenCreateRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
-const opPathGenerateTokenCreate = "./conversations/v3/visitor-identification/tokens/create"
+var opPathGenerateTokenCreate = client.MustParseURL("./conversations/v3/visitor-identification/tokens/create")
 
 // newGenerateTokenCreateRequestWithBody generates requests for GenerateTokenCreate with any type of body
 func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	queryURL, err := baseURL.Parse(opPathGenerateTokenCreate)
-	if err != nil {
-		return nil, err
-	}
+	queryURL := baseURL.ResolveReference(opPathGenerateTokenCreate)
 
 	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {

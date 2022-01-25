@@ -284,21 +284,17 @@ func (c *Client) doCreateAssociationType(ctx context.Context, objectType string,
 
 // newListObjectTypeRequest generates requests for ListObjectType
 func newListObjectTypeRequest(baseURL *url.URL, objectType string, params *ListObjectTypeParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathListObjectType := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
-	if opPathListObjectType[0] == '/' {
-		opPathListObjectType = "." + opPathListObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathListObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -398,21 +394,17 @@ func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body Create
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
 func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateObjectType := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
-	if opPathCreateObjectType[0] == '/' {
-		opPathCreateObjectType = "." + opPathCreateObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -440,21 +432,17 @@ func newArchiveBatchRequest(baseURL *url.URL, objectType string, body ArchiveBat
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/archive", pathParam0)
-	if opPathArchiveBatch[0] == '/' {
-		opPathArchiveBatch = "." + opPathArchiveBatch
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/batch/archive", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveBatch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -482,21 +470,17 @@ func newCreateBatchRequest(baseURL *url.URL, objectType string, body CreateBatch
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/create", pathParam0)
-	if opPathCreateBatch[0] == '/' {
-		opPathCreateBatch = "." + opPathCreateBatch
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/batch/create", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateBatch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -524,21 +508,17 @@ func newReadBatchRequest(baseURL *url.URL, objectType string, params *ReadBatchP
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathReadBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/read", pathParam0)
-	if opPathReadBatch[0] == '/' {
-		opPathReadBatch = "." + opPathReadBatch
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/batch/read", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathReadBatch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -584,21 +564,17 @@ func newUpdateBatchRequest(baseURL *url.URL, objectType string, body UpdateBatch
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/update", pathParam0)
-	if opPathUpdateBatch[0] == '/' {
-		opPathUpdateBatch = "." + opPathUpdateBatch
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/batch/update", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateBatch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -626,21 +602,17 @@ func newGdprDeleteObjectTypeRequest(baseURL *url.URL, objectType string, body Gd
 
 // newGdprDeleteObjectTypeRequestWithBody generates requests for GdprDeleteObjectType with any type of body
 func newGdprDeleteObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGdprDeleteObjectType := fmt.Sprintf("/crm/v3/objects/%s/gdpr-delete", pathParam0)
-	if opPathGdprDeleteObjectType[0] == '/' {
-		opPathGdprDeleteObjectType = "." + opPathGdprDeleteObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/gdpr-delete", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGdprDeleteObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -668,21 +640,17 @@ func newDoSearchRequest(baseURL *url.URL, objectType string, body DoSearchJSONRe
 
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathDoSearch := fmt.Sprintf("/crm/v3/objects/%s/search", pathParam0)
-	if opPathDoSearch[0] == '/' {
-		opPathDoSearch = "." + opPathDoSearch
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/search", pathParam0)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathDoSearch)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -699,28 +667,22 @@ func newDoSearchRequestWithBody(baseURL *url.URL, objectType string, contentType
 
 // newArchiveObjectRequest generates requests for ArchiveObject
 func newArchiveObjectRequest(baseURL *url.URL, objectType string, objectId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if opPathArchiveObject[0] == '/' {
-		opPathArchiveObject = "." + opPathArchiveObject
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveObject)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -735,28 +697,22 @@ func newArchiveObjectRequest(baseURL *url.URL, objectType string, objectId strin
 
 // newGetObjectRequest generates requests for GetObject
 func newGetObjectRequest(baseURL *url.URL, objectType string, objectId string, params *GetObjectParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if opPathGetObject[0] == '/' {
-		opPathGetObject = "." + opPathGetObject
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetObject)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -842,28 +798,22 @@ func newUpdateObjectRequest(baseURL *url.URL, objectType string, objectId string
 
 // newUpdateObjectRequestWithBody generates requests for UpdateObject with any type of body
 func newUpdateObjectRequestWithBody(baseURL *url.URL, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathUpdateObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if opPathUpdateObject[0] == '/' {
-		opPathUpdateObject = "." + opPathUpdateObject
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathUpdateObject)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -898,35 +848,27 @@ func newUpdateObjectRequestWithBody(baseURL *url.URL, objectType string, objectI
 
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
 func newGetAllToObjectTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s", pathParam0, pathParam1, pathParam2)
-	if opPathGetAllToObjectType[0] == '/' {
-		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s", pathParam0, pathParam1, pathParam2)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -973,49 +915,37 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, objectType string, objectId 
 
 // newArchiveAssociationTypeRequest generates requests for ArchiveAssociationType
 func newArchiveAssociationTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam4 string
-
-	pathParam4, err = runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam4, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathArchiveAssociationType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
-	if opPathArchiveAssociationType[0] == '/' {
-		opPathArchiveAssociationType = "." + opPathArchiveAssociationType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathArchiveAssociationType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1030,49 +960,37 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, objectType string, objec
 
 // newCreateAssociationTypeRequest generates requests for CreateAssociationType
 func newCreateAssociationTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
+	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "objectId", runtime.ParamLocationPath, objectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam2 string
-
-	pathParam2, err = runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam3 string
-
-	pathParam3, err = runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	var pathParam4 string
-
-	pathParam4, err = runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam4, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPathCreateAssociationType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
-	if opPathCreateAssociationType[0] == '/' {
-		opPathCreateAssociationType = "." + opPathCreateAssociationType
+	opPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
+	if opPath[0] == '/' {
+		opPath = "." + opPath
 	}
 
-	queryURL, err := baseURL.Parse(opPathCreateAssociationType)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
