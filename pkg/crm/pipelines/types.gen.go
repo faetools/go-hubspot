@@ -247,8 +247,8 @@ type GetAllObjectTypeParams struct {
 // CreateObjectTypeJSONBody defines parameters for CreateObjectType.
 type CreateObjectTypeJSONBody PipelineInput
 
-// GetByIdPipelineParams defines parameters for GetByIdPipeline.
-type GetByIdPipelineParams struct {
+// GetPipelineParams defines parameters for GetPipeline.
+type GetPipelineParams struct {
 	// Whether to return only results that have been archived.
 	Archived *bool `json:"archived,omitempty"`
 }
@@ -274,8 +274,8 @@ type GetAllStagesParams struct {
 // CreateStagesJSONBody defines parameters for CreateStages.
 type CreateStagesJSONBody PipelineStageInput
 
-// GetByIdStageParams defines parameters for GetByIdStage.
-type GetByIdStageParams struct {
+// GetStageParams defines parameters for GetStage.
+type GetStageParams struct {
 	// Whether to return only results that have been archived.
 	Archived *bool `json:"archived,omitempty"`
 }

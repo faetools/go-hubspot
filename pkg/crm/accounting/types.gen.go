@@ -843,8 +843,8 @@ type InvoicePdfRequestJSONBody InvoicePdfResponse
 // DoInvoiceSearchRequestJSONBody defines parameters for DoInvoiceSearchRequest.
 type DoInvoiceSearchRequestJSONBody InvoiceSearchResponse
 
-// GetByIdRequestJSONBody defines parameters for GetByIdRequest.
-type GetByIdRequestJSONBody InvoicesResponseExternal
+// GetRequestJSONBody defines parameters for GetRequest.
+type GetRequestJSONBody InvoicesResponseExternal
 
 // DoProductSearchRequestJSONBody defines parameters for DoProductSearchRequest.
 type DoProductSearchRequestJSONBody ProductSearchResponse
@@ -855,8 +855,8 @@ type DoTaxSearchRequestJSONBody TaxSearchResponse
 // CreateTermRequestJSONBody defines parameters for CreateTermRequest.
 type CreateTermRequestJSONBody TermsResponse
 
-// GetByIdInvoiceParams defines parameters for GetByIdInvoice.
-type GetByIdInvoiceParams struct {
+// GetInvoiceParams defines parameters for GetInvoice.
+type GetInvoiceParams struct {
 	// The ID of the account that the invoice belongs to. This is the account ID from the external accounting system.
 	AccountId string `json:"accountId"`
 }
@@ -909,8 +909,8 @@ type InvoicePdfRequestJSONRequestBody InvoicePdfRequestJSONBody
 // DoInvoiceSearchRequestJSONRequestBody defines body for DoInvoiceSearchRequest for application/json ContentType.
 type DoInvoiceSearchRequestJSONRequestBody DoInvoiceSearchRequestJSONBody
 
-// GetByIdRequestJSONRequestBody defines body for GetByIdRequest for application/json ContentType.
-type GetByIdRequestJSONRequestBody GetByIdRequestJSONBody
+// GetRequestJSONRequestBody defines body for GetRequest for application/json ContentType.
+type GetRequestJSONRequestBody GetRequestJSONBody
 
 // DoProductSearchRequestJSONRequestBody defines body for DoProductSearchRequest for application/json ContentType.
 type DoProductSearchRequestJSONRequestBody DoProductSearchRequestJSONBody

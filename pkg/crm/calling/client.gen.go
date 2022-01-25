@@ -60,8 +60,8 @@ func (c *Client) doArchiveSettings(ctx context.Context, appId int32, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdSettingsRequest(c.Server, appId)
+func (c *Client) doGetSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetSettingsRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +154,8 @@ func newArchiveSettingsRequest(server string, appId int32) (*http.Request, error
 	return req, nil
 }
 
-// newGetByIdSettingsRequest generates requests for GetByIdSettings
-func newGetByIdSettingsRequest(server string, appId int32) (*http.Request, error) {
+// newGetSettingsRequest generates requests for GetSettings
+func newGetSettingsRequest(server string, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -355,8 +355,8 @@ type ClientInterface interface {
 	// ArchiveSettings request
 	ArchiveSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ArchiveSettingsResponse, error)
 
-	// GetByIdSettings request
-	GetByIdSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdSettingsResponse, error)
+	// GetSettings request
+	GetSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetSettingsResponse, error)
 
 	// UpdateSettings request with any body
 	UpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSettingsResponse, error)
@@ -388,14 +388,14 @@ func (r ArchiveSettingsResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdSettingsResponse struct {
+type GetSettingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SettingsResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdSettingsResponse) Status() string {
+func (r GetSettingsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -403,7 +403,7 @@ func (r GetByIdSettingsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdSettingsResponse) StatusCode() int {
+func (r GetSettingsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -463,13 +463,13 @@ func (c *Client) ArchiveSettings(ctx context.Context, appId int32, reqEditors ..
 	return parseArchiveSettingsResponse(rsp)
 }
 
-// GetByIdSettings request returning *GetByIdSettingsResponse
-func (c *Client) GetByIdSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdSettingsResponse, error) {
-	rsp, err := c.doGetByIdSettings(ctx, appId, reqEditors...)
+// GetSettings request returning *GetSettingsResponse
+func (c *Client) GetSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetSettingsResponse, error) {
+	rsp, err := c.doGetSettings(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdSettingsResponse(rsp)
+	return parseGetSettingsResponse(rsp)
 }
 
 // UpdateSettingsWithBody request with arbitrary body returning *UpdateSettingsResponse
@@ -522,15 +522,15 @@ func parseArchiveSettingsResponse(rsp *http.Response) (*ArchiveSettingsResponse,
 	return response, nil
 }
 
-// parseGetByIdSettingsResponse parses an HTTP response from a GetByIdSettings call.
-func parseGetByIdSettingsResponse(rsp *http.Response) (*GetByIdSettingsResponse, error) {
+// parseGetSettingsResponse parses an HTTP response from a GetSettings call.
+func parseGetSettingsResponse(rsp *http.Response) (*GetSettingsResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdSettingsResponse{
+	response := &GetSettingsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

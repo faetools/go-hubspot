@@ -71,8 +71,8 @@ func (c *Client) doCreateWithBody(ctx context.Context, contentType string, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdImportRequest(c.Server, importId)
+func (c *Client) doGetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetImportRequest(c.Server, importId)
 	if err != nil {
 		return nil, err
 	}
@@ -209,8 +209,8 @@ func newCreateRequestWithBody(server string, contentType string, body io.Reader)
 	return req, nil
 }
 
-// newGetByIdImportRequest generates requests for GetByIdImport
-func newGetByIdImportRequest(server string, importId int64) (*http.Request, error) {
+// newGetImportRequest generates requests for GetImport
+func newGetImportRequest(server string, importId int64) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -419,8 +419,8 @@ type ClientInterface interface {
 	// Create request with any body
 	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error)
 
-	// GetByIdImport request
-	GetByIdImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetByIdImportResponse, error)
+	// GetImport request
+	GetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetImportResponse, error)
 
 	// CancelImport request
 	CancelImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*CancelImportResponse, error)
@@ -473,14 +473,14 @@ func (r CreateResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdImportResponse struct {
+type GetImportResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PublicImportResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdImportResponse) Status() string {
+func (r GetImportResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -488,7 +488,7 @@ func (r GetByIdImportResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdImportResponse) StatusCode() int {
+func (r GetImportResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -557,13 +557,13 @@ func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io
 	return parseCreateResponse(rsp)
 }
 
-// GetByIdImport request returning *GetByIdImportResponse
-func (c *Client) GetByIdImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetByIdImportResponse, error) {
-	rsp, err := c.doGetByIdImport(ctx, importId, reqEditors...)
+// GetImport request returning *GetImportResponse
+func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetImportResponse, error) {
+	rsp, err := c.doGetImport(ctx, importId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdImportResponse(rsp)
+	return parseGetImportResponse(rsp)
 }
 
 // CancelImport request returning *CancelImportResponse
@@ -634,15 +634,15 @@ func parseCreateResponse(rsp *http.Response) (*CreateResponse, error) {
 	return response, nil
 }
 
-// parseGetByIdImportResponse parses an HTTP response from a GetByIdImport call.
-func parseGetByIdImportResponse(rsp *http.Response) (*GetByIdImportResponse, error) {
+// parseGetImportResponse parses an HTTP response from a GetImport call.
+func parseGetImportResponse(rsp *http.Response) (*GetImportResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdImportResponse{
+	response := &GetImportResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

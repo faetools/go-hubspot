@@ -108,8 +108,8 @@ func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdQuote(ctx context.Context, quoteId string, params *GetByIdQuoteParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdQuoteRequest(c.Server, quoteId, params)
+func (c *Client) doGetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetQuoteRequest(c.Server, quoteId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -331,8 +331,8 @@ func newDoSearchRequestWithBody(server string, contentType string, body io.Reade
 	return req, nil
 }
 
-// newGetByIdQuoteRequest generates requests for GetByIdQuote
-func newGetByIdQuoteRequest(server string, quoteId string, params *GetByIdQuoteParams) (*http.Request, error) {
+// newGetQuoteRequest generates requests for GetQuote
+func newGetQuoteRequest(server string, quoteId string, params *GetQuoteParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -579,8 +579,8 @@ type ClientInterface interface {
 	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
 	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
 
-	// GetByIdQuote request
-	GetByIdQuote(ctx context.Context, quoteId string, params *GetByIdQuoteParams, reqEditors ...RequestEditorFn) (*GetByIdQuoteResponse, error)
+	// GetQuote request
+	GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*GetQuoteResponse, error)
 
 	// GetAllToObjectType request
 	GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error)
@@ -653,14 +653,14 @@ func (r DoSearchResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdQuoteResponse struct {
+type GetQuoteResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdQuoteResponse) Status() string {
+func (r GetQuoteResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -668,7 +668,7 @@ func (r GetByIdQuoteResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdQuoteResponse) StatusCode() int {
+func (r GetQuoteResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -740,13 +740,13 @@ func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, req
 	return parseDoSearchResponse(rsp)
 }
 
-// GetByIdQuote request returning *GetByIdQuoteResponse
-func (c *Client) GetByIdQuote(ctx context.Context, quoteId string, params *GetByIdQuoteParams, reqEditors ...RequestEditorFn) (*GetByIdQuoteResponse, error) {
-	rsp, err := c.doGetByIdQuote(ctx, quoteId, params, reqEditors...)
+// GetQuote request returning *GetQuoteResponse
+func (c *Client) GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*GetQuoteResponse, error) {
+	rsp, err := c.doGetQuote(ctx, quoteId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdQuoteResponse(rsp)
+	return parseGetQuoteResponse(rsp)
 }
 
 // GetAllToObjectType request returning *GetAllToObjectTypeResponse
@@ -841,15 +841,15 @@ func parseDoSearchResponse(rsp *http.Response) (*DoSearchResponse, error) {
 	return response, nil
 }
 
-// parseGetByIdQuoteResponse parses an HTTP response from a GetByIdQuote call.
-func parseGetByIdQuoteResponse(rsp *http.Response) (*GetByIdQuoteResponse, error) {
+// parseGetQuoteResponse parses an HTTP response from a GetQuote call.
+func parseGetQuoteResponse(rsp *http.Response) (*GetQuoteResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdQuoteResponse{
+	response := &GetQuoteResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

@@ -96,8 +96,8 @@ func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, par
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdObjectTypeRequest(c.Server, objectType)
+func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetObjectTypeRequest(c.Server, objectType)
 	if err != nil {
 		return nil, err
 	}
@@ -317,8 +317,8 @@ func newArchiveObjectTypeRequest(server string, objectType string, params *Archi
 	return req, nil
 }
 
-// newGetByIdObjectTypeRequest generates requests for GetByIdObjectType
-func newGetByIdObjectTypeRequest(server string, objectType string) (*http.Request, error) {
+// newGetObjectTypeRequest generates requests for GetObjectType
+func newGetObjectTypeRequest(server string, objectType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -600,8 +600,8 @@ type ClientInterface interface {
 	// ArchiveObjectType request
 	ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...RequestEditorFn) (*ArchiveObjectTypeResponse, error)
 
-	// GetByIdObjectType request
-	GetByIdObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetByIdObjectTypeResponse, error)
+	// GetObjectType request
+	GetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetObjectTypeResponse, error)
 
 	// UpdateObjectType request with any body
 	UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateObjectTypeResponse, error)
@@ -683,14 +683,14 @@ func (r ArchiveObjectTypeResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdObjectTypeResponse struct {
+type GetObjectTypeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ObjectSchema
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdObjectTypeResponse) Status() string {
+func (r GetObjectTypeResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -698,7 +698,7 @@ func (r GetByIdObjectTypeResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdObjectTypeResponse) StatusCode() int {
+func (r GetObjectTypeResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -826,13 +826,13 @@ func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, param
 	return parseArchiveObjectTypeResponse(rsp)
 }
 
-// GetByIdObjectType request returning *GetByIdObjectTypeResponse
-func (c *Client) GetByIdObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetByIdObjectTypeResponse, error) {
-	rsp, err := c.doGetByIdObjectType(ctx, objectType, reqEditors...)
+// GetObjectType request returning *GetObjectTypeResponse
+func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetObjectTypeResponse, error) {
+	rsp, err := c.doGetObjectType(ctx, objectType, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdObjectTypeResponse(rsp)
+	return parseGetObjectTypeResponse(rsp)
 }
 
 // UpdateObjectTypeWithBody request with arbitrary body returning *UpdateObjectTypeResponse
@@ -953,15 +953,15 @@ func parseArchiveObjectTypeResponse(rsp *http.Response) (*ArchiveObjectTypeRespo
 	return response, nil
 }
 
-// parseGetByIdObjectTypeResponse parses an HTTP response from a GetByIdObjectType call.
-func parseGetByIdObjectTypeResponse(rsp *http.Response) (*GetByIdObjectTypeResponse, error) {
+// parseGetObjectTypeResponse parses an HTTP response from a GetObjectType call.
+func parseGetObjectTypeResponse(rsp *http.Response) (*GetObjectTypeResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdObjectTypeResponse{
+	response := &GetObjectTypeResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

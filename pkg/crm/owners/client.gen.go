@@ -58,8 +58,8 @@ func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdOwner(ctx context.Context, ownerId int32, params *GetByIdOwnerParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdOwnerRequest(c.Server, ownerId, params)
+func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetOwnerRequest(c.Server, ownerId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -157,8 +157,8 @@ func newListRequest(server string, params *ListParams) (*http.Request, error) {
 	return req, nil
 }
 
-// newGetByIdOwnerRequest generates requests for GetByIdOwner
-func newGetByIdOwnerRequest(server string, ownerId int32, params *GetByIdOwnerParams) (*http.Request, error) {
+// newGetOwnerRequest generates requests for GetOwner
+func newGetOwnerRequest(server string, ownerId int32, params *GetOwnerParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -296,8 +296,8 @@ type ClientInterface interface {
 	// List request
 	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error)
 
-	// GetByIdOwner request
-	GetByIdOwner(ctx context.Context, ownerId int32, params *GetByIdOwnerParams, reqEditors ...RequestEditorFn) (*GetByIdOwnerResponse, error)
+	// GetOwner request
+	GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*GetOwnerResponse, error)
 }
 
 type ListResponse struct {
@@ -322,14 +322,14 @@ func (r ListResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdOwnerResponse struct {
+type GetOwnerResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PublicOwner
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdOwnerResponse) Status() string {
+func (r GetOwnerResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -337,7 +337,7 @@ func (r GetByIdOwnerResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdOwnerResponse) StatusCode() int {
+func (r GetOwnerResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -353,13 +353,13 @@ func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...Req
 	return parseListResponse(rsp)
 }
 
-// GetByIdOwner request returning *GetByIdOwnerResponse
-func (c *Client) GetByIdOwner(ctx context.Context, ownerId int32, params *GetByIdOwnerParams, reqEditors ...RequestEditorFn) (*GetByIdOwnerResponse, error) {
-	rsp, err := c.doGetByIdOwner(ctx, ownerId, params, reqEditors...)
+// GetOwner request returning *GetOwnerResponse
+func (c *Client) GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*GetOwnerResponse, error) {
+	rsp, err := c.doGetOwner(ctx, ownerId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdOwnerResponse(rsp)
+	return parseGetOwnerResponse(rsp)
 }
 
 // parseListResponse parses an HTTP response from a List call.
@@ -387,15 +387,15 @@ func parseListResponse(rsp *http.Response) (*ListResponse, error) {
 	return response, nil
 }
 
-// parseGetByIdOwnerResponse parses an HTTP response from a GetByIdOwner call.
-func parseGetByIdOwnerResponse(rsp *http.Response) (*GetByIdOwnerResponse, error) {
+// parseGetOwnerResponse parses an HTTP response from a GetOwner call.
+func parseGetOwnerResponse(rsp *http.Response) (*GetOwnerResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdOwnerResponse{
+	response := &GetOwnerResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

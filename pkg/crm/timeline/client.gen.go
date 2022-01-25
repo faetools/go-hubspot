@@ -96,8 +96,8 @@ func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdEventRequest(c.Server, eventTemplateId, eventId)
+func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetEventRequest(c.Server, eventTemplateId, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -180,8 +180,8 @@ func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventT
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdEventTemplateRequest(c.Server, appId, eventTemplateId)
+func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetEventTemplateRequest(c.Server, appId, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
@@ -356,8 +356,8 @@ func newCreateBatchRequestWithBody(server string, contentType string, body io.Re
 	return req, nil
 }
 
-// newGetByIdEventRequest generates requests for GetByIdEvent
-func newGetByIdEventRequest(server string, eventTemplateId string, eventId string) (*http.Request, error) {
+// newGetEventRequest generates requests for GetEvent
+func newGetEventRequest(server string, eventTemplateId string, eventId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -619,8 +619,8 @@ func newArchiveEventTemplateRequest(server string, appId int32, eventTemplateId 
 	return req, nil
 }
 
-// newGetByIdEventTemplateRequest generates requests for GetByIdEventTemplate
-func newGetByIdEventTemplateRequest(server string, appId int32, eventTemplateId string) (*http.Request, error) {
+// newGetEventTemplateRequest generates requests for GetEventTemplate
+func newGetEventTemplateRequest(server string, appId int32, eventTemplateId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -955,8 +955,8 @@ type ClientInterface interface {
 	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
 	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
 
-	// GetByIdEvent request
-	GetByIdEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetByIdEventResponse, error)
+	// GetEvent request
+	GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
 
 	// GetDetailById request
 	GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetDetailByIdResponse, error)
@@ -974,8 +974,8 @@ type ClientInterface interface {
 	// ArchiveEventTemplate request
 	ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*ArchiveEventTemplateResponse, error)
 
-	// GetByIdEventTemplate request
-	GetByIdEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetByIdEventTemplateResponse, error)
+	// GetEventTemplate request
+	GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetEventTemplateResponse, error)
 
 	// UpdateEventTemplate request with any body
 	UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateEventTemplateResponse, error)
@@ -1038,14 +1038,14 @@ func (r CreateBatchResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdEventResponse struct {
+type GetEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *TimelineEventResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdEventResponse) Status() string {
+func (r GetEventResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1053,7 +1053,7 @@ func (r GetByIdEventResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdEventResponse) StatusCode() int {
+func (r GetEventResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1168,14 +1168,14 @@ func (r ArchiveEventTemplateResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdEventTemplateResponse struct {
+type GetEventTemplateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *TimelineEventTemplate
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdEventTemplateResponse) Status() string {
+func (r GetEventTemplateResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1183,7 +1183,7 @@ func (r GetByIdEventTemplateResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdEventTemplateResponse) StatusCode() int {
+func (r GetEventTemplateResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1311,13 +1311,13 @@ func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBod
 	return parseCreateBatchResponse(rsp)
 }
 
-// GetByIdEvent request returning *GetByIdEventResponse
-func (c *Client) GetByIdEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetByIdEventResponse, error) {
-	rsp, err := c.doGetByIdEvent(ctx, eventTemplateId, eventId, reqEditors...)
+// GetEvent request returning *GetEventResponse
+func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetEventResponse, error) {
+	rsp, err := c.doGetEvent(ctx, eventTemplateId, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdEventResponse(rsp)
+	return parseGetEventResponse(rsp)
 }
 
 // GetDetailById request returning *GetDetailByIdResponse
@@ -1373,13 +1373,13 @@ func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTem
 	return parseArchiveEventTemplateResponse(rsp)
 }
 
-// GetByIdEventTemplate request returning *GetByIdEventTemplateResponse
-func (c *Client) GetByIdEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetByIdEventTemplateResponse, error) {
-	rsp, err := c.doGetByIdEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
+// GetEventTemplate request returning *GetEventTemplateResponse
+func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetEventTemplateResponse, error) {
+	rsp, err := c.doGetEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdEventTemplateResponse(rsp)
+	return parseGetEventTemplateResponse(rsp)
 }
 
 // UpdateEventTemplateWithBody request with arbitrary body returning *UpdateEventTemplateResponse
@@ -1500,15 +1500,15 @@ func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) 
 	return response, nil
 }
 
-// parseGetByIdEventResponse parses an HTTP response from a GetByIdEvent call.
-func parseGetByIdEventResponse(rsp *http.Response) (*GetByIdEventResponse, error) {
+// parseGetEventResponse parses an HTTP response from a GetEvent call.
+func parseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdEventResponse{
+	response := &GetEventResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1632,15 +1632,15 @@ func parseArchiveEventTemplateResponse(rsp *http.Response) (*ArchiveEventTemplat
 	return response, nil
 }
 
-// parseGetByIdEventTemplateResponse parses an HTTP response from a GetByIdEventTemplate call.
-func parseGetByIdEventTemplateResponse(rsp *http.Response) (*GetByIdEventTemplateResponse, error) {
+// parseGetEventTemplateResponse parses an HTTP response from a GetEventTemplate call.
+func parseGetEventTemplateResponse(rsp *http.Response) (*GetEventTemplateResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdEventTemplateResponse{
+	response := &GetEventTemplateResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

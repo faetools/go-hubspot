@@ -60,8 +60,8 @@ func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...Re
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdAppRequest(c.Server, appId)
+func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -130,8 +130,8 @@ func newArchiveAppRequest(server string, appId int32) (*http.Request, error) {
 	return req, nil
 }
 
-// newGetByIdAppRequest generates requests for GetByIdApp
-func newGetByIdAppRequest(server string, appId int32) (*http.Request, error) {
+// newGetAppRequest generates requests for GetApp
+func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -284,8 +284,8 @@ type ClientInterface interface {
 	// ArchiveApp request
 	ArchiveApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ArchiveAppResponse, error)
 
-	// GetByIdApp request
-	GetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdAppResponse, error)
+	// GetApp request
+	GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error)
 
 	// ReplaceApp request with any body
 	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
@@ -313,14 +313,14 @@ func (r ArchiveAppResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdAppResponse struct {
+type GetAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ExternalSettings
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdAppResponse) Status() string {
+func (r GetAppResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -328,7 +328,7 @@ func (r GetByIdAppResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdAppResponse) StatusCode() int {
+func (r GetAppResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -366,13 +366,13 @@ func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...Requ
 	return parseArchiveAppResponse(rsp)
 }
 
-// GetByIdApp request returning *GetByIdAppResponse
-func (c *Client) GetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdAppResponse, error) {
-	rsp, err := c.doGetByIdApp(ctx, appId, reqEditors...)
+// GetApp request returning *GetAppResponse
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error) {
+	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdAppResponse(rsp)
+	return parseGetAppResponse(rsp)
 }
 
 // ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
@@ -408,15 +408,15 @@ func parseArchiveAppResponse(rsp *http.Response) (*ArchiveAppResponse, error) {
 	return response, nil
 }
 
-// parseGetByIdAppResponse parses an HTTP response from a GetByIdApp call.
-func parseGetByIdAppResponse(rsp *http.Response) (*GetByIdAppResponse, error) {
+// parseGetAppResponse parses an HTTP response from a GetApp call.
+func parseGetAppResponse(rsp *http.Response) (*GetAppResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdAppResponse{
+	response := &GetAppResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

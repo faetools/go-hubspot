@@ -523,8 +523,8 @@ type UpdateBatchJSONBody BatchInputSimplePublicObjectBatchInput
 // DoSearchJSONBody defines parameters for DoSearch.
 type DoSearchJSONBody PublicObjectSearchRequest
 
-// GetByIdCompanyParams defines parameters for GetByIdCompany.
-type GetByIdCompanyParams struct {
+// GetCompanyParams defines parameters for GetCompany.
+type GetCompanyParams struct {
 	// A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.
 	Properties *[]string `json:"properties,omitempty"`
 

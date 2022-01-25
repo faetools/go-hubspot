@@ -136,16 +136,16 @@ type ListParams struct {
 	Archived *bool `json:"archived,omitempty"`
 }
 
-// GetByIdOwnerParams defines parameters for GetByIdOwner.
-type GetByIdOwnerParams struct {
-	IdProperty *GetByIdOwnerParamsIdProperty `json:"idProperty,omitempty"`
+// GetOwnerParams defines parameters for GetOwner.
+type GetOwnerParams struct {
+	IdProperty *GetOwnerParamsIdProperty `json:"idProperty,omitempty"`
 
 	// Whether to return only results that have been archived.
 	Archived *bool `json:"archived,omitempty"`
 }
 
-// GetByIdOwnerParamsIdProperty defines parameters for GetByIdOwner.
-type GetByIdOwnerParamsIdProperty string
+// GetOwnerParamsIdProperty defines parameters for GetOwner.
+type GetOwnerParamsIdProperty string
 
 // Getter for additional properties for Error_Context. Returns the specified
 // element and whether it was found

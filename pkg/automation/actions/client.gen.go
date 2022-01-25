@@ -144,8 +144,8 @@ func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitio
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdDefinition(ctx context.Context, appId int32, definitionId string, params *GetByIdDefinitionParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdDefinitionRequest(c.Server, appId, definitionId, params)
+func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetDefinitionRequest(c.Server, appId, definitionId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -240,8 +240,8 @@ func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionI
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdFunction(ctx context.Context, appId int32, definitionId string, functionType GetByIdFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
+func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
 	if err != nil {
 		return nil, err
 	}
@@ -276,8 +276,8 @@ func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdRevisionRequest(c.Server, appId, definitionId, revisionId)
+func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetRevisionRequest(c.Server, appId, definitionId, revisionId)
 	if err != nil {
 		return nil, err
 	}
@@ -543,8 +543,8 @@ func newArchiveDefinitionRequest(server string, appId int32, definitionId string
 	return req, nil
 }
 
-// newGetByIdDefinitionRequest generates requests for GetByIdDefinition
-func newGetByIdDefinitionRequest(server string, appId int32, definitionId string, params *GetByIdDefinitionParams) (*http.Request, error) {
+// newGetDefinitionRequest generates requests for GetDefinition
+func newGetDefinitionRequest(server string, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -898,8 +898,8 @@ func newArchiveFunctionRequest(server string, appId int32, definitionId string, 
 	return req, nil
 }
 
-// newGetByIdFunctionRequest generates requests for GetByIdFunction
-func newGetByIdFunctionRequest(server string, appId int32, definitionId string, functionType GetByIdFunctionParamsFunctionType, functionId string) (*http.Request, error) {
+// newGetFunctionRequest generates requests for GetFunction
+func newGetFunctionRequest(server string, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1083,8 +1083,8 @@ func newListRevisionsRequest(server string, appId int32, definitionId string, pa
 	return req, nil
 }
 
-// newGetByIdRevisionRequest generates requests for GetByIdRevision
-func newGetByIdRevisionRequest(server string, appId int32, definitionId string, revisionId string) (*http.Request, error) {
+// newGetRevisionRequest generates requests for GetRevision
+func newGetRevisionRequest(server string, appId int32, definitionId string, revisionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1219,8 +1219,8 @@ type ClientInterface interface {
 	// ArchiveDefinition request
 	ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ArchiveDefinitionResponse, error)
 
-	// GetByIdDefinition request
-	GetByIdDefinition(ctx context.Context, appId int32, definitionId string, params *GetByIdDefinitionParams, reqEditors ...RequestEditorFn) (*GetByIdDefinitionResponse, error)
+	// GetDefinition request
+	GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*GetDefinitionResponse, error)
 
 	// UpdateDefinition request with any body
 	UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error)
@@ -1241,8 +1241,8 @@ type ClientInterface interface {
 	// ArchiveFunction request
 	ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*ArchiveFunctionResponse, error)
 
-	// GetByIdFunction request
-	GetByIdFunction(ctx context.Context, appId int32, definitionId string, functionType GetByIdFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetByIdFunctionResponse, error)
+	// GetFunction request
+	GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetFunctionResponse, error)
 
 	// CreateOrReplaceFunction request with any body
 	CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceFunctionResponse, error)
@@ -1250,8 +1250,8 @@ type ClientInterface interface {
 	// ListRevisions request
 	ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*ListRevisionsResponse, error)
 
-	// GetByIdRevision request
-	GetByIdRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetByIdRevisionResponse, error)
+	// GetRevision request
+	GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetRevisionResponse, error)
 }
 
 type CompleteBatchResponse struct {
@@ -1361,14 +1361,14 @@ func (r ArchiveDefinitionResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdDefinitionResponse struct {
+type GetDefinitionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ExtensionActionDefinition
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdDefinitionResponse) Status() string {
+func (r GetDefinitionResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1376,7 +1376,7 @@ func (r GetByIdDefinitionResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdDefinitionResponse) StatusCode() int {
+func (r GetDefinitionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1513,14 +1513,14 @@ func (r ArchiveFunctionResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdFunctionResponse struct {
+type GetFunctionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ActionFunction
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdFunctionResponse) Status() string {
+func (r GetFunctionResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1528,7 +1528,7 @@ func (r GetByIdFunctionResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdFunctionResponse) StatusCode() int {
+func (r GetFunctionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1579,14 +1579,14 @@ func (r ListRevisionsResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdRevisionResponse struct {
+type GetRevisionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *ActionRevision
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdRevisionResponse) Status() string {
+func (r GetRevisionResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1594,7 +1594,7 @@ func (r GetByIdRevisionResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdRevisionResponse) StatusCode() int {
+func (r GetRevisionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1670,13 +1670,13 @@ func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionI
 	return parseArchiveDefinitionResponse(rsp)
 }
 
-// GetByIdDefinition request returning *GetByIdDefinitionResponse
-func (c *Client) GetByIdDefinition(ctx context.Context, appId int32, definitionId string, params *GetByIdDefinitionParams, reqEditors ...RequestEditorFn) (*GetByIdDefinitionResponse, error) {
-	rsp, err := c.doGetByIdDefinition(ctx, appId, definitionId, params, reqEditors...)
+// GetDefinition request returning *GetDefinitionResponse
+func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*GetDefinitionResponse, error) {
+	rsp, err := c.doGetDefinition(ctx, appId, definitionId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdDefinitionResponse(rsp)
+	return parseGetDefinitionResponse(rsp)
 }
 
 // UpdateDefinitionWithBody request with arbitrary body returning *UpdateDefinitionResponse
@@ -1741,13 +1741,13 @@ func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId 
 	return parseArchiveFunctionResponse(rsp)
 }
 
-// GetByIdFunction request returning *GetByIdFunctionResponse
-func (c *Client) GetByIdFunction(ctx context.Context, appId int32, definitionId string, functionType GetByIdFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetByIdFunctionResponse, error) {
-	rsp, err := c.doGetByIdFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
+// GetFunction request returning *GetFunctionResponse
+func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetFunctionResponse, error) {
+	rsp, err := c.doGetFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdFunctionResponse(rsp)
+	return parseGetFunctionResponse(rsp)
 }
 
 // CreateOrReplaceFunctionWithBody request with arbitrary body returning *CreateOrReplaceFunctionResponse
@@ -1768,13 +1768,13 @@ func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId st
 	return parseListRevisionsResponse(rsp)
 }
 
-// GetByIdRevision request returning *GetByIdRevisionResponse
-func (c *Client) GetByIdRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetByIdRevisionResponse, error) {
-	rsp, err := c.doGetByIdRevision(ctx, appId, definitionId, revisionId, reqEditors...)
+// GetRevision request returning *GetRevisionResponse
+func (c *Client) GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetRevisionResponse, error) {
+	rsp, err := c.doGetRevision(ctx, appId, definitionId, revisionId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdRevisionResponse(rsp)
+	return parseGetRevisionResponse(rsp)
 }
 
 // parseCompleteBatchResponse parses an HTTP response from a CompleteBatch call.
@@ -1875,15 +1875,15 @@ func parseArchiveDefinitionResponse(rsp *http.Response) (*ArchiveDefinitionRespo
 	return response, nil
 }
 
-// parseGetByIdDefinitionResponse parses an HTTP response from a GetByIdDefinition call.
-func parseGetByIdDefinitionResponse(rsp *http.Response) (*GetByIdDefinitionResponse, error) {
+// parseGetDefinitionResponse parses an HTTP response from a GetDefinition call.
+func parseGetDefinitionResponse(rsp *http.Response) (*GetDefinitionResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdDefinitionResponse{
+	response := &GetDefinitionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2032,15 +2032,15 @@ func parseArchiveFunctionResponse(rsp *http.Response) (*ArchiveFunctionResponse,
 	return response, nil
 }
 
-// parseGetByIdFunctionResponse parses an HTTP response from a GetByIdFunction call.
-func parseGetByIdFunctionResponse(rsp *http.Response) (*GetByIdFunctionResponse, error) {
+// parseGetFunctionResponse parses an HTTP response from a GetFunction call.
+func parseGetFunctionResponse(rsp *http.Response) (*GetFunctionResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdFunctionResponse{
+	response := &GetFunctionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2107,15 +2107,15 @@ func parseListRevisionsResponse(rsp *http.Response) (*ListRevisionsResponse, err
 	return response, nil
 }
 
-// parseGetByIdRevisionResponse parses an HTTP response from a GetByIdRevision call.
-func parseGetByIdRevisionResponse(rsp *http.Response) (*GetByIdRevisionResponse, error) {
+// parseGetRevisionResponse parses an HTTP response from a GetRevision call.
+func parseGetRevisionResponse(rsp *http.Response) (*GetRevisionResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdRevisionResponse{
+	response := &GetRevisionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

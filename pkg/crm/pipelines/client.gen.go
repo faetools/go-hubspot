@@ -96,8 +96,8 @@ func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipel
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdPipeline(ctx context.Context, objectType string, pipelineId string, params *GetByIdPipelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdPipelineRequest(c.Server, objectType, pipelineId, params)
+func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetPipelineRequest(c.Server, objectType, pipelineId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -204,8 +204,8 @@ func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipeline
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetByIdStageParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdStageRequest(c.Server, objectType, pipelineId, stageId, params)
+func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetStageRequest(c.Server, objectType, pipelineId, stageId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -404,8 +404,8 @@ func newArchivePipelineRequest(server string, objectType string, pipelineId stri
 	return req, nil
 }
 
-// newGetByIdPipelineRequest generates requests for GetByIdPipeline
-func newGetByIdPipelineRequest(server string, objectType string, pipelineId string, params *GetByIdPipelineParams) (*http.Request, error) {
+// newGetPipelineRequest generates requests for GetPipeline
+func newGetPipelineRequest(server string, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -750,8 +750,8 @@ func newArchiveStageRequest(server string, objectType string, pipelineId string,
 	return req, nil
 }
 
-// newGetByIdStageRequest generates requests for GetByIdStage
-func newGetByIdStageRequest(server string, objectType string, pipelineId string, stageId string, params *GetByIdStageParams) (*http.Request, error) {
+// newGetStageRequest generates requests for GetStage
+func newGetStageRequest(server string, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1036,8 +1036,8 @@ type ClientInterface interface {
 	// ArchivePipeline request
 	ArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...RequestEditorFn) (*ArchivePipelineResponse, error)
 
-	// GetByIdPipeline request
-	GetByIdPipeline(ctx context.Context, objectType string, pipelineId string, params *GetByIdPipelineParams, reqEditors ...RequestEditorFn) (*GetByIdPipelineResponse, error)
+	// GetPipeline request
+	GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...RequestEditorFn) (*GetPipelineResponse, error)
 
 	// UpdatePipeline request with any body
 	UpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePipelineResponse, error)
@@ -1057,8 +1057,8 @@ type ClientInterface interface {
 	// ArchiveStage request
 	ArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...RequestEditorFn) (*ArchiveStageResponse, error)
 
-	// GetByIdStage request
-	GetByIdStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetByIdStageParams, reqEditors ...RequestEditorFn) (*GetByIdStageResponse, error)
+	// GetStage request
+	GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...RequestEditorFn) (*GetStageResponse, error)
 
 	// UpdateStage request with any body
 	UpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateStageResponse, error)
@@ -1134,14 +1134,14 @@ func (r ArchivePipelineResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdPipelineResponse struct {
+type GetPipelineResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *Pipeline
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdPipelineResponse) Status() string {
+func (r GetPipelineResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1149,7 +1149,7 @@ func (r GetByIdPipelineResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdPipelineResponse) StatusCode() int {
+func (r GetPipelineResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1265,14 +1265,14 @@ func (r ArchiveStageResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdStageResponse struct {
+type GetStageResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PipelineStage
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdStageResponse) Status() string {
+func (r GetStageResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1280,7 +1280,7 @@ func (r GetByIdStageResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdStageResponse) StatusCode() int {
+func (r GetStageResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1366,13 +1366,13 @@ func (c *Client) ArchivePipeline(ctx context.Context, objectType string, pipelin
 	return parseArchivePipelineResponse(rsp)
 }
 
-// GetByIdPipeline request returning *GetByIdPipelineResponse
-func (c *Client) GetByIdPipeline(ctx context.Context, objectType string, pipelineId string, params *GetByIdPipelineParams, reqEditors ...RequestEditorFn) (*GetByIdPipelineResponse, error) {
-	rsp, err := c.doGetByIdPipeline(ctx, objectType, pipelineId, params, reqEditors...)
+// GetPipeline request returning *GetPipelineResponse
+func (c *Client) GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...RequestEditorFn) (*GetPipelineResponse, error) {
+	rsp, err := c.doGetPipeline(ctx, objectType, pipelineId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdPipelineResponse(rsp)
+	return parseGetPipelineResponse(rsp)
 }
 
 // UpdatePipelineWithBody request with arbitrary body returning *UpdatePipelineResponse
@@ -1444,13 +1444,13 @@ func (c *Client) ArchiveStage(ctx context.Context, objectType string, pipelineId
 	return parseArchiveStageResponse(rsp)
 }
 
-// GetByIdStage request returning *GetByIdStageResponse
-func (c *Client) GetByIdStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetByIdStageParams, reqEditors ...RequestEditorFn) (*GetByIdStageResponse, error) {
-	rsp, err := c.doGetByIdStage(ctx, objectType, pipelineId, stageId, params, reqEditors...)
+// GetStage request returning *GetStageResponse
+func (c *Client) GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...RequestEditorFn) (*GetStageResponse, error) {
+	rsp, err := c.doGetStage(ctx, objectType, pipelineId, stageId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdStageResponse(rsp)
+	return parseGetStageResponse(rsp)
 }
 
 // UpdateStageWithBody request with arbitrary body returning *UpdateStageResponse
@@ -1553,15 +1553,15 @@ func parseArchivePipelineResponse(rsp *http.Response) (*ArchivePipelineResponse,
 	return response, nil
 }
 
-// parseGetByIdPipelineResponse parses an HTTP response from a GetByIdPipeline call.
-func parseGetByIdPipelineResponse(rsp *http.Response) (*GetByIdPipelineResponse, error) {
+// parseGetPipelineResponse parses an HTTP response from a GetPipeline call.
+func parseGetPipelineResponse(rsp *http.Response) (*GetPipelineResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdPipelineResponse{
+	response := &GetPipelineResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1694,15 +1694,15 @@ func parseArchiveStageResponse(rsp *http.Response) (*ArchiveStageResponse, error
 	return response, nil
 }
 
-// parseGetByIdStageResponse parses an HTTP response from a GetByIdStage call.
-func parseGetByIdStageResponse(rsp *http.Response) (*GetByIdStageResponse, error) {
+// parseGetStageResponse parses an HTTP response from a GetStage call.
+func parseGetStageResponse(rsp *http.Response) (*GetStageResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdStageResponse{
+	response := &GetStageResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

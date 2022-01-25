@@ -108,8 +108,8 @@ func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdCardRequest(c.Server, appId, cardId)
+func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetCardRequest(c.Server, appId, cardId)
 	if err != nil {
 		return nil, err
 	}
@@ -293,8 +293,8 @@ func newArchiveCardRequest(server string, appId int32, cardId string) (*http.Req
 	return req, nil
 }
 
-// newGetByIdCardRequest generates requests for GetByIdCard
-func newGetByIdCardRequest(server string, appId int32, cardId string) (*http.Request, error) {
+// newGetCardRequest generates requests for GetCard
+func newGetCardRequest(server string, appId int32, cardId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -471,8 +471,8 @@ type ClientInterface interface {
 	// ArchiveCard request
 	ArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*ArchiveCardResponse, error)
 
-	// GetByIdCard request
-	GetByIdCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetByIdCardResponse, error)
+	// GetCard request
+	GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetCardResponse, error)
 
 	// UpdateCard request with any body
 	UpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCardResponse, error)
@@ -566,14 +566,14 @@ func (r ArchiveCardResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdCardResponse struct {
+type GetCardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *CardResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdCardResponse) Status() string {
+func (r GetCardResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -581,7 +581,7 @@ func (r GetByIdCardResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdCardResponse) StatusCode() int {
+func (r GetCardResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -654,13 +654,13 @@ func (c *Client) ArchiveCard(ctx context.Context, appId int32, cardId string, re
 	return parseArchiveCardResponse(rsp)
 }
 
-// GetByIdCard request returning *GetByIdCardResponse
-func (c *Client) GetByIdCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetByIdCardResponse, error) {
-	rsp, err := c.doGetByIdCard(ctx, appId, cardId, reqEditors...)
+// GetCard request returning *GetCardResponse
+func (c *Client) GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetCardResponse, error) {
+	rsp, err := c.doGetCard(ctx, appId, cardId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdCardResponse(rsp)
+	return parseGetCardResponse(rsp)
 }
 
 // UpdateCardWithBody request with arbitrary body returning *UpdateCardResponse
@@ -771,15 +771,15 @@ func parseArchiveCardResponse(rsp *http.Response) (*ArchiveCardResponse, error) 
 	return response, nil
 }
 
-// parseGetByIdCardResponse parses an HTTP response from a GetByIdCard call.
-func parseGetByIdCardResponse(rsp *http.Response) (*GetByIdCardResponse, error) {
+// parseGetCardResponse parses an HTTP response from a GetCard call.
+func parseGetCardResponse(rsp *http.Response) (*GetCardResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdCardResponse{
+	response := &GetCardResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

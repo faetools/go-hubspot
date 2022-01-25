@@ -532,8 +532,8 @@ type GdprDeleteObjectTypeJSONBody PublicGdprDeleteInput
 // DoSearchJSONBody defines parameters for DoSearch.
 type DoSearchJSONBody PublicObjectSearchRequest
 
-// GetByIdObjectParams defines parameters for GetByIdObject.
-type GetByIdObjectParams struct {
+// GetObjectParams defines parameters for GetObject.
+type GetObjectParams struct {
 	// A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.
 	Properties *[]string `json:"properties,omitempty"`
 

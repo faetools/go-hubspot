@@ -216,8 +216,8 @@ func (c *Client) doArchiveDeal(ctx context.Context, dealId string, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdDeal(ctx context.Context, dealId string, params *GetByIdDealParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdDealRequest(c.Server, dealId, params)
+func (c *Client) doGetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetDealRequest(c.Server, dealId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -681,8 +681,8 @@ func newArchiveDealRequest(server string, dealId string) (*http.Request, error) 
 	return req, nil
 }
 
-// newGetByIdDealRequest generates requests for GetByIdDeal
-func newGetByIdDealRequest(server string, dealId string, params *GetByIdDealParams) (*http.Request, error) {
+// newGetDealRequest generates requests for GetDeal
+func newGetDealRequest(server string, dealId string, params *GetDealParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1123,8 +1123,8 @@ type ClientInterface interface {
 	// ArchiveDeal request
 	ArchiveDeal(ctx context.Context, dealId string, reqEditors ...RequestEditorFn) (*ArchiveDealResponse, error)
 
-	// GetByIdDeal request
-	GetByIdDeal(ctx context.Context, dealId string, params *GetByIdDealParams, reqEditors ...RequestEditorFn) (*GetByIdDealResponse, error)
+	// GetDeal request
+	GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*GetDealResponse, error)
 
 	// UpdateDeal request with any body
 	UpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDealResponse, error)
@@ -1317,14 +1317,14 @@ func (r ArchiveDealResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdDealResponse struct {
+type GetDealResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdDealResponse) Status() string {
+func (r GetDealResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1332,7 +1332,7 @@ func (r GetByIdDealResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdDealResponse) StatusCode() int {
+func (r GetDealResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1546,13 +1546,13 @@ func (c *Client) ArchiveDeal(ctx context.Context, dealId string, reqEditors ...R
 	return parseArchiveDealResponse(rsp)
 }
 
-// GetByIdDeal request returning *GetByIdDealResponse
-func (c *Client) GetByIdDeal(ctx context.Context, dealId string, params *GetByIdDealParams, reqEditors ...RequestEditorFn) (*GetByIdDealResponse, error) {
-	rsp, err := c.doGetByIdDeal(ctx, dealId, params, reqEditors...)
+// GetDeal request returning *GetDealResponse
+func (c *Client) GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*GetDealResponse, error) {
+	rsp, err := c.doGetDeal(ctx, dealId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdDealResponse(rsp)
+	return parseGetDealResponse(rsp)
 }
 
 // UpdateDealWithBody request with arbitrary body returning *UpdateDealResponse
@@ -1805,15 +1805,15 @@ func parseArchiveDealResponse(rsp *http.Response) (*ArchiveDealResponse, error) 
 	return response, nil
 }
 
-// parseGetByIdDealResponse parses an HTTP response from a GetByIdDeal call.
-func parseGetByIdDealResponse(rsp *http.Response) (*GetByIdDealResponse, error) {
+// parseGetDealResponse parses an HTTP response from a GetDeal call.
+func parseGetDealResponse(rsp *http.Response) (*GetDealResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdDealResponse{
+	response := &GetDealResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

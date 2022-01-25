@@ -522,8 +522,8 @@ type UpdateBatchJSONBody BatchInputSimplePublicObjectBatchInput
 // DoSearchJSONBody defines parameters for DoSearch.
 type DoSearchJSONBody PublicObjectSearchRequest
 
-// GetByIdLineItemParams defines parameters for GetByIdLineItem.
-type GetByIdLineItemParams struct {
+// GetLineItemParams defines parameters for GetLineItem.
+type GetLineItemParams struct {
 	// A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.
 	Properties *[]string `json:"properties,omitempty"`
 

@@ -216,8 +216,8 @@ func (c *Client) doArchiveProduct(ctx context.Context, productId string, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdProduct(ctx context.Context, productId string, params *GetByIdProductParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdProductRequest(c.Server, productId, params)
+func (c *Client) doGetProduct(ctx context.Context, productId string, params *GetProductParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetProductRequest(c.Server, productId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -681,8 +681,8 @@ func newArchiveProductRequest(server string, productId string) (*http.Request, e
 	return req, nil
 }
 
-// newGetByIdProductRequest generates requests for GetByIdProduct
-func newGetByIdProductRequest(server string, productId string, params *GetByIdProductParams) (*http.Request, error) {
+// newGetProductRequest generates requests for GetProduct
+func newGetProductRequest(server string, productId string, params *GetProductParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1123,8 +1123,8 @@ type ClientInterface interface {
 	// ArchiveProduct request
 	ArchiveProduct(ctx context.Context, productId string, reqEditors ...RequestEditorFn) (*ArchiveProductResponse, error)
 
-	// GetByIdProduct request
-	GetByIdProduct(ctx context.Context, productId string, params *GetByIdProductParams, reqEditors ...RequestEditorFn) (*GetByIdProductResponse, error)
+	// GetProduct request
+	GetProduct(ctx context.Context, productId string, params *GetProductParams, reqEditors ...RequestEditorFn) (*GetProductResponse, error)
 
 	// UpdateProduct request with any body
 	UpdateProductWithBody(ctx context.Context, productId string, params *UpdateProductParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateProductResponse, error)
@@ -1317,14 +1317,14 @@ func (r ArchiveProductResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdProductResponse struct {
+type GetProductResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdProductResponse) Status() string {
+func (r GetProductResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1332,7 +1332,7 @@ func (r GetByIdProductResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdProductResponse) StatusCode() int {
+func (r GetProductResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1546,13 +1546,13 @@ func (c *Client) ArchiveProduct(ctx context.Context, productId string, reqEditor
 	return parseArchiveProductResponse(rsp)
 }
 
-// GetByIdProduct request returning *GetByIdProductResponse
-func (c *Client) GetByIdProduct(ctx context.Context, productId string, params *GetByIdProductParams, reqEditors ...RequestEditorFn) (*GetByIdProductResponse, error) {
-	rsp, err := c.doGetByIdProduct(ctx, productId, params, reqEditors...)
+// GetProduct request returning *GetProductResponse
+func (c *Client) GetProduct(ctx context.Context, productId string, params *GetProductParams, reqEditors ...RequestEditorFn) (*GetProductResponse, error) {
+	rsp, err := c.doGetProduct(ctx, productId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdProductResponse(rsp)
+	return parseGetProductResponse(rsp)
 }
 
 // UpdateProductWithBody request with arbitrary body returning *UpdateProductResponse
@@ -1805,15 +1805,15 @@ func parseArchiveProductResponse(rsp *http.Response) (*ArchiveProductResponse, e
 	return response, nil
 }
 
-// parseGetByIdProductResponse parses an HTTP response from a GetByIdProduct call.
-func parseGetByIdProductResponse(rsp *http.Response) (*GetByIdProductResponse, error) {
+// parseGetProductResponse parses an HTTP response from a GetProduct call.
+func parseGetProductResponse(rsp *http.Response) (*GetProductResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdProductResponse{
+	response := &GetProductResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

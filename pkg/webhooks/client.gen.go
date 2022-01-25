@@ -168,8 +168,8 @@ func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdSubscriptionRequest(c.Server, appId, subscriptionId)
+func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetSubscriptionRequest(c.Server, appId, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
@@ -488,8 +488,8 @@ func newArchiveSubscriptionRequest(server string, appId int32, subscriptionId in
 	return req, nil
 }
 
-// newGetByIdSubscriptionRequest generates requests for GetByIdSubscription
-func newGetByIdSubscriptionRequest(server string, appId int32, subscriptionId int32) (*http.Request, error) {
+// newGetSubscriptionRequest generates requests for GetSubscription
+func newGetSubscriptionRequest(server string, appId int32, subscriptionId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -677,8 +677,8 @@ type ClientInterface interface {
 	// ArchiveSubscription request
 	ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*ArchiveSubscriptionResponse, error)
 
-	// GetByIdSubscription request
-	GetByIdSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetByIdSubscriptionResponse, error)
+	// GetSubscription request
+	GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetSubscriptionResponse, error)
 
 	// UpdateSubscription request with any body
 	UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSubscriptionResponse, error)
@@ -838,14 +838,14 @@ func (r ArchiveSubscriptionResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdSubscriptionResponse struct {
+type GetSubscriptionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SubscriptionResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdSubscriptionResponse) Status() string {
+func (r GetSubscriptionResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -853,7 +853,7 @@ func (r GetByIdSubscriptionResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdSubscriptionResponse) StatusCode() int {
+func (r GetSubscriptionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -969,13 +969,13 @@ func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscript
 	return parseArchiveSubscriptionResponse(rsp)
 }
 
-// GetByIdSubscription request returning *GetByIdSubscriptionResponse
-func (c *Client) GetByIdSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetByIdSubscriptionResponse, error) {
-	rsp, err := c.doGetByIdSubscription(ctx, appId, subscriptionId, reqEditors...)
+// GetSubscription request returning *GetSubscriptionResponse
+func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetSubscriptionResponse, error) {
+	rsp, err := c.doGetSubscription(ctx, appId, subscriptionId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdSubscriptionResponse(rsp)
+	return parseGetSubscriptionResponse(rsp)
 }
 
 // UpdateSubscriptionWithBody request with arbitrary body returning *UpdateSubscriptionResponse
@@ -1160,15 +1160,15 @@ func parseArchiveSubscriptionResponse(rsp *http.Response) (*ArchiveSubscriptionR
 	return response, nil
 }
 
-// parseGetByIdSubscriptionResponse parses an HTTP response from a GetByIdSubscription call.
-func parseGetByIdSubscriptionResponse(rsp *http.Response) (*GetByIdSubscriptionResponse, error) {
+// parseGetSubscriptionResponse parses an HTTP response from a GetSubscription call.
+func parseGetSubscriptionResponse(rsp *http.Response) (*GetSubscriptionResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdSubscriptionResponse{
+	response := &GetSubscriptionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

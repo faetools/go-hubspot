@@ -22,7 +22,6 @@ branches:
         strict: true
         contexts:
           - 'ci/circleci: Unit Tests'
-          - 'ci/circleci: Contract Tests'
         enforce_admins: false
       restrictions: null
   - name: main
@@ -35,6 +34,5 @@ branches:
         strict: true
         contexts:
           - 'ci/circleci: Unit Tests'
-          - 'ci/circleci: Contract Tests'
         enforce_admins: true
       restrictions: null

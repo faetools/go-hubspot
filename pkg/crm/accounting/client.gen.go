@@ -192,8 +192,8 @@ func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdRequestRequestWithBody(c.Server, requestId, contentType, body)
+func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -204,8 +204,8 @@ func (c *Client) doGetByIdRequestWithBody(ctx context.Context, requestId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdRequest(ctx context.Context, requestId string, body GetByIdRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdRequestRequest(c.Server, requestId, body)
+func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -288,8 +288,8 @@ func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdInvoice(ctx context.Context, invoiceId string, params *GetByIdInvoiceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdInvoiceRequest(c.Server, invoiceId, params)
+func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetInvoiceRequest(c.Server, invoiceId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -348,8 +348,8 @@ func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdAppRequest(c.Server, appId)
+func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -750,19 +750,19 @@ func newDoInvoiceSearchRequestRequestWithBody(server string, requestId string, c
 	return req, nil
 }
 
-// newGetByIdRequestRequest calls the generic GetByIdRequest builder with application/json body.
-func newGetByIdRequestRequest(server string, requestId string, body GetByIdRequestJSONRequestBody) (*http.Request, error) {
+// newGetRequestRequest calls the generic GetRequest builder with application/json body.
+func newGetRequestRequest(server string, requestId string, body GetRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGetByIdRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newGetRequestRequestWithBody(server, requestId, "application/json", bodyReader)
 }
 
-// newGetByIdRequestRequestWithBody generates requests for GetByIdRequest with any type of body
-func newGetByIdRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+// newGetRequestRequestWithBody generates requests for GetRequest with any type of body
+func newGetRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -938,8 +938,8 @@ func newCreateTermRequestRequestWithBody(server string, requestId string, conten
 	return req, nil
 }
 
-// newGetByIdInvoiceRequest generates requests for GetByIdInvoice
-func newGetByIdInvoiceRequest(server string, invoiceId string, params *GetByIdInvoiceParams) (*http.Request, error) {
+// newGetInvoiceRequest generates requests for GetInvoice
+func newGetInvoiceRequest(server string, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1116,8 +1116,8 @@ func newCreatePaymentRequestWithBody(server string, invoiceId string, params *Cr
 	return req, nil
 }
 
-// newGetByIdAppRequest generates requests for GetByIdApp
-func newGetByIdAppRequest(server string, appId int32) (*http.Request, error) {
+// newGetAppRequest generates requests for GetApp
+func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1459,9 +1459,9 @@ type ClientInterface interface {
 	DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
 	DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
 
-	// GetByIdRequest request with any body
-	GetByIdRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetByIdRequestResponse, error)
-	GetByIdRequest(ctx context.Context, requestId string, body GetByIdRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetByIdRequestResponse, error)
+	// GetRequest request with any body
+	GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetRequestResponse, error)
+	GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetRequestResponse, error)
 
 	// DoProductSearchRequest request with any body
 	DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoProductSearchRequestResponse, error)
@@ -1475,8 +1475,8 @@ type ClientInterface interface {
 	CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error)
 	CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error)
 
-	// GetByIdInvoice request
-	GetByIdInvoice(ctx context.Context, invoiceId string, params *GetByIdInvoiceParams, reqEditors ...RequestEditorFn) (*GetByIdInvoiceResponse, error)
+	// GetInvoice request
+	GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*GetInvoiceResponse, error)
 
 	// UpdateInvoice request with any body
 	UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateInvoiceResponse, error)
@@ -1486,8 +1486,8 @@ type ClientInterface interface {
 	CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error)
 	CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error)
 
-	// GetByIdApp request
-	GetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdAppResponse, error)
+	// GetApp request
+	GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error)
 
 	// ReplaceApp request with any body
 	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
@@ -1635,13 +1635,13 @@ func (r DoInvoiceSearchRequestResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdRequestResponse struct {
+type GetRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdRequestResponse) Status() string {
+func (r GetRequestResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1649,7 +1649,7 @@ func (r GetByIdRequestResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdRequestResponse) StatusCode() int {
+func (r GetRequestResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1719,14 +1719,14 @@ func (r CreateTermRequestResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdInvoiceResponse struct {
+type GetInvoiceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *InvoiceReadResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdInvoiceResponse) Status() string {
+func (r GetInvoiceResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1734,7 +1734,7 @@ func (r GetByIdInvoiceResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdInvoiceResponse) StatusCode() int {
+func (r GetInvoiceResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1785,14 +1785,14 @@ func (r CreatePaymentResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdAppResponse struct {
+type GetAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *AccountingAppSettings
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdAppResponse) Status() string {
+func (r GetAppResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1800,7 +1800,7 @@ func (r GetByIdAppResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdAppResponse) StatusCode() int {
+func (r GetAppResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2016,21 +2016,21 @@ func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, b
 	return parseDoInvoiceSearchRequestResponse(rsp)
 }
 
-// GetByIdRequestWithBody request with arbitrary body returning *GetByIdRequestResponse
-func (c *Client) GetByIdRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetByIdRequestResponse, error) {
-	rsp, err := c.doGetByIdRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+// GetRequestWithBody request with arbitrary body returning *GetRequestResponse
+func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetRequestResponse, error) {
+	rsp, err := c.doGetRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdRequestResponse(rsp)
+	return parseGetRequestResponse(rsp)
 }
 
-func (c *Client) GetByIdRequest(ctx context.Context, requestId string, body GetByIdRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetByIdRequestResponse, error) {
-	rsp, err := c.doGetByIdRequest(ctx, requestId, body, reqEditors...)
+func (c *Client) GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetRequestResponse, error) {
+	rsp, err := c.doGetRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdRequestResponse(rsp)
+	return parseGetRequestResponse(rsp)
 }
 
 // DoProductSearchRequestWithBody request with arbitrary body returning *DoProductSearchRequestResponse
@@ -2084,13 +2084,13 @@ func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body C
 	return parseCreateTermRequestResponse(rsp)
 }
 
-// GetByIdInvoice request returning *GetByIdInvoiceResponse
-func (c *Client) GetByIdInvoice(ctx context.Context, invoiceId string, params *GetByIdInvoiceParams, reqEditors ...RequestEditorFn) (*GetByIdInvoiceResponse, error) {
-	rsp, err := c.doGetByIdInvoice(ctx, invoiceId, params, reqEditors...)
+// GetInvoice request returning *GetInvoiceResponse
+func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*GetInvoiceResponse, error) {
+	rsp, err := c.doGetInvoice(ctx, invoiceId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdInvoiceResponse(rsp)
+	return parseGetInvoiceResponse(rsp)
 }
 
 // UpdateInvoiceWithBody request with arbitrary body returning *UpdateInvoiceResponse
@@ -2127,13 +2127,13 @@ func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *Cr
 	return parseCreatePaymentResponse(rsp)
 }
 
-// GetByIdApp request returning *GetByIdAppResponse
-func (c *Client) GetByIdApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetByIdAppResponse, error) {
-	rsp, err := c.doGetByIdApp(ctx, appId, reqEditors...)
+// GetApp request returning *GetAppResponse
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error) {
+	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdAppResponse(rsp)
+	return parseGetAppResponse(rsp)
 }
 
 // ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
@@ -2309,15 +2309,15 @@ func parseDoInvoiceSearchRequestResponse(rsp *http.Response) (*DoInvoiceSearchRe
 	return response, nil
 }
 
-// parseGetByIdRequestResponse parses an HTTP response from a GetByIdRequest call.
-func parseGetByIdRequestResponse(rsp *http.Response) (*GetByIdRequestResponse, error) {
+// parseGetRequestResponse parses an HTTP response from a GetRequest call.
+func parseGetRequestResponse(rsp *http.Response) (*GetRequestResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdRequestResponse{
+	response := &GetRequestResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2373,15 +2373,15 @@ func parseCreateTermRequestResponse(rsp *http.Response) (*CreateTermRequestRespo
 	return response, nil
 }
 
-// parseGetByIdInvoiceResponse parses an HTTP response from a GetByIdInvoice call.
-func parseGetByIdInvoiceResponse(rsp *http.Response) (*GetByIdInvoiceResponse, error) {
+// parseGetInvoiceResponse parses an HTTP response from a GetInvoice call.
+func parseGetInvoiceResponse(rsp *http.Response) (*GetInvoiceResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdInvoiceResponse{
+	response := &GetInvoiceResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -2448,15 +2448,15 @@ func parseCreatePaymentResponse(rsp *http.Response) (*CreatePaymentResponse, err
 	return response, nil
 }
 
-// parseGetByIdAppResponse parses an HTTP response from a GetByIdApp call.
-func parseGetByIdAppResponse(rsp *http.Response) (*GetByIdAppResponse, error) {
+// parseGetAppResponse parses an HTTP response from a GetApp call.
+func parseGetAppResponse(rsp *http.Response) (*GetAppResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdAppResponse{
+	response := &GetAppResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

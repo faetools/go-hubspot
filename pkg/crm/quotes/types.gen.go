@@ -473,8 +473,8 @@ type ReadBatchParams struct {
 // DoSearchJSONBody defines parameters for DoSearch.
 type DoSearchJSONBody PublicObjectSearchRequest
 
-// GetByIdQuoteParams defines parameters for GetByIdQuote.
-type GetByIdQuoteParams struct {
+// GetQuoteParams defines parameters for GetQuote.
+type GetQuoteParams struct {
 	// A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.
 	Properties *[]string `json:"properties,omitempty"`
 

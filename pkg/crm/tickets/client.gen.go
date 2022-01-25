@@ -216,8 +216,8 @@ func (c *Client) doArchiveTicket(ctx context.Context, ticketId string, reqEditor
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdTicket(ctx context.Context, ticketId string, params *GetByIdTicketParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdTicketRequest(c.Server, ticketId, params)
+func (c *Client) doGetTicket(ctx context.Context, ticketId string, params *GetTicketParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetTicketRequest(c.Server, ticketId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -681,8 +681,8 @@ func newArchiveTicketRequest(server string, ticketId string) (*http.Request, err
 	return req, nil
 }
 
-// newGetByIdTicketRequest generates requests for GetByIdTicket
-func newGetByIdTicketRequest(server string, ticketId string, params *GetByIdTicketParams) (*http.Request, error) {
+// newGetTicketRequest generates requests for GetTicket
+func newGetTicketRequest(server string, ticketId string, params *GetTicketParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1123,8 +1123,8 @@ type ClientInterface interface {
 	// ArchiveTicket request
 	ArchiveTicket(ctx context.Context, ticketId string, reqEditors ...RequestEditorFn) (*ArchiveTicketResponse, error)
 
-	// GetByIdTicket request
-	GetByIdTicket(ctx context.Context, ticketId string, params *GetByIdTicketParams, reqEditors ...RequestEditorFn) (*GetByIdTicketResponse, error)
+	// GetTicket request
+	GetTicket(ctx context.Context, ticketId string, params *GetTicketParams, reqEditors ...RequestEditorFn) (*GetTicketResponse, error)
 
 	// UpdateTicket request with any body
 	UpdateTicketWithBody(ctx context.Context, ticketId string, params *UpdateTicketParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTicketResponse, error)
@@ -1317,14 +1317,14 @@ func (r ArchiveTicketResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdTicketResponse struct {
+type GetTicketResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdTicketResponse) Status() string {
+func (r GetTicketResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1332,7 +1332,7 @@ func (r GetByIdTicketResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdTicketResponse) StatusCode() int {
+func (r GetTicketResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1546,13 +1546,13 @@ func (c *Client) ArchiveTicket(ctx context.Context, ticketId string, reqEditors 
 	return parseArchiveTicketResponse(rsp)
 }
 
-// GetByIdTicket request returning *GetByIdTicketResponse
-func (c *Client) GetByIdTicket(ctx context.Context, ticketId string, params *GetByIdTicketParams, reqEditors ...RequestEditorFn) (*GetByIdTicketResponse, error) {
-	rsp, err := c.doGetByIdTicket(ctx, ticketId, params, reqEditors...)
+// GetTicket request returning *GetTicketResponse
+func (c *Client) GetTicket(ctx context.Context, ticketId string, params *GetTicketParams, reqEditors ...RequestEditorFn) (*GetTicketResponse, error) {
+	rsp, err := c.doGetTicket(ctx, ticketId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdTicketResponse(rsp)
+	return parseGetTicketResponse(rsp)
 }
 
 // UpdateTicketWithBody request with arbitrary body returning *UpdateTicketResponse
@@ -1805,15 +1805,15 @@ func parseArchiveTicketResponse(rsp *http.Response) (*ArchiveTicketResponse, err
 	return response, nil
 }
 
-// parseGetByIdTicketResponse parses an HTTP response from a GetByIdTicket call.
-func parseGetByIdTicketResponse(rsp *http.Response) (*GetByIdTicketResponse, error) {
+// parseGetTicketResponse parses an HTTP response from a GetTicket call.
+func parseGetTicketResponse(rsp *http.Response) (*GetTicketResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdTicketResponse{
+	response := &GetTicketResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

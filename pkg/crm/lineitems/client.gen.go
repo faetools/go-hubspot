@@ -216,8 +216,8 @@ func (c *Client) doArchiveLineItem(ctx context.Context, lineItemId string, reqEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdLineItem(ctx context.Context, lineItemId string, params *GetByIdLineItemParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdLineItemRequest(c.Server, lineItemId, params)
+func (c *Client) doGetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetLineItemRequest(c.Server, lineItemId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -681,8 +681,8 @@ func newArchiveLineItemRequest(server string, lineItemId string) (*http.Request,
 	return req, nil
 }
 
-// newGetByIdLineItemRequest generates requests for GetByIdLineItem
-func newGetByIdLineItemRequest(server string, lineItemId string, params *GetByIdLineItemParams) (*http.Request, error) {
+// newGetLineItemRequest generates requests for GetLineItem
+func newGetLineItemRequest(server string, lineItemId string, params *GetLineItemParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1123,8 +1123,8 @@ type ClientInterface interface {
 	// ArchiveLineItem request
 	ArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...RequestEditorFn) (*ArchiveLineItemResponse, error)
 
-	// GetByIdLineItem request
-	GetByIdLineItem(ctx context.Context, lineItemId string, params *GetByIdLineItemParams, reqEditors ...RequestEditorFn) (*GetByIdLineItemResponse, error)
+	// GetLineItem request
+	GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...RequestEditorFn) (*GetLineItemResponse, error)
 
 	// UpdateLineItem request with any body
 	UpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateLineItemResponse, error)
@@ -1317,14 +1317,14 @@ func (r ArchiveLineItemResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdLineItemResponse struct {
+type GetLineItemResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdLineItemResponse) Status() string {
+func (r GetLineItemResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1332,7 +1332,7 @@ func (r GetByIdLineItemResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdLineItemResponse) StatusCode() int {
+func (r GetLineItemResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1546,13 +1546,13 @@ func (c *Client) ArchiveLineItem(ctx context.Context, lineItemId string, reqEdit
 	return parseArchiveLineItemResponse(rsp)
 }
 
-// GetByIdLineItem request returning *GetByIdLineItemResponse
-func (c *Client) GetByIdLineItem(ctx context.Context, lineItemId string, params *GetByIdLineItemParams, reqEditors ...RequestEditorFn) (*GetByIdLineItemResponse, error) {
-	rsp, err := c.doGetByIdLineItem(ctx, lineItemId, params, reqEditors...)
+// GetLineItem request returning *GetLineItemResponse
+func (c *Client) GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...RequestEditorFn) (*GetLineItemResponse, error) {
+	rsp, err := c.doGetLineItem(ctx, lineItemId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdLineItemResponse(rsp)
+	return parseGetLineItemResponse(rsp)
 }
 
 // UpdateLineItemWithBody request with arbitrary body returning *UpdateLineItemResponse
@@ -1805,15 +1805,15 @@ func parseArchiveLineItemResponse(rsp *http.Response) (*ArchiveLineItemResponse,
 	return response, nil
 }
 
-// parseGetByIdLineItemResponse parses an HTTP response from a GetByIdLineItem call.
-func parseGetByIdLineItemResponse(rsp *http.Response) (*GetByIdLineItemResponse, error) {
+// parseGetLineItemResponse parses an HTTP response from a GetLineItem call.
+func parseGetLineItemResponse(rsp *http.Response) (*GetLineItemResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdLineItemResponse{
+	response := &GetLineItemResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

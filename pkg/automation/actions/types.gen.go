@@ -632,8 +632,8 @@ type ListAppParams struct {
 // CreateAppJSONBody defines parameters for CreateApp.
 type CreateAppJSONBody ExtensionActionDefinitionInput
 
-// GetByIdDefinitionParams defines parameters for GetByIdDefinition.
-type GetByIdDefinitionParams struct {
+// GetDefinitionParams defines parameters for GetDefinition.
+type GetDefinitionParams struct {
 	// Whether to include archived custom actions.
 	Archived *bool `json:"archived,omitempty"`
 }
@@ -653,8 +653,8 @@ type CreateOrReplaceByFunctionTypeParamsFunctionType string
 // ArchiveFunctionParamsFunctionType defines parameters for ArchiveFunction.
 type ArchiveFunctionParamsFunctionType string
 
-// GetByIdFunctionParamsFunctionType defines parameters for GetByIdFunction.
-type GetByIdFunctionParamsFunctionType string
+// GetFunctionParamsFunctionType defines parameters for GetFunction.
+type GetFunctionParamsFunctionType string
 
 // CreateOrReplaceFunctionParamsFunctionType defines parameters for CreateOrReplaceFunction.
 type CreateOrReplaceFunctionParamsFunctionType string

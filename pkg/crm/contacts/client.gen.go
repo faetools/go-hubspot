@@ -240,8 +240,8 @@ func (c *Client) doArchiveContact(ctx context.Context, contactId string, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdContact(ctx context.Context, contactId string, params *GetByIdContactParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdContactRequest(c.Server, contactId, params)
+func (c *Client) doGetContact(ctx context.Context, contactId string, params *GetContactParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetContactRequest(c.Server, contactId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -745,8 +745,8 @@ func newArchiveContactRequest(server string, contactId string) (*http.Request, e
 	return req, nil
 }
 
-// newGetByIdContactRequest generates requests for GetByIdContact
-func newGetByIdContactRequest(server string, contactId string, params *GetByIdContactParams) (*http.Request, error) {
+// newGetContactRequest generates requests for GetContact
+func newGetContactRequest(server string, contactId string, params *GetContactParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1191,8 +1191,8 @@ type ClientInterface interface {
 	// ArchiveContact request
 	ArchiveContact(ctx context.Context, contactId string, reqEditors ...RequestEditorFn) (*ArchiveContactResponse, error)
 
-	// GetByIdContact request
-	GetByIdContact(ctx context.Context, contactId string, params *GetByIdContactParams, reqEditors ...RequestEditorFn) (*GetByIdContactResponse, error)
+	// GetContact request
+	GetContact(ctx context.Context, contactId string, params *GetContactParams, reqEditors ...RequestEditorFn) (*GetContactResponse, error)
 
 	// UpdateContact request with any body
 	UpdateContactWithBody(ctx context.Context, contactId string, params *UpdateContactParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateContactResponse, error)
@@ -1406,14 +1406,14 @@ func (r ArchiveContactResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdContactResponse struct {
+type GetContactResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdContactResponse) Status() string {
+func (r GetContactResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1421,7 +1421,7 @@ func (r GetByIdContactResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdContactResponse) StatusCode() int {
+func (r GetContactResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1652,13 +1652,13 @@ func (c *Client) ArchiveContact(ctx context.Context, contactId string, reqEditor
 	return parseArchiveContactResponse(rsp)
 }
 
-// GetByIdContact request returning *GetByIdContactResponse
-func (c *Client) GetByIdContact(ctx context.Context, contactId string, params *GetByIdContactParams, reqEditors ...RequestEditorFn) (*GetByIdContactResponse, error) {
-	rsp, err := c.doGetByIdContact(ctx, contactId, params, reqEditors...)
+// GetContact request returning *GetContactResponse
+func (c *Client) GetContact(ctx context.Context, contactId string, params *GetContactParams, reqEditors ...RequestEditorFn) (*GetContactResponse, error) {
+	rsp, err := c.doGetContact(ctx, contactId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdContactResponse(rsp)
+	return parseGetContactResponse(rsp)
 }
 
 // UpdateContactWithBody request with arbitrary body returning *UpdateContactResponse
@@ -1927,15 +1927,15 @@ func parseArchiveContactResponse(rsp *http.Response) (*ArchiveContactResponse, e
 	return response, nil
 }
 
-// parseGetByIdContactResponse parses an HTTP response from a GetByIdContact call.
-func parseGetByIdContactResponse(rsp *http.Response) (*GetByIdContactResponse, error) {
+// parseGetContactResponse parses an HTTP response from a GetContact call.
+func parseGetContactResponse(rsp *http.Response) (*GetContactResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdContactResponse{
+	response := &GetContactResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

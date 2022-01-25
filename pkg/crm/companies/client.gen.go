@@ -216,8 +216,8 @@ func (c *Client) doArchiveCompany(ctx context.Context, companyId string, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByIdCompany(ctx context.Context, companyId string, params *GetByIdCompanyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByIdCompanyRequest(c.Server, companyId, params)
+func (c *Client) doGetCompany(ctx context.Context, companyId string, params *GetCompanyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := newGetCompanyRequest(c.Server, companyId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -681,8 +681,8 @@ func newArchiveCompanyRequest(server string, companyId string) (*http.Request, e
 	return req, nil
 }
 
-// newGetByIdCompanyRequest generates requests for GetByIdCompany
-func newGetByIdCompanyRequest(server string, companyId string, params *GetByIdCompanyParams) (*http.Request, error) {
+// newGetCompanyRequest generates requests for GetCompany
+func newGetCompanyRequest(server string, companyId string, params *GetCompanyParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1123,8 +1123,8 @@ type ClientInterface interface {
 	// ArchiveCompany request
 	ArchiveCompany(ctx context.Context, companyId string, reqEditors ...RequestEditorFn) (*ArchiveCompanyResponse, error)
 
-	// GetByIdCompany request
-	GetByIdCompany(ctx context.Context, companyId string, params *GetByIdCompanyParams, reqEditors ...RequestEditorFn) (*GetByIdCompanyResponse, error)
+	// GetCompany request
+	GetCompany(ctx context.Context, companyId string, params *GetCompanyParams, reqEditors ...RequestEditorFn) (*GetCompanyResponse, error)
 
 	// UpdateCompany request with any body
 	UpdateCompanyWithBody(ctx context.Context, companyId string, params *UpdateCompanyParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCompanyResponse, error)
@@ -1317,14 +1317,14 @@ func (r ArchiveCompanyResponse) StatusCode() int {
 	return 0
 }
 
-type GetByIdCompanyResponse struct {
+type GetCompanyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *SimplePublicObjectWithAssociations
 }
 
 // Status returns HTTPResponse.Status
-func (r GetByIdCompanyResponse) Status() string {
+func (r GetCompanyResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -1332,7 +1332,7 @@ func (r GetByIdCompanyResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetByIdCompanyResponse) StatusCode() int {
+func (r GetCompanyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1546,13 +1546,13 @@ func (c *Client) ArchiveCompany(ctx context.Context, companyId string, reqEditor
 	return parseArchiveCompanyResponse(rsp)
 }
 
-// GetByIdCompany request returning *GetByIdCompanyResponse
-func (c *Client) GetByIdCompany(ctx context.Context, companyId string, params *GetByIdCompanyParams, reqEditors ...RequestEditorFn) (*GetByIdCompanyResponse, error) {
-	rsp, err := c.doGetByIdCompany(ctx, companyId, params, reqEditors...)
+// GetCompany request returning *GetCompanyResponse
+func (c *Client) GetCompany(ctx context.Context, companyId string, params *GetCompanyParams, reqEditors ...RequestEditorFn) (*GetCompanyResponse, error) {
+	rsp, err := c.doGetCompany(ctx, companyId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetByIdCompanyResponse(rsp)
+	return parseGetCompanyResponse(rsp)
 }
 
 // UpdateCompanyWithBody request with arbitrary body returning *UpdateCompanyResponse
@@ -1805,15 +1805,15 @@ func parseArchiveCompanyResponse(rsp *http.Response) (*ArchiveCompanyResponse, e
 	return response, nil
 }
 
-// parseGetByIdCompanyResponse parses an HTTP response from a GetByIdCompany call.
-func parseGetByIdCompanyResponse(rsp *http.Response) (*GetByIdCompanyResponse, error) {
+// parseGetCompanyResponse parses an HTTP response from a GetCompany call.
+func parseGetCompanyResponse(rsp *http.Response) (*GetCompanyResponse, error) {
 	bodyBytes, err := ioutil.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetByIdCompanyResponse{
+	response := &GetCompanyResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
