@@ -21,24 +21,6 @@ import (
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
 func (c *Client) doListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
@@ -48,7 +30,7 @@ func (c *Client) doListObjectType(ctx context.Context, objectType string, params
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -60,7 +42,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -72,7 +54,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -84,7 +66,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -96,7 +78,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body Arc
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -108,7 +90,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, c
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -120,7 +102,7 @@ func (c *Client) doCreateBatch(ctx context.Context, objectType string, body Crea
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -132,7 +114,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, par
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -144,7 +126,7 @@ func (c *Client) doReadBatch(ctx context.Context, objectType string, params *Rea
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -156,7 +138,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, c
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -168,7 +150,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body Upda
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -180,7 +162,7 @@ func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -192,7 +174,7 @@ func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -204,7 +186,7 @@ func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, cont
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -216,7 +198,7 @@ func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearc
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -228,7 +210,7 @@ func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectI
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -240,7 +222,7 @@ func (c *Client) doGetObject(ctx context.Context, objectType string, objectId st
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -252,7 +234,7 @@ func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -264,7 +246,7 @@ func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -276,7 +258,7 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, ob
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -288,7 +270,7 @@ func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -300,7 +282,7 @@ func (c *Client) doCreateAssociationType(ctx context.Context, objectType string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 // newListObjectTypeRequest generates requests for ListObjectType
@@ -1177,7 +1159,7 @@ func newCreateAssociationTypeRequest(server string, objectType string, objectId 
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
+	for _, r := range c.requestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
 		}
@@ -1190,6 +1172,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 	return nil
 }
 
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
 // Client conforms to the OpenAPI3 specification for this service.
 type Client struct {
 	// The endpoint of the server conforming to this interface, with scheme,
@@ -1200,11 +1185,21 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client client.HTTPRequestDoer
+	client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []client.RequestEditorFn
+	requestEditors []client.RequestEditorFn
+}
+
+// SetClient sets the underlying client.
+func (c *Client) SetClient(doer client.HTTPRequestDoer) {
+	c.client = doer
+}
+
+// AddRequestEditor adds a request editor to the client.
+func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
+	c.requestEditors = append(c.requestEditors, fn)
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1225,8 +1220,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
@@ -1246,6 +1241,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
+	client.Client
 	// ListObjectType request
 	ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ListObjectTypeResponse, error)
 

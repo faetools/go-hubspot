@@ -21,24 +21,6 @@ import (
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
 func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCompleteBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
@@ -48,7 +30,7 @@ func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -60,7 +42,7 @@ func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequ
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -72,7 +54,7 @@ func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -84,7 +66,7 @@ func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -96,7 +78,7 @@ func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppPara
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -108,7 +90,7 @@ func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentTy
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -120,7 +102,7 @@ func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSO
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -132,7 +114,7 @@ func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitio
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -144,7 +126,7 @@ func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -156,7 +138,7 @@ func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, de
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -168,7 +150,7 @@ func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definition
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -180,7 +162,7 @@ func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -192,7 +174,7 @@ func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, defin
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -204,7 +186,7 @@ func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitio
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -216,7 +198,7 @@ func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, ap
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -228,7 +210,7 @@ func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionI
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -240,7 +222,7 @@ func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId st
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -252,7 +234,7 @@ func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId in
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -264,7 +246,7 @@ func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -276,7 +258,7 @@ func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId st
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 // newCompleteBatchRequest calls the generic CompleteBatch builder with application/json body.
@@ -1123,7 +1105,7 @@ func newGetRevisionRequest(server string, appId int32, definitionId string, revi
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
+	for _, r := range c.requestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
 		}
@@ -1136,6 +1118,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 	return nil
 }
 
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
 // Client conforms to the OpenAPI3 specification for this service.
 type Client struct {
 	// The endpoint of the server conforming to this interface, with scheme,
@@ -1146,11 +1131,21 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client client.HTTPRequestDoer
+	client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []client.RequestEditorFn
+	requestEditors []client.RequestEditorFn
+}
+
+// SetClient sets the underlying client.
+func (c *Client) SetClient(doer client.HTTPRequestDoer) {
+	c.client = doer
+}
+
+// AddRequestEditor adds a request editor to the client.
+func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
+	c.requestEditors = append(c.requestEditors, fn)
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1171,8 +1166,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
@@ -1192,6 +1187,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
+	client.Client
 	// CompleteBatch request with any body
 	CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)
 	CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)

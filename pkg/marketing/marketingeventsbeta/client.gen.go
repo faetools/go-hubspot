@@ -21,24 +21,6 @@ import (
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
 func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newEventsMarketingEventsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
@@ -48,7 +30,7 @@ func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentTyp
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -60,7 +42,7 @@ func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketi
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -72,7 +54,7 @@ func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -84,7 +66,7 @@ func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONReques
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -96,7 +78,7 @@ func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -108,7 +90,7 @@ func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -120,7 +102,7 @@ func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONReques
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -132,7 +114,7 @@ func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -144,7 +126,7 @@ func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -156,7 +138,7 @@ func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEvent
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -168,7 +150,7 @@ func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId strin
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -180,7 +162,7 @@ func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -192,7 +174,7 @@ func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -204,7 +186,7 @@ func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -216,7 +198,7 @@ func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, exter
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -228,7 +210,7 @@ func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEvent
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -240,7 +222,7 @@ func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEv
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -252,7 +234,7 @@ func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId st
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -264,7 +246,7 @@ func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors .
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -276,7 +258,7 @@ func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, con
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -288,7 +270,7 @@ func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAp
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 // newEventsMarketingEventsRequest calls the generic EventsMarketingEvents builder with application/json body.
@@ -936,7 +918,7 @@ func newPostAppSettingsRequestWithBody(server string, appId int32, contentType s
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
+	for _, r := range c.requestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
 		}
@@ -949,6 +931,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 	return nil
 }
 
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
 // Client conforms to the OpenAPI3 specification for this service.
 type Client struct {
 	// The endpoint of the server conforming to this interface, with scheme,
@@ -959,11 +944,21 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client client.HTTPRequestDoer
+	client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []client.RequestEditorFn
+	requestEditors []client.RequestEditorFn
+}
+
+// SetClient sets the underlying client.
+func (c *Client) SetClient(doer client.HTTPRequestDoer) {
+	c.client = doer
+}
+
+// AddRequestEditor adds a request editor to the client.
+func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
+	c.requestEditors = append(c.requestEditors, fn)
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -984,8 +979,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
@@ -1005,6 +1000,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
+	client.Client
 	// EventsMarketingEvents request with any body
 	EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)
 	EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)

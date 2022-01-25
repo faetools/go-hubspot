@@ -21,24 +21,6 @@ import (
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
 func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
@@ -48,7 +30,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -60,7 +42,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toOb
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -72,7 +54,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType strin
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -84,7 +66,7 @@ func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObj
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -96,7 +78,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string,
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -108,7 +90,7 @@ func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjec
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -120,7 +102,7 @@ func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObj
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 // newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
@@ -327,7 +309,7 @@ func newGetAllTypesRequest(server string, fromObjectType string, toObjectType st
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
+	for _, r := range c.requestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
 		}
@@ -340,6 +322,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 	return nil
 }
 
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
 // Client conforms to the OpenAPI3 specification for this service.
 type Client struct {
 	// The endpoint of the server conforming to this interface, with scheme,
@@ -350,11 +335,21 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client client.HTTPRequestDoer
+	client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []client.RequestEditorFn
+	requestEditors []client.RequestEditorFn
+}
+
+// SetClient sets the underlying client.
+func (c *Client) SetClient(doer client.HTTPRequestDoer) {
+	c.client = doer
+}
+
+// AddRequestEditor adds a request editor to the client.
+func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
+	c.requestEditors = append(c.requestEditors, fn)
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -375,8 +370,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
@@ -396,6 +391,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
+	client.Client
 	// ArchiveBatch request with any body
 	ArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
 	ArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)

@@ -21,24 +21,6 @@ import (
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
-// WithHTTPClient allows overriding the default Doer, which is
-// automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
-	return func(c *Client) error {
-		c.Client = doer
-		return nil
-	}
-}
-
-// WithRequestEditorFn allows setting up a callback function, which will be
-// called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
-	return func(c *Client) error {
-		c.RequestEditors = append(c.RequestEditors, fn)
-		return nil
-	}
-}
-
 func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
@@ -48,7 +30,7 @@ func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, para
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -60,7 +42,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -72,7 +54,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -84,7 +66,7 @@ func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipel
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -96,7 +78,7 @@ func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineI
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -108,7 +90,7 @@ func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -120,7 +102,7 @@ func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipeli
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -132,7 +114,7 @@ func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType strin
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -144,7 +126,7 @@ func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipel
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -156,7 +138,7 @@ func (c *Client) doGetAllStages(ctx context.Context, objectType string, pipeline
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -168,7 +150,7 @@ func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doCreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -180,7 +162,7 @@ func (c *Client) doCreateStages(ctx context.Context, objectType string, pipeline
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -192,7 +174,7 @@ func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipeline
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -204,7 +186,7 @@ func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId s
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -216,7 +198,7 @@ func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, p
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -228,7 +210,7 @@ func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineI
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -240,7 +222,7 @@ func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, 
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
@@ -252,7 +234,7 @@ func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipeline
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+	return c.client.Do(req)
 }
 
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
@@ -948,7 +930,7 @@ func newReplaceStageRequestWithBody(server string, objectType string, pipelineId
 }
 
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.RequestEditors {
+	for _, r := range c.requestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
 		}
@@ -961,6 +943,9 @@ func (c *Client) applyEditors(ctx context.Context, req *http.Request, additional
 	return nil
 }
 
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
 // Client conforms to the OpenAPI3 specification for this service.
 type Client struct {
 	// The endpoint of the server conforming to this interface, with scheme,
@@ -971,11 +956,21 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client client.HTTPRequestDoer
+	client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []client.RequestEditorFn
+	requestEditors []client.RequestEditorFn
+}
+
+// SetClient sets the underlying client.
+func (c *Client) SetClient(doer client.HTTPRequestDoer) {
+	c.client = doer
+}
+
+// AddRequestEditor adds a request editor to the client.
+func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
+	c.requestEditors = append(c.requestEditors, fn)
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -996,8 +991,8 @@ func NewClient(opts ...ClientOption) (*Client, error) {
 	}
 
 	// create httpClient, if not already present
-	if client.Client == nil {
-		client.Client = &http.Client{}
+	if client.client == nil {
+		client.client = &http.Client{}
 	}
 
 	return &client, nil
@@ -1017,6 +1012,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
+	client.Client
 	// GetAllObjectType request
 	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error)
 
