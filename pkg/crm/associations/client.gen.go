@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequest(c.Server, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toOb
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType strin
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequest(c.Server, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObj
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequest(c.Server, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjec
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllTypesRequest(c.Server, fromObjectType, toObjectType)
 	if err != nil {
 		return nil, err
@@ -335,7 +333,7 @@ func newGetAllTypesRequest(server string, fromObjectType string, toObjectType st
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -363,7 +361,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -406,19 +404,19 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ArchiveBatch request with any body
-	ArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
-	ArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
 
 	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
 
 	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
 
 	// GetAllTypes request
-	GetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...RequestEditorFn) (*GetAllTypesResponse, error)
+	GetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...client.RequestEditorFn) (*GetAllTypesResponse, error)
 }
 
 type ArchiveBatchResponse struct {
@@ -511,7 +509,7 @@ func (r GetAllTypesResponse) StatusCode() int {
 }
 
 // ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatchWithBody(ctx, fromObjectType, toObjectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -519,7 +517,7 @@ func (c *Client) ArchiveBatchWithBody(ctx context.Context, fromObjectType string
 	return parseArchiveBatchResponse(rsp)
 }
 
-func (c *Client) ArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatch(ctx, fromObjectType, toObjectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -528,7 +526,7 @@ func (c *Client) ArchiveBatch(ctx context.Context, fromObjectType string, toObje
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatchWithBody(ctx, fromObjectType, toObjectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -536,7 +534,7 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, fromObjectType string,
 	return parseCreateBatchResponse(rsp)
 }
 
-func (c *Client) CreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatch(ctx, fromObjectType, toObjectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -545,7 +543,7 @@ func (c *Client) CreateBatch(ctx context.Context, fromObjectType string, toObjec
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatchWithBody(ctx, fromObjectType, toObjectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -553,7 +551,7 @@ func (c *Client) ReadBatchWithBody(ctx context.Context, fromObjectType string, t
 	return parseReadBatchResponse(rsp)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatch(ctx, fromObjectType, toObjectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -562,7 +560,7 @@ func (c *Client) ReadBatch(ctx context.Context, fromObjectType string, toObjectT
 }
 
 // GetAllTypes request returning *GetAllTypesResponse
-func (c *Client) GetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...RequestEditorFn) (*GetAllTypesResponse, error) {
+func (c *Client) GetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...client.RequestEditorFn) (*GetAllTypesResponse, error) {
 	rsp, err := c.doGetAllTypes(ctx, fromObjectType, toObjectType, reqEditors...)
 	if err != nil {
 		return nil, err

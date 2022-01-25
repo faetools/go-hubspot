@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListDealsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doListDeals(ctx context.Context, params *ListDealsParams, reqEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateDealsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateDealsWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateDealsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateDeals(ctx context.Context, body CreateDealsJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, contentType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, body ArchiveBatchJSONReques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParam
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, body UpdateBatchJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, bod
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveDeal(ctx context.Context, dealId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveDeal(ctx context.Context, dealId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveDealRequest(c.Server, dealId)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doArchiveDeal(ctx context.Context, dealId string, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetDealRequest(c.Server, dealId, params)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doGetDeal(ctx context.Context, dealId string, params *GetDealPa
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateDealRequestWithBody(c.Server, dealId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doUpdateDealWithBody(ctx context.Context, dealId string, params
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateDealRequest(c.Server, dealId, params, body)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doUpdateDeal(ctx context.Context, dealId string, params *Update
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllToObjectTypeRequest(c.Server, dealId, toObjectType, params)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, dealId string, toObje
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveAssociationTypeRequest(c.Server, dealId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doArchiveAssociationType(ctx context.Context, dealId string, to
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAssociationTypeRequest(c.Server, dealId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
@@ -1023,7 +1021,7 @@ func newCreateAssociationTypeRequest(server string, dealId string, toObjectType 
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -1051,7 +1049,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1094,50 +1092,50 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ListDeals request
-	ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*ListDealsResponse, error)
+	ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...client.RequestEditorFn) (*ListDealsResponse, error)
 
 	// CreateDeals request with any body
-	CreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDealsResponse, error)
-	CreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDealsResponse, error)
+	CreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateDealsResponse, error)
+	CreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateDealsResponse, error)
 
 	// ArchiveBatch request with any body
-	ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
-	ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
 
 	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
 
 	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
 
 	// UpdateBatch request with any body
-	UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
-	UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
 
 	// DoSearch request with any body
-	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
-	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
+	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
+	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
 
 	// ArchiveDeal request
-	ArchiveDeal(ctx context.Context, dealId string, reqEditors ...RequestEditorFn) (*ArchiveDealResponse, error)
+	ArchiveDeal(ctx context.Context, dealId string, reqEditors ...client.RequestEditorFn) (*ArchiveDealResponse, error)
 
 	// GetDeal request
-	GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*GetDealResponse, error)
+	GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...client.RequestEditorFn) (*GetDealResponse, error)
 
 	// UpdateDeal request with any body
-	UpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDealResponse, error)
-	UpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDealResponse, error)
+	UpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDealResponse, error)
+	UpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDealResponse, error)
 
 	// GetAllToObjectType request
-	GetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error)
+	GetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error)
 
 	// ArchiveAssociationType request
-	ArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
+	ArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
 
 	// CreateAssociationType request
-	CreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
+	CreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
 type ListDealsResponse struct {
@@ -1427,7 +1425,7 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 }
 
 // ListDeals request returning *ListDealsResponse
-func (c *Client) ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...RequestEditorFn) (*ListDealsResponse, error) {
+func (c *Client) ListDeals(ctx context.Context, params *ListDealsParams, reqEditors ...client.RequestEditorFn) (*ListDealsResponse, error) {
 	rsp, err := c.doListDeals(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1436,7 +1434,7 @@ func (c *Client) ListDeals(ctx context.Context, params *ListDealsParams, reqEdit
 }
 
 // CreateDealsWithBody request with arbitrary body returning *CreateDealsResponse
-func (c *Client) CreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDealsResponse, error) {
+func (c *Client) CreateDealsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateDealsResponse, error) {
 	rsp, err := c.doCreateDealsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1444,7 +1442,7 @@ func (c *Client) CreateDealsWithBody(ctx context.Context, contentType string, bo
 	return parseCreateDealsResponse(rsp)
 }
 
-func (c *Client) CreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDealsResponse, error) {
+func (c *Client) CreateDeals(ctx context.Context, body CreateDealsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateDealsResponse, error) {
 	rsp, err := c.doCreateDeals(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1453,7 +1451,7 @@ func (c *Client) CreateDeals(ctx context.Context, body CreateDealsJSONRequestBod
 }
 
 // ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1461,7 +1459,7 @@ func (c *Client) ArchiveBatchWithBody(ctx context.Context, contentType string, b
 	return parseArchiveBatchResponse(rsp)
 }
 
-func (c *Client) ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1470,7 +1468,7 @@ func (c *Client) ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestB
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1478,7 +1476,7 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, bo
 	return parseCreateBatchResponse(rsp)
 }
 
-func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1487,7 +1485,7 @@ func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBod
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatchWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1495,7 +1493,7 @@ func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams,
 	return parseReadBatchResponse(rsp)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatch(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1504,7 +1502,7 @@ func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body Re
 }
 
 // UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
-func (c *Client) UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1512,7 +1510,7 @@ func (c *Client) UpdateBatchWithBody(ctx context.Context, contentType string, bo
 	return parseUpdateBatchResponse(rsp)
 }
 
-func (c *Client) UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1521,7 +1519,7 @@ func (c *Client) UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBod
 }
 
 // DoSearchWithBody request with arbitrary body returning *DoSearchResponse
-func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1529,7 +1527,7 @@ func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body 
 	return parseDoSearchResponse(rsp)
 }
 
-func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1538,7 +1536,7 @@ func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, req
 }
 
 // ArchiveDeal request returning *ArchiveDealResponse
-func (c *Client) ArchiveDeal(ctx context.Context, dealId string, reqEditors ...RequestEditorFn) (*ArchiveDealResponse, error) {
+func (c *Client) ArchiveDeal(ctx context.Context, dealId string, reqEditors ...client.RequestEditorFn) (*ArchiveDealResponse, error) {
 	rsp, err := c.doArchiveDeal(ctx, dealId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1547,7 +1545,7 @@ func (c *Client) ArchiveDeal(ctx context.Context, dealId string, reqEditors ...R
 }
 
 // GetDeal request returning *GetDealResponse
-func (c *Client) GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...RequestEditorFn) (*GetDealResponse, error) {
+func (c *Client) GetDeal(ctx context.Context, dealId string, params *GetDealParams, reqEditors ...client.RequestEditorFn) (*GetDealResponse, error) {
 	rsp, err := c.doGetDeal(ctx, dealId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1556,7 +1554,7 @@ func (c *Client) GetDeal(ctx context.Context, dealId string, params *GetDealPara
 }
 
 // UpdateDealWithBody request with arbitrary body returning *UpdateDealResponse
-func (c *Client) UpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDealResponse, error) {
+func (c *Client) UpdateDealWithBody(ctx context.Context, dealId string, params *UpdateDealParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDealResponse, error) {
 	rsp, err := c.doUpdateDealWithBody(ctx, dealId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1564,7 +1562,7 @@ func (c *Client) UpdateDealWithBody(ctx context.Context, dealId string, params *
 	return parseUpdateDealResponse(rsp)
 }
 
-func (c *Client) UpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDealResponse, error) {
+func (c *Client) UpdateDeal(ctx context.Context, dealId string, params *UpdateDealParams, body UpdateDealJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDealResponse, error) {
 	rsp, err := c.doUpdateDeal(ctx, dealId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1573,7 +1571,7 @@ func (c *Client) UpdateDeal(ctx context.Context, dealId string, params *UpdateDe
 }
 
 // GetAllToObjectType request returning *GetAllToObjectTypeResponse
-func (c *Client) GetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
+func (c *Client) GetAllToObjectType(ctx context.Context, dealId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
 	rsp, err := c.doGetAllToObjectType(ctx, dealId, toObjectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1582,7 +1580,7 @@ func (c *Client) GetAllToObjectType(ctx context.Context, dealId string, toObject
 }
 
 // ArchiveAssociationType request returning *ArchiveAssociationTypeResponse
-func (c *Client) ArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
+func (c *Client) ArchiveAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
 	rsp, err := c.doArchiveAssociationType(ctx, dealId, toObjectType, toObjectId, associationType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1591,7 +1589,7 @@ func (c *Client) ArchiveAssociationType(ctx context.Context, dealId string, toOb
 }
 
 // CreateAssociationType request returning *CreateAssociationTypeResponse
-func (c *Client) CreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error) {
+func (c *Client) CreateAssociationType(ctx context.Context, dealId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error) {
 	rsp, err := c.doCreateAssociationType(ctx, dealId, toObjectType, toObjectId, associationType, reqEditors...)
 	if err != nil {
 		return nil, err

@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCompleteBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCompleteBatchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequ
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCompleteCallbackRequestWithBody(c.Server, callbackId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCompleteCallbackRequest(c.Server, callbackId, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListAppRequest(c.Server, appId, params)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppPara
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAppRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentTy
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAppRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSO
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveDefinitionRequest(c.Server, appId, definitionId)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitio
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetDefinitionRequest(c.Server, appId, definitionId, params)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateDefinitionRequestWithBody(c.Server, appId, definitionId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, de
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateDefinitionRequest(c.Server, appId, definitionId, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definition
 	return c.Client.Do(req)
 }
 
-func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListFunctionsRequest(c.Server, appId, definitionId)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveByFunctionTypeRequest(c.Server, appId, definitionId, functionType)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, defin
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetByFunctionTypeRequest(c.Server, appId, definitionId, functionType)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitio
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateOrReplaceByFunctionTypeRequestWithBody(c.Server, appId, definitionId, functionType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, ap
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionI
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId st
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateOrReplaceFunctionRequestWithBody(c.Server, appId, definitionId, functionType, functionId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId in
 	return c.Client.Do(req)
 }
 
-func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListRevisionsRequest(c.Server, appId, definitionId, params)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetRevisionRequest(c.Server, appId, definitionId, revisionId)
 	if err != nil {
 		return nil, err
@@ -1131,7 +1129,7 @@ func newGetRevisionRequest(server string, appId int32, definitionId string, revi
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -1159,7 +1157,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1202,56 +1200,56 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// CompleteBatch request with any body
-	CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteBatchResponse, error)
-	CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteBatchResponse, error)
+	CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)
+	CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)
 
 	// CompleteCallback request with any body
-	CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error)
-	CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error)
+	CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error)
+	CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error)
 
 	// ListApp request
-	ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*ListAppResponse, error)
+	ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*ListAppResponse, error)
 
 	// CreateApp request with any body
-	CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAppResponse, error)
-	CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAppResponse, error)
+	CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error)
+	CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error)
 
 	// ArchiveDefinition request
-	ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ArchiveDefinitionResponse, error)
+	ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ArchiveDefinitionResponse, error)
 
 	// GetDefinition request
-	GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*GetDefinitionResponse, error)
+	GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*GetDefinitionResponse, error)
 
 	// UpdateDefinition request with any body
-	UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error)
-	UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error)
+	UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error)
+	UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error)
 
 	// ListFunctions request
-	ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ListFunctionsResponse, error)
+	ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ListFunctionsResponse, error)
 
 	// ArchiveByFunctionType request
-	ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*ArchiveByFunctionTypeResponse, error)
+	ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*ArchiveByFunctionTypeResponse, error)
 
 	// GetByFunctionType request
-	GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*GetByFunctionTypeResponse, error)
+	GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*GetByFunctionTypeResponse, error)
 
 	// CreateOrReplaceByFunctionType request with any body
-	CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error)
+	CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error)
 
 	// ArchiveFunction request
-	ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*ArchiveFunctionResponse, error)
+	ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*ArchiveFunctionResponse, error)
 
 	// GetFunction request
-	GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetFunctionResponse, error)
+	GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*GetFunctionResponse, error)
 
 	// CreateOrReplaceFunction request with any body
-	CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceFunctionResponse, error)
+	CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceFunctionResponse, error)
 
 	// ListRevisions request
-	ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*ListRevisionsResponse, error)
+	ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*ListRevisionsResponse, error)
 
 	// GetRevision request
-	GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetRevisionResponse, error)
+	GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*GetRevisionResponse, error)
 }
 
 type CompleteBatchResponse struct {
@@ -1602,7 +1600,7 @@ func (r GetRevisionResponse) StatusCode() int {
 }
 
 // CompleteBatchWithBody request with arbitrary body returning *CompleteBatchResponse
-func (c *Client) CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteBatchResponse, error) {
+func (c *Client) CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
 	rsp, err := c.doCompleteBatchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1610,7 +1608,7 @@ func (c *Client) CompleteBatchWithBody(ctx context.Context, contentType string, 
 	return parseCompleteBatchResponse(rsp)
 }
 
-func (c *Client) CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteBatchResponse, error) {
+func (c *Client) CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
 	rsp, err := c.doCompleteBatch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1619,7 +1617,7 @@ func (c *Client) CompleteBatch(ctx context.Context, body CompleteBatchJSONReques
 }
 
 // CompleteCallbackWithBody request with arbitrary body returning *CompleteCallbackResponse
-func (c *Client) CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error) {
+func (c *Client) CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
 	rsp, err := c.doCompleteCallbackWithBody(ctx, callbackId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1627,7 +1625,7 @@ func (c *Client) CompleteCallbackWithBody(ctx context.Context, callbackId string
 	return parseCompleteCallbackResponse(rsp)
 }
 
-func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*CompleteCallbackResponse, error) {
+func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
 	rsp, err := c.doCompleteCallback(ctx, callbackId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1636,7 +1634,7 @@ func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body C
 }
 
 // ListApp request returning *ListAppResponse
-func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...RequestEditorFn) (*ListAppResponse, error) {
+func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*ListAppResponse, error) {
 	rsp, err := c.doListApp(ctx, appId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1645,7 +1643,7 @@ func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams
 }
 
 // CreateAppWithBody request with arbitrary body returning *CreateAppResponse
-func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAppResponse, error) {
+func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
 	rsp, err := c.doCreateAppWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1653,7 +1651,7 @@ func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType
 	return parseCreateAppResponse(rsp)
 }
 
-func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAppResponse, error) {
+func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
 	rsp, err := c.doCreateApp(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1662,7 +1660,7 @@ func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONR
 }
 
 // ArchiveDefinition request returning *ArchiveDefinitionResponse
-func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ArchiveDefinitionResponse, error) {
+func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ArchiveDefinitionResponse, error) {
 	rsp, err := c.doArchiveDefinition(ctx, appId, definitionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1671,7 +1669,7 @@ func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionI
 }
 
 // GetDefinition request returning *GetDefinitionResponse
-func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...RequestEditorFn) (*GetDefinitionResponse, error) {
+func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*GetDefinitionResponse, error) {
 	rsp, err := c.doGetDefinition(ctx, appId, definitionId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1680,7 +1678,7 @@ func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId st
 }
 
 // UpdateDefinitionWithBody request with arbitrary body returning *UpdateDefinitionResponse
-func (c *Client) UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error) {
+func (c *Client) UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
 	rsp, err := c.doUpdateDefinitionWithBody(ctx, appId, definitionId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1688,7 +1686,7 @@ func (c *Client) UpdateDefinitionWithBody(ctx context.Context, appId int32, defi
 	return parseUpdateDefinitionResponse(rsp)
 }
 
-func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDefinitionResponse, error) {
+func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
 	rsp, err := c.doUpdateDefinition(ctx, appId, definitionId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1697,7 +1695,7 @@ func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId
 }
 
 // ListFunctions request returning *ListFunctionsResponse
-func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...RequestEditorFn) (*ListFunctionsResponse, error) {
+func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ListFunctionsResponse, error) {
 	rsp, err := c.doListFunctions(ctx, appId, definitionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1706,7 +1704,7 @@ func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId st
 }
 
 // ArchiveByFunctionType request returning *ArchiveByFunctionTypeResponse
-func (c *Client) ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*ArchiveByFunctionTypeResponse, error) {
+func (c *Client) ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*ArchiveByFunctionTypeResponse, error) {
 	rsp, err := c.doArchiveByFunctionType(ctx, appId, definitionId, functionType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1715,7 +1713,7 @@ func (c *Client) ArchiveByFunctionType(ctx context.Context, appId int32, definit
 }
 
 // GetByFunctionType request returning *GetByFunctionTypeResponse
-func (c *Client) GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...RequestEditorFn) (*GetByFunctionTypeResponse, error) {
+func (c *Client) GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*GetByFunctionTypeResponse, error) {
 	rsp, err := c.doGetByFunctionType(ctx, appId, definitionId, functionType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1724,7 +1722,7 @@ func (c *Client) GetByFunctionType(ctx context.Context, appId int32, definitionI
 }
 
 // CreateOrReplaceByFunctionTypeWithBody request with arbitrary body returning *CreateOrReplaceByFunctionTypeResponse
-func (c *Client) CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error) {
+func (c *Client) CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error) {
 	rsp, err := c.doCreateOrReplaceByFunctionTypeWithBody(ctx, appId, definitionId, functionType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1733,7 +1731,7 @@ func (c *Client) CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appI
 }
 
 // ArchiveFunction request returning *ArchiveFunctionResponse
-func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*ArchiveFunctionResponse, error) {
+func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*ArchiveFunctionResponse, error) {
 	rsp, err := c.doArchiveFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1742,7 +1740,7 @@ func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId 
 }
 
 // GetFunction request returning *GetFunctionResponse
-func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...RequestEditorFn) (*GetFunctionResponse, error) {
+func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*GetFunctionResponse, error) {
 	rsp, err := c.doGetFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1751,7 +1749,7 @@ func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId stri
 }
 
 // CreateOrReplaceFunctionWithBody request with arbitrary body returning *CreateOrReplaceFunctionResponse
-func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateOrReplaceFunctionResponse, error) {
+func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceFunctionResponse, error) {
 	rsp, err := c.doCreateOrReplaceFunctionWithBody(ctx, appId, definitionId, functionType, functionId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1760,7 +1758,7 @@ func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int3
 }
 
 // ListRevisions request returning *ListRevisionsResponse
-func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...RequestEditorFn) (*ListRevisionsResponse, error) {
+func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*ListRevisionsResponse, error) {
 	rsp, err := c.doListRevisions(ctx, appId, definitionId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1769,7 +1767,7 @@ func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId st
 }
 
 // GetRevision request returning *GetRevisionResponse
-func (c *Client) GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...RequestEditorFn) (*GetRevisionResponse, error) {
+func (c *Client) GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*GetRevisionResponse, error) {
 	rsp, err := c.doGetRevision(ctx, appId, definitionId, revisionId, reqEditors...)
 	if err != nil {
 		return nil, err

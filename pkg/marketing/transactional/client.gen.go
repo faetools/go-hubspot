@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doSendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doSendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newSendEmailRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doSendEmailWithBody(ctx context.Context, contentType string, bo
 	return c.Client.Do(req)
 }
 
-func (c *Client) doSendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doSendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newSendEmailRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doSendEmail(ctx context.Context, body SendEmailJSONRequestBody,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetTokensPageSmtpTokensRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doGetTokensPageSmtpTokens(ctx context.Context, params *GetToken
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTokenSmtpTokensRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doCreateTokenSmtpTokensWithBody(ctx context.Context, contentTyp
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTokenSmtpTokensRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doCreateTokenSmtpTokens(ctx context.Context, body CreateTokenSm
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveToken(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveToken(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveTokenRequest(c.Server, tokenId)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doArchiveToken(ctx context.Context, tokenId string, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetTokenById(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetTokenById(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetTokenByIdRequest(c.Server, tokenId)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doGetTokenById(ctx context.Context, tokenId string, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newResetPasswordPasswordResetRequest(c.Server, tokenId)
 	if err != nil {
 		return nil, err
@@ -413,7 +411,7 @@ func newResetPasswordPasswordResetRequest(server string, tokenId string) (*http.
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -441,7 +439,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -484,24 +482,24 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// SendEmail request with any body
-	SendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SendEmailResponse, error)
-	SendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...RequestEditorFn) (*SendEmailResponse, error)
+	SendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*SendEmailResponse, error)
+	SendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...client.RequestEditorFn) (*SendEmailResponse, error)
 
 	// GetTokensPageSmtpTokens request
-	GetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...RequestEditorFn) (*GetTokensPageSmtpTokensResponse, error)
+	GetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...client.RequestEditorFn) (*GetTokensPageSmtpTokensResponse, error)
 
 	// CreateTokenSmtpTokens request with any body
-	CreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenSmtpTokensResponse, error)
-	CreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokenSmtpTokensResponse, error)
+	CreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokenSmtpTokensResponse, error)
+	CreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokenSmtpTokensResponse, error)
 
 	// ArchiveToken request
-	ArchiveToken(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*ArchiveTokenResponse, error)
+	ArchiveToken(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenResponse, error)
 
 	// GetTokenById request
-	GetTokenById(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*GetTokenByIdResponse, error)
+	GetTokenById(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*GetTokenByIdResponse, error)
 
 	// ResetPasswordPasswordReset request
-	ResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*ResetPasswordPasswordResetResponse, error)
+	ResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*ResetPasswordPasswordResetResponse, error)
 }
 
 type SendEmailResponse struct {
@@ -636,7 +634,7 @@ func (r ResetPasswordPasswordResetResponse) StatusCode() int {
 }
 
 // SendEmailWithBody request with arbitrary body returning *SendEmailResponse
-func (c *Client) SendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SendEmailResponse, error) {
+func (c *Client) SendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*SendEmailResponse, error) {
 	rsp, err := c.doSendEmailWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -644,7 +642,7 @@ func (c *Client) SendEmailWithBody(ctx context.Context, contentType string, body
 	return parseSendEmailResponse(rsp)
 }
 
-func (c *Client) SendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...RequestEditorFn) (*SendEmailResponse, error) {
+func (c *Client) SendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...client.RequestEditorFn) (*SendEmailResponse, error) {
 	rsp, err := c.doSendEmail(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -653,7 +651,7 @@ func (c *Client) SendEmail(ctx context.Context, body SendEmailJSONRequestBody, r
 }
 
 // GetTokensPageSmtpTokens request returning *GetTokensPageSmtpTokensResponse
-func (c *Client) GetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...RequestEditorFn) (*GetTokensPageSmtpTokensResponse, error) {
+func (c *Client) GetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...client.RequestEditorFn) (*GetTokensPageSmtpTokensResponse, error) {
 	rsp, err := c.doGetTokensPageSmtpTokens(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -662,7 +660,7 @@ func (c *Client) GetTokensPageSmtpTokens(ctx context.Context, params *GetTokensP
 }
 
 // CreateTokenSmtpTokensWithBody request with arbitrary body returning *CreateTokenSmtpTokensResponse
-func (c *Client) CreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenSmtpTokensResponse, error) {
+func (c *Client) CreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokenSmtpTokensResponse, error) {
 	rsp, err := c.doCreateTokenSmtpTokensWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -670,7 +668,7 @@ func (c *Client) CreateTokenSmtpTokensWithBody(ctx context.Context, contentType 
 	return parseCreateTokenSmtpTokensResponse(rsp)
 }
 
-func (c *Client) CreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokenSmtpTokensResponse, error) {
+func (c *Client) CreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokenSmtpTokensResponse, error) {
 	rsp, err := c.doCreateTokenSmtpTokens(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -679,7 +677,7 @@ func (c *Client) CreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtp
 }
 
 // ArchiveToken request returning *ArchiveTokenResponse
-func (c *Client) ArchiveToken(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*ArchiveTokenResponse, error) {
+func (c *Client) ArchiveToken(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenResponse, error) {
 	rsp, err := c.doArchiveToken(ctx, tokenId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -688,7 +686,7 @@ func (c *Client) ArchiveToken(ctx context.Context, tokenId string, reqEditors ..
 }
 
 // GetTokenById request returning *GetTokenByIdResponse
-func (c *Client) GetTokenById(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*GetTokenByIdResponse, error) {
+func (c *Client) GetTokenById(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*GetTokenByIdResponse, error) {
 	rsp, err := c.doGetTokenById(ctx, tokenId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -697,7 +695,7 @@ func (c *Client) GetTokenById(ctx context.Context, tokenId string, reqEditors ..
 }
 
 // ResetPasswordPasswordReset request returning *ResetPasswordPasswordResetResponse
-func (c *Client) ResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...RequestEditorFn) (*ResetPasswordPasswordResetResponse, error) {
+func (c *Client) ResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*ResetPasswordPasswordResetResponse, error) {
 	rsp, err := c.doResetPasswordPasswordReset(ctx, tokenId, reqEditors...)
 	if err != nil {
 		return nil, err

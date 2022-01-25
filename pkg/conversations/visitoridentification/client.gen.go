@@ -13,10 +13,9 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-)
 
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
+	"github.com/faetools/client"
+)
 
 // Doer performs HTTP requests.
 //
@@ -39,14 +38,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGenerateTokenCreateRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -58,7 +57,7 @@ func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGenerateTokenCreateRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -110,7 +109,7 @@ func newGenerateTokenCreateRequestWithBody(server string, contentType string, bo
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -138,7 +137,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -181,8 +180,8 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// GenerateTokenCreate request with any body
-	GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GenerateTokenCreateResponse, error)
-	GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*GenerateTokenCreateResponse, error)
+	GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
+	GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
 }
 
 type GenerateTokenCreateResponse struct {
@@ -208,7 +207,7 @@ func (r GenerateTokenCreateResponse) StatusCode() int {
 }
 
 // GenerateTokenCreateWithBody request with arbitrary body returning *GenerateTokenCreateResponse
-func (c *Client) GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GenerateTokenCreateResponse, error) {
+func (c *Client) GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error) {
 	rsp, err := c.doGenerateTokenCreateWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -216,7 +215,7 @@ func (c *Client) GenerateTokenCreateWithBody(ctx context.Context, contentType st
 	return parseGenerateTokenCreateResponse(rsp)
 }
 
-func (c *Client) GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...RequestEditorFn) (*GenerateTokenCreateResponse, error) {
+func (c *Client) GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error) {
 	rsp, err := c.doGenerateTokenCreate(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err

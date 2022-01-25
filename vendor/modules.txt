@@ -11,6 +11,9 @@ github.com/containerd/typeurl
 github.com/deepmap/oapi-codegen/pkg/codegen
 github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
+# github.com/faetools/client v0.0.0-20220125082958-72beec4766c6
+## explicit; go 1.17
+github.com/faetools/client
 # github.com/faetools/devtool v0.0.0-20220122165158-9997bdc7bbf3
 ## explicit; go 1.17
 github.com/faetools/devtool/cgtools

@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateEventsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateEventsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONReques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestB
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetEventRequest(c.Server, eventTemplateId, eventId)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetDetailByIdRequest(c.Server, eventTemplateId, eventId)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, ev
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetRenderByIdRequest(c.Server, eventTemplateId, eventId, params)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, ev
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllEventTemplatesRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEdi
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateEventTemplatesRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateEventTemplatesRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body C
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveEventTemplateRequest(c.Server, appId, eventTemplateId)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventT
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetEventTemplateRequest(c.Server, appId, eventTemplateId)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTempl
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateEventTemplateRequestWithBody(c.Server, appId, eventTemplateId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateEventTemplateRequest(c.Server, appId, eventTemplateId, body)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTe
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTokensRequestWithBody(c.Server, appId, eventTemplateId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventT
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTokensRequest(c.Server, appId, eventTemplateId, body)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateI
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveTokenNameRequest(c.Server, appId, eventTemplateId, tokenName)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTempl
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateTokenNameRequestWithBody(c.Server, appId, eventTemplateId, tokenName, contentType, body)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eve
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateTokenNameRequest(c.Server, appId, eventTemplateId, tokenName, body)
 	if err != nil {
 		return nil, err
@@ -877,7 +875,7 @@ func newUpdateTokenNameRequestWithBody(server string, appId int32, eventTemplate
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -905,7 +903,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -948,49 +946,49 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// CreateEvents request with any body
-	CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateEventsResponse, error)
-	CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEventsResponse, error)
+	CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error)
+	CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error)
 
 	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
 
 	// GetEvent request
-	GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
+	GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetEventResponse, error)
 
 	// GetDetailById request
-	GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetDetailByIdResponse, error)
+	GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetDetailByIdResponse, error)
 
 	// GetRenderById request
-	GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...RequestEditorFn) (*GetRenderByIdResponse, error)
+	GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*GetRenderByIdResponse, error)
 
 	// GetAllEventTemplates request
-	GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllEventTemplatesResponse, error)
+	GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllEventTemplatesResponse, error)
 
 	// CreateEventTemplates request with any body
-	CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateEventTemplatesResponse, error)
-	CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEventTemplatesResponse, error)
+	CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error)
+	CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error)
 
 	// ArchiveEventTemplate request
-	ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*ArchiveEventTemplateResponse, error)
+	ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*ArchiveEventTemplateResponse, error)
 
 	// GetEventTemplate request
-	GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetEventTemplateResponse, error)
+	GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*GetEventTemplateResponse, error)
 
 	// UpdateEventTemplate request with any body
-	UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateEventTemplateResponse, error)
-	UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateEventTemplateResponse, error)
+	UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error)
+	UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error)
 
 	// CreateTokens request with any body
-	CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokensResponse, error)
-	CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokensResponse, error)
+	CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error)
+	CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error)
 
 	// ArchiveTokenName request
-	ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...RequestEditorFn) (*ArchiveTokenNameResponse, error)
+	ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenNameResponse, error)
 
 	// UpdateTokenName request with any body
-	UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTokenNameResponse, error)
-	UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTokenNameResponse, error)
+	UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error)
+	UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error)
 }
 
 type CreateEventsResponse struct {
@@ -1278,7 +1276,7 @@ func (r UpdateTokenNameResponse) StatusCode() int {
 }
 
 // CreateEventsWithBody request with arbitrary body returning *CreateEventsResponse
-func (c *Client) CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateEventsResponse, error) {
+func (c *Client) CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
 	rsp, err := c.doCreateEventsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1286,7 +1284,7 @@ func (c *Client) CreateEventsWithBody(ctx context.Context, contentType string, b
 	return parseCreateEventsResponse(rsp)
 }
 
-func (c *Client) CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEventsResponse, error) {
+func (c *Client) CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
 	rsp, err := c.doCreateEvents(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1295,7 +1293,7 @@ func (c *Client) CreateEvents(ctx context.Context, body CreateEventsJSONRequestB
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1303,7 +1301,7 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, bo
 	return parseCreateBatchResponse(rsp)
 }
 
-func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1312,7 +1310,7 @@ func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBod
 }
 
 // GetEvent request returning *GetEventResponse
-func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetEventResponse, error) {
+func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetEventResponse, error) {
 	rsp, err := c.doGetEvent(ctx, eventTemplateId, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1321,7 +1319,7 @@ func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId s
 }
 
 // GetDetailById request returning *GetDetailByIdResponse
-func (c *Client) GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...RequestEditorFn) (*GetDetailByIdResponse, error) {
+func (c *Client) GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetDetailByIdResponse, error) {
 	rsp, err := c.doGetDetailById(ctx, eventTemplateId, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1330,7 +1328,7 @@ func (c *Client) GetDetailById(ctx context.Context, eventTemplateId string, even
 }
 
 // GetRenderById request returning *GetRenderByIdResponse
-func (c *Client) GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...RequestEditorFn) (*GetRenderByIdResponse, error) {
+func (c *Client) GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*GetRenderByIdResponse, error) {
 	rsp, err := c.doGetRenderById(ctx, eventTemplateId, eventId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1339,7 +1337,7 @@ func (c *Client) GetRenderById(ctx context.Context, eventTemplateId string, even
 }
 
 // GetAllEventTemplates request returning *GetAllEventTemplatesResponse
-func (c *Client) GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllEventTemplatesResponse, error) {
+func (c *Client) GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllEventTemplatesResponse, error) {
 	rsp, err := c.doGetAllEventTemplates(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1348,7 +1346,7 @@ func (c *Client) GetAllEventTemplates(ctx context.Context, appId int32, reqEdito
 }
 
 // CreateEventTemplatesWithBody request with arbitrary body returning *CreateEventTemplatesResponse
-func (c *Client) CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateEventTemplatesResponse, error) {
+func (c *Client) CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
 	rsp, err := c.doCreateEventTemplatesWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1356,7 +1354,7 @@ func (c *Client) CreateEventTemplatesWithBody(ctx context.Context, appId int32, 
 	return parseCreateEventTemplatesResponse(rsp)
 }
 
-func (c *Client) CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEventTemplatesResponse, error) {
+func (c *Client) CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
 	rsp, err := c.doCreateEventTemplates(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1365,7 +1363,7 @@ func (c *Client) CreateEventTemplates(ctx context.Context, appId int32, body Cre
 }
 
 // ArchiveEventTemplate request returning *ArchiveEventTemplateResponse
-func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*ArchiveEventTemplateResponse, error) {
+func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*ArchiveEventTemplateResponse, error) {
 	rsp, err := c.doArchiveEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1374,7 +1372,7 @@ func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTem
 }
 
 // GetEventTemplate request returning *GetEventTemplateResponse
-func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...RequestEditorFn) (*GetEventTemplateResponse, error) {
+func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*GetEventTemplateResponse, error) {
 	rsp, err := c.doGetEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1383,7 +1381,7 @@ func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplat
 }
 
 // UpdateEventTemplateWithBody request with arbitrary body returning *UpdateEventTemplateResponse
-func (c *Client) UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateEventTemplateResponse, error) {
+func (c *Client) UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
 	rsp, err := c.doUpdateEventTemplateWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1391,7 +1389,7 @@ func (c *Client) UpdateEventTemplateWithBody(ctx context.Context, appId int32, e
 	return parseUpdateEventTemplateResponse(rsp)
 }
 
-func (c *Client) UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateEventTemplateResponse, error) {
+func (c *Client) UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
 	rsp, err := c.doUpdateEventTemplate(ctx, appId, eventTemplateId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1400,7 +1398,7 @@ func (c *Client) UpdateEventTemplate(ctx context.Context, appId int32, eventTemp
 }
 
 // CreateTokensWithBody request with arbitrary body returning *CreateTokensResponse
-func (c *Client) CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokensResponse, error) {
+func (c *Client) CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
 	rsp, err := c.doCreateTokensWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1408,7 +1406,7 @@ func (c *Client) CreateTokensWithBody(ctx context.Context, appId int32, eventTem
 	return parseCreateTokensResponse(rsp)
 }
 
-func (c *Client) CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokensResponse, error) {
+func (c *Client) CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
 	rsp, err := c.doCreateTokens(ctx, appId, eventTemplateId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1417,7 +1415,7 @@ func (c *Client) CreateTokens(ctx context.Context, appId int32, eventTemplateId 
 }
 
 // ArchiveTokenName request returning *ArchiveTokenNameResponse
-func (c *Client) ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...RequestEditorFn) (*ArchiveTokenNameResponse, error) {
+func (c *Client) ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenNameResponse, error) {
 	rsp, err := c.doArchiveTokenName(ctx, appId, eventTemplateId, tokenName, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1426,7 +1424,7 @@ func (c *Client) ArchiveTokenName(ctx context.Context, appId int32, eventTemplat
 }
 
 // UpdateTokenNameWithBody request with arbitrary body returning *UpdateTokenNameResponse
-func (c *Client) UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTokenNameResponse, error) {
+func (c *Client) UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
 	rsp, err := c.doUpdateTokenNameWithBody(ctx, appId, eventTemplateId, tokenName, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1434,7 +1432,7 @@ func (c *Client) UpdateTokenNameWithBody(ctx context.Context, appId int32, event
 	return parseUpdateTokenNameResponse(rsp)
 }
 
-func (c *Client) UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTokenNameResponse, error) {
+func (c *Client) UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
 	rsp, err := c.doUpdateTokenName(ctx, appId, eventTemplateId, tokenName, body, reqEditors...)
 	if err != nil {
 		return nil, err

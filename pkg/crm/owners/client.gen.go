@@ -13,10 +13,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -39,14 +37,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -58,7 +56,7 @@ func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetOwnerRequest(c.Server, ownerId, params)
 	if err != nil {
 		return nil, err
@@ -223,7 +221,7 @@ func newGetOwnerRequest(server string, ownerId int32, params *GetOwnerParams) (*
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -251,7 +249,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -294,10 +292,10 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// List request
-	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error)
+	List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error)
 
 	// GetOwner request
-	GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*GetOwnerResponse, error)
+	GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...client.RequestEditorFn) (*GetOwnerResponse, error)
 }
 
 type ListResponse struct {
@@ -345,7 +343,7 @@ func (r GetOwnerResponse) StatusCode() int {
 }
 
 // List request returning *ListResponse
-func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error) {
+func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error) {
 	rsp, err := c.doList(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -354,7 +352,7 @@ func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...Req
 }
 
 // GetOwner request returning *GetOwnerResponse
-func (c *Client) GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...RequestEditorFn) (*GetOwnerResponse, error) {
+func (c *Client) GetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...client.RequestEditorFn) (*GetOwnerResponse, error) {
 	rsp, err := c.doGetOwner(ctx, ownerId, params, reqEditors...)
 	if err != nil {
 		return nil, err

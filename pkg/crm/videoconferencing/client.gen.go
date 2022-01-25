@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...Re
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceAppRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentT
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceAppRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -211,7 +209,7 @@ func newReplaceAppRequestWithBody(server string, appId int32, contentType string
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -239,7 +237,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -282,14 +280,14 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ArchiveApp request
-	ArchiveApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ArchiveAppResponse, error)
+	ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error)
 
 	// GetApp request
-	GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error)
+	GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error)
 
 	// ReplaceApp request with any body
-	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
-	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
+	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
+	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
 }
 
 type ArchiveAppResponse struct {
@@ -358,7 +356,7 @@ func (r ReplaceAppResponse) StatusCode() int {
 }
 
 // ArchiveApp request returning *ArchiveAppResponse
-func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ArchiveAppResponse, error) {
+func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error) {
 	rsp, err := c.doArchiveApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -367,7 +365,7 @@ func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...Requ
 }
 
 // GetApp request returning *GetAppResponse
-func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error) {
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
 	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -376,7 +374,7 @@ func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestE
 }
 
 // ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
-func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error) {
+func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
 	rsp, err := c.doReplaceAppWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -384,7 +382,7 @@ func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentTyp
 	return parseReplaceAppResponse(rsp)
 }
 
-func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error) {
+func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
 	rsp, err := c.doReplaceApp(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err

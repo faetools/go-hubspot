@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/deepmap/oapi-codegen v1.9.1
+	github.com/faetools/client v0.0.0-20220125082958-72beec4766c6
 	github.com/faetools/devtool v0.0.0-20220122165158-9997bdc7bbf3
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/afero v1.6.0

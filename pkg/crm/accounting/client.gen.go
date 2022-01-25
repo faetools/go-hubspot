@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateCustomerRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateCustomerRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoCustomerSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestI
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoCustomerSearchRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateExchangeRateRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, reques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateExchangeRateRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateInvoiceRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId s
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateInvoiceRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, b
 	return c.Client.Do(req)
 }
 
-func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newInvoicePdfRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newInvoicePdfRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoInvoiceSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoInvoiceSearchRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, con
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetReq
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoProductSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoProductSearchRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoTaxSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId str
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoTaxSearchRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, bod
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTermRequestRequestWithBody(c.Server, requestId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTermRequestRequest(c.Server, requestId, body)
 	if err != nil {
 		return nil, err
@@ -288,7 +286,7 @@ func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetInvoiceRequest(c.Server, invoiceId, params)
 	if err != nil {
 		return nil, err
@@ -300,7 +298,7 @@ func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *Get
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateInvoiceRequestWithBody(c.Server, invoiceId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -312,7 +310,7 @@ func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateInvoiceRequest(c.Server, invoiceId, params, body)
 	if err != nil {
 		return nil, err
@@ -324,7 +322,7 @@ func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreatePaymentRequestWithBody(c.Server, invoiceId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -336,7 +334,7 @@ func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreatePaymentRequest(c.Server, invoiceId, params, body)
 	if err != nil {
 		return nil, err
@@ -348,7 +346,7 @@ func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -360,7 +358,7 @@ func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceAppRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -372,7 +370,7 @@ func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentT
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceAppRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -384,7 +382,7 @@ func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJ
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateContactContactsRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -396,7 +394,7 @@ func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int3
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateContactContactsRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -408,7 +406,7 @@ func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateProductProductsRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -420,7 +418,7 @@ func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int3
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateProductProductsRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -432,7 +430,7 @@ func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceUserAccountsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -444,7 +442,7 @@ func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReplaceUserAccountsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -456,7 +454,7 @@ func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAcco
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveAccount(ctx context.Context, accountId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveAccountRequest(c.Server, accountId)
 	if err != nil {
 		return nil, err
@@ -1365,7 +1363,7 @@ func newArchiveAccountRequest(server string, accountId string) (*http.Request, e
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -1393,7 +1391,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1436,77 +1434,77 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// CreateCustomerRequest request with any body
-	CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCustomerRequestResponse, error)
-	CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCustomerRequestResponse, error)
+	CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error)
+	CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error)
 
 	// DoCustomerSearchRequest request with any body
-	DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoCustomerSearchRequestResponse, error)
-	DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoCustomerSearchRequestResponse, error)
+	DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error)
+	DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error)
 
 	// CreateExchangeRateRequest request with any body
-	CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateExchangeRateRequestResponse, error)
-	CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateExchangeRateRequestResponse, error)
+	CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error)
+	CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error)
 
 	// CreateInvoiceRequest request with any body
-	CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInvoiceRequestResponse, error)
-	CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateInvoiceRequestResponse, error)
+	CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error)
+	CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error)
 
 	// InvoicePdfRequest request with any body
-	InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InvoicePdfRequestResponse, error)
-	InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*InvoicePdfRequestResponse, error)
+	InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error)
+	InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error)
 
 	// DoInvoiceSearchRequest request with any body
-	DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
-	DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
+	DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
+	DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error)
 
 	// GetRequest request with any body
-	GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetRequestResponse, error)
-	GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetRequestResponse, error)
+	GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error)
+	GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error)
 
 	// DoProductSearchRequest request with any body
-	DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoProductSearchRequestResponse, error)
-	DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoProductSearchRequestResponse, error)
+	DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error)
+	DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error)
 
 	// DoTaxSearchRequest request with any body
-	DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoTaxSearchRequestResponse, error)
-	DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoTaxSearchRequestResponse, error)
+	DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error)
+	DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error)
 
 	// CreateTermRequest request with any body
-	CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error)
-	CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error)
+	CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error)
+	CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error)
 
 	// GetInvoice request
-	GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*GetInvoiceResponse, error)
+	GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*GetInvoiceResponse, error)
 
 	// UpdateInvoice request with any body
-	UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateInvoiceResponse, error)
-	UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateInvoiceResponse, error)
+	UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error)
+	UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error)
 
 	// CreatePayment request with any body
-	CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error)
-	CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error)
+	CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error)
+	CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error)
 
 	// GetApp request
-	GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error)
+	GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error)
 
 	// ReplaceApp request with any body
-	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
-	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error)
+	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
+	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
 
 	// CreateContactContacts request with any body
-	CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateContactContactsResponse, error)
-	CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateContactContactsResponse, error)
+	CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error)
+	CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error)
 
 	// CreateProductProducts request with any body
-	CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateProductProductsResponse, error)
-	CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateProductProductsResponse, error)
+	CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error)
+	CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error)
 
 	// ReplaceUserAccounts request with any body
-	ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceUserAccountsResponse, error)
-	ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceUserAccountsResponse, error)
+	ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error)
+	ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error)
 
 	// ArchiveAccount request
-	ArchiveAccount(ctx context.Context, accountId string, reqEditors ...RequestEditorFn) (*ArchiveAccountResponse, error)
+	ArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*ArchiveAccountResponse, error)
 }
 
 type CreateCustomerRequestResponse struct {
@@ -1915,7 +1913,7 @@ func (r ArchiveAccountResponse) StatusCode() int {
 }
 
 // CreateCustomerRequestWithBody request with arbitrary body returning *CreateCustomerRequestResponse
-func (c *Client) CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCustomerRequestResponse, error) {
+func (c *Client) CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
 	rsp, err := c.doCreateCustomerRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1923,7 +1921,7 @@ func (c *Client) CreateCustomerRequestWithBody(ctx context.Context, requestId st
 	return parseCreateCustomerRequestResponse(rsp)
 }
 
-func (c *Client) CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCustomerRequestResponse, error) {
+func (c *Client) CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
 	rsp, err := c.doCreateCustomerRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1932,7 +1930,7 @@ func (c *Client) CreateCustomerRequest(ctx context.Context, requestId string, bo
 }
 
 // DoCustomerSearchRequestWithBody request with arbitrary body returning *DoCustomerSearchRequestResponse
-func (c *Client) DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
+func (c *Client) DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
 	rsp, err := c.doDoCustomerSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1940,7 +1938,7 @@ func (c *Client) DoCustomerSearchRequestWithBody(ctx context.Context, requestId 
 	return parseDoCustomerSearchRequestResponse(rsp)
 }
 
-func (c *Client) DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
+func (c *Client) DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
 	rsp, err := c.doDoCustomerSearchRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1949,7 +1947,7 @@ func (c *Client) DoCustomerSearchRequest(ctx context.Context, requestId string, 
 }
 
 // CreateExchangeRateRequestWithBody request with arbitrary body returning *CreateExchangeRateRequestResponse
-func (c *Client) CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
+func (c *Client) CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
 	rsp, err := c.doCreateExchangeRateRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1957,7 +1955,7 @@ func (c *Client) CreateExchangeRateRequestWithBody(ctx context.Context, requestI
 	return parseCreateExchangeRateRequestResponse(rsp)
 }
 
-func (c *Client) CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
+func (c *Client) CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
 	rsp, err := c.doCreateExchangeRateRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1966,7 +1964,7 @@ func (c *Client) CreateExchangeRateRequest(ctx context.Context, requestId string
 }
 
 // CreateInvoiceRequestWithBody request with arbitrary body returning *CreateInvoiceRequestResponse
-func (c *Client) CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
+func (c *Client) CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
 	rsp, err := c.doCreateInvoiceRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1974,7 +1972,7 @@ func (c *Client) CreateInvoiceRequestWithBody(ctx context.Context, requestId str
 	return parseCreateInvoiceRequestResponse(rsp)
 }
 
-func (c *Client) CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
+func (c *Client) CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
 	rsp, err := c.doCreateInvoiceRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1983,7 +1981,7 @@ func (c *Client) CreateInvoiceRequest(ctx context.Context, requestId string, bod
 }
 
 // InvoicePdfRequestWithBody request with arbitrary body returning *InvoicePdfRequestResponse
-func (c *Client) InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*InvoicePdfRequestResponse, error) {
+func (c *Client) InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
 	rsp, err := c.doInvoicePdfRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1991,7 +1989,7 @@ func (c *Client) InvoicePdfRequestWithBody(ctx context.Context, requestId string
 	return parseInvoicePdfRequestResponse(rsp)
 }
 
-func (c *Client) InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*InvoicePdfRequestResponse, error) {
+func (c *Client) InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
 	rsp, err := c.doInvoicePdfRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2000,7 +1998,7 @@ func (c *Client) InvoicePdfRequest(ctx context.Context, requestId string, body I
 }
 
 // DoInvoiceSearchRequestWithBody request with arbitrary body returning *DoInvoiceSearchRequestResponse
-func (c *Client) DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
+func (c *Client) DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
 	rsp, err := c.doDoInvoiceSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2008,7 +2006,7 @@ func (c *Client) DoInvoiceSearchRequestWithBody(ctx context.Context, requestId s
 	return parseDoInvoiceSearchRequestResponse(rsp)
 }
 
-func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
+func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
 	rsp, err := c.doDoInvoiceSearchRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2017,7 +2015,7 @@ func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, b
 }
 
 // GetRequestWithBody request with arbitrary body returning *GetRequestResponse
-func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetRequestResponse, error) {
+func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
 	rsp, err := c.doGetRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2025,7 +2023,7 @@ func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, conte
 	return parseGetRequestResponse(rsp)
 }
 
-func (c *Client) GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*GetRequestResponse, error) {
+func (c *Client) GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
 	rsp, err := c.doGetRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2034,7 +2032,7 @@ func (c *Client) GetRequest(ctx context.Context, requestId string, body GetReque
 }
 
 // DoProductSearchRequestWithBody request with arbitrary body returning *DoProductSearchRequestResponse
-func (c *Client) DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoProductSearchRequestResponse, error) {
+func (c *Client) DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
 	rsp, err := c.doDoProductSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2042,7 +2040,7 @@ func (c *Client) DoProductSearchRequestWithBody(ctx context.Context, requestId s
 	return parseDoProductSearchRequestResponse(rsp)
 }
 
-func (c *Client) DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoProductSearchRequestResponse, error) {
+func (c *Client) DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
 	rsp, err := c.doDoProductSearchRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2051,7 +2049,7 @@ func (c *Client) DoProductSearchRequest(ctx context.Context, requestId string, b
 }
 
 // DoTaxSearchRequestWithBody request with arbitrary body returning *DoTaxSearchRequestResponse
-func (c *Client) DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
+func (c *Client) DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
 	rsp, err := c.doDoTaxSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2059,7 +2057,7 @@ func (c *Client) DoTaxSearchRequestWithBody(ctx context.Context, requestId strin
 	return parseDoTaxSearchRequestResponse(rsp)
 }
 
-func (c *Client) DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
+func (c *Client) DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
 	rsp, err := c.doDoTaxSearchRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2068,7 +2066,7 @@ func (c *Client) DoTaxSearchRequest(ctx context.Context, requestId string, body 
 }
 
 // CreateTermRequestWithBody request with arbitrary body returning *CreateTermRequestResponse
-func (c *Client) CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error) {
+func (c *Client) CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
 	rsp, err := c.doCreateTermRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2076,7 +2074,7 @@ func (c *Client) CreateTermRequestWithBody(ctx context.Context, requestId string
 	return parseCreateTermRequestResponse(rsp)
 }
 
-func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTermRequestResponse, error) {
+func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
 	rsp, err := c.doCreateTermRequest(ctx, requestId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2085,7 +2083,7 @@ func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body C
 }
 
 // GetInvoice request returning *GetInvoiceResponse
-func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...RequestEditorFn) (*GetInvoiceResponse, error) {
+func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*GetInvoiceResponse, error) {
 	rsp, err := c.doGetInvoice(ctx, invoiceId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2094,7 +2092,7 @@ func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetIn
 }
 
 // UpdateInvoiceWithBody request with arbitrary body returning *UpdateInvoiceResponse
-func (c *Client) UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateInvoiceResponse, error) {
+func (c *Client) UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
 	rsp, err := c.doUpdateInvoiceWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2102,7 +2100,7 @@ func (c *Client) UpdateInvoiceWithBody(ctx context.Context, invoiceId string, pa
 	return parseUpdateInvoiceResponse(rsp)
 }
 
-func (c *Client) UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateInvoiceResponse, error) {
+func (c *Client) UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
 	rsp, err := c.doUpdateInvoice(ctx, invoiceId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2111,7 +2109,7 @@ func (c *Client) UpdateInvoice(ctx context.Context, invoiceId string, params *Up
 }
 
 // CreatePaymentWithBody request with arbitrary body returning *CreatePaymentResponse
-func (c *Client) CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error) {
+func (c *Client) CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
 	rsp, err := c.doCreatePaymentWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2119,7 +2117,7 @@ func (c *Client) CreatePaymentWithBody(ctx context.Context, invoiceId string, pa
 	return parseCreatePaymentResponse(rsp)
 }
 
-func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreatePaymentResponse, error) {
+func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
 	rsp, err := c.doCreatePayment(ctx, invoiceId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2128,7 +2126,7 @@ func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *Cr
 }
 
 // GetApp request returning *GetAppResponse
-func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppResponse, error) {
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
 	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2137,7 +2135,7 @@ func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...RequestE
 }
 
 // ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
-func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error) {
+func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
 	rsp, err := c.doReplaceAppWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2145,7 +2143,7 @@ func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentTyp
 	return parseReplaceAppResponse(rsp)
 }
 
-func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceAppResponse, error) {
+func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
 	rsp, err := c.doReplaceApp(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2154,7 +2152,7 @@ func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSO
 }
 
 // CreateContactContactsWithBody request with arbitrary body returning *CreateContactContactsResponse
-func (c *Client) CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateContactContactsResponse, error) {
+func (c *Client) CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
 	rsp, err := c.doCreateContactContactsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2162,7 +2160,7 @@ func (c *Client) CreateContactContactsWithBody(ctx context.Context, appId int32,
 	return parseCreateContactContactsResponse(rsp)
 }
 
-func (c *Client) CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateContactContactsResponse, error) {
+func (c *Client) CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
 	rsp, err := c.doCreateContactContacts(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2171,7 +2169,7 @@ func (c *Client) CreateContactContacts(ctx context.Context, appId int32, body Cr
 }
 
 // CreateProductProductsWithBody request with arbitrary body returning *CreateProductProductsResponse
-func (c *Client) CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateProductProductsResponse, error) {
+func (c *Client) CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
 	rsp, err := c.doCreateProductProductsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2179,7 +2177,7 @@ func (c *Client) CreateProductProductsWithBody(ctx context.Context, appId int32,
 	return parseCreateProductProductsResponse(rsp)
 }
 
-func (c *Client) CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateProductProductsResponse, error) {
+func (c *Client) CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
 	rsp, err := c.doCreateProductProducts(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2188,7 +2186,7 @@ func (c *Client) CreateProductProducts(ctx context.Context, appId int32, body Cr
 }
 
 // ReplaceUserAccountsWithBody request with arbitrary body returning *ReplaceUserAccountsResponse
-func (c *Client) ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
+func (c *Client) ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
 	rsp, err := c.doReplaceUserAccountsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2196,7 +2194,7 @@ func (c *Client) ReplaceUserAccountsWithBody(ctx context.Context, contentType st
 	return parseReplaceUserAccountsResponse(rsp)
 }
 
-func (c *Client) ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
+func (c *Client) ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
 	rsp, err := c.doReplaceUserAccounts(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -2205,7 +2203,7 @@ func (c *Client) ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccoun
 }
 
 // ArchiveAccount request returning *ArchiveAccountResponse
-func (c *Client) ArchiveAccount(ctx context.Context, accountId string, reqEditors ...RequestEditorFn) (*ArchiveAccountResponse, error) {
+func (c *Client) ArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*ArchiveAccountResponse, error) {
 	rsp, err := c.doArchiveAccount(ctx, accountId, reqEditors...)
 	if err != nil {
 		return nil, err

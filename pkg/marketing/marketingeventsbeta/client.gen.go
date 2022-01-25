@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newEventsMarketingEventsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentTyp
 	return c.Client.Do(req)
 }
 
-func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newEventsMarketingEventsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketi
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDeleteEventsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDeleteEventsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONReques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newSearchEventsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpsertEventsRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpsertEventsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONReques
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDeleteExternalEventRequest(c.Server, externalEventId, params)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetExternalEventRequest(c.Server, externalEventId, params)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPatchExternalEventRequestWithBody(c.Server, externalEventId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEvent
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPatchExternalEventRequest(c.Server, externalEventId, params, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId strin
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPutExternalEventRequestWithBody(c.Server, externalEventId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPutExternalEventRequest(c.Server, externalEventId, body)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCancelExternalEventRequest(c.Server, externalEventId, params)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newEmailUpsertSubscriberStateRequestWithBody(c.Server, externalEventId, subscriberState, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, exter
 	return c.Client.Do(req)
 }
 
-func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newEmailUpsertSubscriberStateRequest(c.Server, externalEventId, subscriberState, params, body)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEvent
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpsertSubscriberStateRequestWithBody(c.Server, externalEventId, subscriberState, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEv
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpsertSubscriberStateRequest(c.Server, externalEventId, subscriberState, params, body)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId st
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAppSettingsRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors .
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPostAppSettingsRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -288,7 +286,7 @@ func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, con
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPostAppSettingsRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -944,7 +942,7 @@ func newPostAppSettingsRequestWithBody(server string, appId int32, contentType s
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -972,7 +970,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1015,51 +1013,51 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// EventsMarketingEvents request with any body
-	EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EventsMarketingEventsResponse, error)
-	EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*EventsMarketingEventsResponse, error)
+	EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)
+	EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)
 
 	// DeleteEvents request with any body
-	DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DeleteEventsResponse, error)
-	DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*DeleteEventsResponse, error)
+	DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error)
+	DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error)
 
 	// SearchEvents request
-	SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...RequestEditorFn) (*SearchEventsResponse, error)
+	SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*SearchEventsResponse, error)
 
 	// UpsertEvents request with any body
-	UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertEventsResponse, error)
-	UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertEventsResponse, error)
+	UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error)
+	UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error)
 
 	// DeleteExternalEvent request
-	DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...RequestEditorFn) (*DeleteExternalEventResponse, error)
+	DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*DeleteExternalEventResponse, error)
 
 	// GetExternalEvent request
-	GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...RequestEditorFn) (*GetExternalEventResponse, error)
+	GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*GetExternalEventResponse, error)
 
 	// PatchExternalEvent request with any body
-	PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchExternalEventResponse, error)
-	PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchExternalEventResponse, error)
+	PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error)
+	PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error)
 
 	// PutExternalEvent request with any body
-	PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutExternalEventResponse, error)
-	PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PutExternalEventResponse, error)
+	PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error)
+	PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error)
 
 	// CancelExternalEvent request
-	CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...RequestEditorFn) (*CancelExternalEventResponse, error)
+	CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*CancelExternalEventResponse, error)
 
 	// EmailUpsertSubscriberState request with any body
-	EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error)
-	EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error)
+	EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error)
+	EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error)
 
 	// UpsertSubscriberState request with any body
-	UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertSubscriberStateResponse, error)
-	UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertSubscriberStateResponse, error)
+	UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error)
+	UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error)
 
 	// GetAppSettings request
-	GetAppSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppSettingsResponse, error)
+	GetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppSettingsResponse, error)
 
 	// PostAppSettings request with any body
-	PostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAppSettingsResponse, error)
-	PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAppSettingsResponse, error)
+	PostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error)
+	PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error)
 }
 
 type EventsMarketingEventsResponse struct {
@@ -1345,7 +1343,7 @@ func (r PostAppSettingsResponse) StatusCode() int {
 }
 
 // EventsMarketingEventsWithBody request with arbitrary body returning *EventsMarketingEventsResponse
-func (c *Client) EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EventsMarketingEventsResponse, error) {
+func (c *Client) EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
 	rsp, err := c.doEventsMarketingEventsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1353,7 +1351,7 @@ func (c *Client) EventsMarketingEventsWithBody(ctx context.Context, contentType 
 	return parseEventsMarketingEventsResponse(rsp)
 }
 
-func (c *Client) EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*EventsMarketingEventsResponse, error) {
+func (c *Client) EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
 	rsp, err := c.doEventsMarketingEvents(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1362,7 +1360,7 @@ func (c *Client) EventsMarketingEvents(ctx context.Context, body EventsMarketing
 }
 
 // DeleteEventsWithBody request with arbitrary body returning *DeleteEventsResponse
-func (c *Client) DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DeleteEventsResponse, error) {
+func (c *Client) DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
 	rsp, err := c.doDeleteEventsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1370,7 +1368,7 @@ func (c *Client) DeleteEventsWithBody(ctx context.Context, contentType string, b
 	return parseDeleteEventsResponse(rsp)
 }
 
-func (c *Client) DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*DeleteEventsResponse, error) {
+func (c *Client) DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
 	rsp, err := c.doDeleteEvents(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1379,7 +1377,7 @@ func (c *Client) DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestB
 }
 
 // SearchEvents request returning *SearchEventsResponse
-func (c *Client) SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...RequestEditorFn) (*SearchEventsResponse, error) {
+func (c *Client) SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*SearchEventsResponse, error) {
 	rsp, err := c.doSearchEvents(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1388,7 +1386,7 @@ func (c *Client) SearchEvents(ctx context.Context, params *SearchEventsParams, r
 }
 
 // UpsertEventsWithBody request with arbitrary body returning *UpsertEventsResponse
-func (c *Client) UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertEventsResponse, error) {
+func (c *Client) UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
 	rsp, err := c.doUpsertEventsWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1396,7 +1394,7 @@ func (c *Client) UpsertEventsWithBody(ctx context.Context, contentType string, b
 	return parseUpsertEventsResponse(rsp)
 }
 
-func (c *Client) UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertEventsResponse, error) {
+func (c *Client) UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
 	rsp, err := c.doUpsertEvents(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1405,7 +1403,7 @@ func (c *Client) UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestB
 }
 
 // DeleteExternalEvent request returning *DeleteExternalEventResponse
-func (c *Client) DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...RequestEditorFn) (*DeleteExternalEventResponse, error) {
+func (c *Client) DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*DeleteExternalEventResponse, error) {
 	rsp, err := c.doDeleteExternalEvent(ctx, externalEventId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1414,7 +1412,7 @@ func (c *Client) DeleteExternalEvent(ctx context.Context, externalEventId string
 }
 
 // GetExternalEvent request returning *GetExternalEventResponse
-func (c *Client) GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...RequestEditorFn) (*GetExternalEventResponse, error) {
+func (c *Client) GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*GetExternalEventResponse, error) {
 	rsp, err := c.doGetExternalEvent(ctx, externalEventId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1423,7 +1421,7 @@ func (c *Client) GetExternalEvent(ctx context.Context, externalEventId string, p
 }
 
 // PatchExternalEventWithBody request with arbitrary body returning *PatchExternalEventResponse
-func (c *Client) PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchExternalEventResponse, error) {
+func (c *Client) PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
 	rsp, err := c.doPatchExternalEventWithBody(ctx, externalEventId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1431,7 +1429,7 @@ func (c *Client) PatchExternalEventWithBody(ctx context.Context, externalEventId
 	return parsePatchExternalEventResponse(rsp)
 }
 
-func (c *Client) PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchExternalEventResponse, error) {
+func (c *Client) PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
 	rsp, err := c.doPatchExternalEvent(ctx, externalEventId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1440,7 +1438,7 @@ func (c *Client) PatchExternalEvent(ctx context.Context, externalEventId string,
 }
 
 // PutExternalEventWithBody request with arbitrary body returning *PutExternalEventResponse
-func (c *Client) PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutExternalEventResponse, error) {
+func (c *Client) PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
 	rsp, err := c.doPutExternalEventWithBody(ctx, externalEventId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1448,7 +1446,7 @@ func (c *Client) PutExternalEventWithBody(ctx context.Context, externalEventId s
 	return parsePutExternalEventResponse(rsp)
 }
 
-func (c *Client) PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...RequestEditorFn) (*PutExternalEventResponse, error) {
+func (c *Client) PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
 	rsp, err := c.doPutExternalEvent(ctx, externalEventId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1457,7 +1455,7 @@ func (c *Client) PutExternalEvent(ctx context.Context, externalEventId string, b
 }
 
 // CancelExternalEvent request returning *CancelExternalEventResponse
-func (c *Client) CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...RequestEditorFn) (*CancelExternalEventResponse, error) {
+func (c *Client) CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*CancelExternalEventResponse, error) {
 	rsp, err := c.doCancelExternalEvent(ctx, externalEventId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1466,7 +1464,7 @@ func (c *Client) CancelExternalEvent(ctx context.Context, externalEventId string
 }
 
 // EmailUpsertSubscriberStateWithBody request with arbitrary body returning *EmailUpsertSubscriberStateResponse
-func (c *Client) EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
+func (c *Client) EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
 	rsp, err := c.doEmailUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1474,7 +1472,7 @@ func (c *Client) EmailUpsertSubscriberStateWithBody(ctx context.Context, externa
 	return parseEmailUpsertSubscriberStateResponse(rsp)
 }
 
-func (c *Client) EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
+func (c *Client) EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
 	rsp, err := c.doEmailUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1483,7 +1481,7 @@ func (c *Client) EmailUpsertSubscriberState(ctx context.Context, externalEventId
 }
 
 // UpsertSubscriberStateWithBody request with arbitrary body returning *UpsertSubscriberStateResponse
-func (c *Client) UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
+func (c *Client) UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
 	rsp, err := c.doUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1491,7 +1489,7 @@ func (c *Client) UpsertSubscriberStateWithBody(ctx context.Context, externalEven
 	return parseUpsertSubscriberStateResponse(rsp)
 }
 
-func (c *Client) UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
+func (c *Client) UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
 	rsp, err := c.doUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1500,7 +1498,7 @@ func (c *Client) UpsertSubscriberState(ctx context.Context, externalEventId stri
 }
 
 // GetAppSettings request returning *GetAppSettingsResponse
-func (c *Client) GetAppSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAppSettingsResponse, error) {
+func (c *Client) GetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppSettingsResponse, error) {
 	rsp, err := c.doGetAppSettings(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1509,7 +1507,7 @@ func (c *Client) GetAppSettings(ctx context.Context, appId int32, reqEditors ...
 }
 
 // PostAppSettingsWithBody request with arbitrary body returning *PostAppSettingsResponse
-func (c *Client) PostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAppSettingsResponse, error) {
+func (c *Client) PostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error) {
 	rsp, err := c.doPostAppSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1517,7 +1515,7 @@ func (c *Client) PostAppSettingsWithBody(ctx context.Context, appId int32, conte
 	return parsePostAppSettingsResponse(rsp)
 }
 
-func (c *Client) PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAppSettingsResponse, error) {
+func (c *Client) PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error) {
 	rsp, err := c.doPostAppSettings(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err

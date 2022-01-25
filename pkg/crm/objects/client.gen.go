@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doListObjectType(ctx context.Context, objectType string, params
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateObjectTypeRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body Arc
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, c
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateBatch(ctx context.Context, objectType string, body Crea
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequestWithBody(c.Server, objectType, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, par
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequest(c.Server, objectType, params, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doReadBatch(ctx context.Context, objectType string, params *Rea
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, c
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body Upda
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGdprDeleteObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGdprDeleteObjectTypeRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, cont
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearc
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveObjectRequest(c.Server, objectType, objectId)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectI
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetObjectRequest(c.Server, objectType, objectId, params)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doGetObject(ctx context.Context, objectType string, objectId st
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateObjectRequestWithBody(c.Server, objectType, objectId, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateObjectRequest(c.Server, objectType, objectId, params, body)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllToObjectTypeRequest(c.Server, objectType, objectId, toObjectType, params)
 	if err != nil {
 		return nil, err
@@ -288,7 +286,7 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, ob
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveAssociationTypeRequest(c.Server, objectType, objectId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
@@ -300,7 +298,7 @@ func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAssociationTypeRequest(c.Server, objectType, objectId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
@@ -1185,7 +1183,7 @@ func newCreateAssociationTypeRequest(server string, objectType string, objectId 
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -1213,7 +1211,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -1256,54 +1254,54 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ListObjectType request
-	ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*ListObjectTypeResponse, error)
+	ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ListObjectTypeResponse, error)
 
 	// CreateObjectType request with any body
-	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error)
-	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error)
+	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
+	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
 
 	// ArchiveBatch request with any body
-	ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
-	ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
 
 	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
 
 	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
 
 	// UpdateBatch request with any body
-	UpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
-	UpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
 
 	// GdprDeleteObjectType request with any body
-	GdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GdprDeleteObjectTypeResponse, error)
-	GdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*GdprDeleteObjectTypeResponse, error)
+	GdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GdprDeleteObjectTypeResponse, error)
+	GdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GdprDeleteObjectTypeResponse, error)
 
 	// DoSearch request with any body
-	DoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
-	DoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
+	DoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
+	DoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
 
 	// ArchiveObject request
-	ArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...RequestEditorFn) (*ArchiveObjectResponse, error)
+	ArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...client.RequestEditorFn) (*ArchiveObjectResponse, error)
 
 	// GetObject request
-	GetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...RequestEditorFn) (*GetObjectResponse, error)
+	GetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...client.RequestEditorFn) (*GetObjectResponse, error)
 
 	// UpdateObject request with any body
-	UpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateObjectResponse, error)
-	UpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateObjectResponse, error)
+	UpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectResponse, error)
+	UpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectResponse, error)
 
 	// GetAllToObjectType request
-	GetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error)
+	GetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error)
 
 	// ArchiveAssociationType request
-	ArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
+	ArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
 
 	// CreateAssociationType request
-	CreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error)
+	CreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error)
 }
 
 type ListObjectTypeResponse struct {
@@ -1614,7 +1612,7 @@ func (r CreateAssociationTypeResponse) StatusCode() int {
 }
 
 // ListObjectType request returning *ListObjectTypeResponse
-func (c *Client) ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...RequestEditorFn) (*ListObjectTypeResponse, error) {
+func (c *Client) ListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ListObjectTypeResponse, error) {
 	rsp, err := c.doListObjectType(ctx, objectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1623,7 +1621,7 @@ func (c *Client) ListObjectType(ctx context.Context, objectType string, params *
 }
 
 // CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
-func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error) {
+func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
 	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1631,7 +1629,7 @@ func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string
 	return parseCreateObjectTypeResponse(rsp)
 }
 
-func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error) {
+func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
 	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1640,7 +1638,7 @@ func (c *Client) CreateObjectType(ctx context.Context, objectType string, body C
 }
 
 // ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1648,7 +1646,7 @@ func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, co
 	return parseArchiveBatchResponse(rsp)
 }
 
-func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1657,7 +1655,7 @@ func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body Archi
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1665,7 +1663,7 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, con
 	return parseCreateBatchResponse(rsp)
 }
 
-func (c *Client) CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1674,7 +1672,7 @@ func (c *Client) CreateBatch(ctx context.Context, objectType string, body Create
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatchWithBody(ctx, objectType, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1682,7 +1680,7 @@ func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, param
 	return parseReadBatchResponse(rsp)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatch(ctx, objectType, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1691,7 +1689,7 @@ func (c *Client) ReadBatch(ctx context.Context, objectType string, params *ReadB
 }
 
 // UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
-func (c *Client) UpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1699,7 +1697,7 @@ func (c *Client) UpdateBatchWithBody(ctx context.Context, objectType string, con
 	return parseUpdateBatchResponse(rsp)
 }
 
-func (c *Client) UpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1708,7 +1706,7 @@ func (c *Client) UpdateBatch(ctx context.Context, objectType string, body Update
 }
 
 // GdprDeleteObjectTypeWithBody request with arbitrary body returning *GdprDeleteObjectTypeResponse
-func (c *Client) GdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GdprDeleteObjectTypeResponse, error) {
+func (c *Client) GdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GdprDeleteObjectTypeResponse, error) {
 	rsp, err := c.doGdprDeleteObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1716,7 +1714,7 @@ func (c *Client) GdprDeleteObjectTypeWithBody(ctx context.Context, objectType st
 	return parseGdprDeleteObjectTypeResponse(rsp)
 }
 
-func (c *Client) GdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*GdprDeleteObjectTypeResponse, error) {
+func (c *Client) GdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GdprDeleteObjectTypeResponse, error) {
 	rsp, err := c.doGdprDeleteObjectType(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1725,7 +1723,7 @@ func (c *Client) GdprDeleteObjectType(ctx context.Context, objectType string, bo
 }
 
 // DoSearchWithBody request with arbitrary body returning *DoSearchResponse
-func (c *Client) DoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1733,7 +1731,7 @@ func (c *Client) DoSearchWithBody(ctx context.Context, objectType string, conten
 	return parseDoSearchResponse(rsp)
 }
 
-func (c *Client) DoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1742,7 +1740,7 @@ func (c *Client) DoSearch(ctx context.Context, objectType string, body DoSearchJ
 }
 
 // ArchiveObject request returning *ArchiveObjectResponse
-func (c *Client) ArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...RequestEditorFn) (*ArchiveObjectResponse, error) {
+func (c *Client) ArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...client.RequestEditorFn) (*ArchiveObjectResponse, error) {
 	rsp, err := c.doArchiveObject(ctx, objectType, objectId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1751,7 +1749,7 @@ func (c *Client) ArchiveObject(ctx context.Context, objectType string, objectId 
 }
 
 // GetObject request returning *GetObjectResponse
-func (c *Client) GetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...RequestEditorFn) (*GetObjectResponse, error) {
+func (c *Client) GetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...client.RequestEditorFn) (*GetObjectResponse, error) {
 	rsp, err := c.doGetObject(ctx, objectType, objectId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1760,7 +1758,7 @@ func (c *Client) GetObject(ctx context.Context, objectType string, objectId stri
 }
 
 // UpdateObjectWithBody request with arbitrary body returning *UpdateObjectResponse
-func (c *Client) UpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateObjectResponse, error) {
+func (c *Client) UpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectResponse, error) {
 	rsp, err := c.doUpdateObjectWithBody(ctx, objectType, objectId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1768,7 +1766,7 @@ func (c *Client) UpdateObjectWithBody(ctx context.Context, objectType string, ob
 	return parseUpdateObjectResponse(rsp)
 }
 
-func (c *Client) UpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateObjectResponse, error) {
+func (c *Client) UpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectResponse, error) {
 	rsp, err := c.doUpdateObject(ctx, objectType, objectId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1777,7 +1775,7 @@ func (c *Client) UpdateObject(ctx context.Context, objectType string, objectId s
 }
 
 // GetAllToObjectType request returning *GetAllToObjectTypeResponse
-func (c *Client) GetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
+func (c *Client) GetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
 	rsp, err := c.doGetAllToObjectType(ctx, objectType, objectId, toObjectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1786,7 +1784,7 @@ func (c *Client) GetAllToObjectType(ctx context.Context, objectType string, obje
 }
 
 // ArchiveAssociationType request returning *ArchiveAssociationTypeResponse
-func (c *Client) ArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
+func (c *Client) ArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
 	rsp, err := c.doArchiveAssociationType(ctx, objectType, objectId, toObjectType, toObjectId, associationType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1795,7 +1793,7 @@ func (c *Client) ArchiveAssociationType(ctx context.Context, objectType string, 
 }
 
 // CreateAssociationType request returning *CreateAssociationTypeResponse
-func (c *Client) CreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...RequestEditorFn) (*CreateAssociationTypeResponse, error) {
+func (c *Client) CreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error) {
 	rsp, err := c.doCreateAssociationType(ctx, objectType, objectId, toObjectType, toObjectId, associationType, reqEditors...)
 	if err != nil {
 		return nil, err

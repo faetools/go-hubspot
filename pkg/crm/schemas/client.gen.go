@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllSchemasRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParam
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateSchemasRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateSchemasRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequ
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, par
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetObjectTypeRequest(c.Server, objectType)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateObjectTypeRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAssociationAssociationsRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, ob
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAssociationAssociationsRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveAssociationAssociationIdentifierRequest(c.Server, objectType, associationIdentifier)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doPurgeObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doPurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newPurgeObjectTypeRequest(c.Server, objectType)
 	if err != nil {
 		return nil, err
@@ -520,7 +518,7 @@ func newPurgeObjectTypeRequest(server string, objectType string) (*http.Request,
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -548,7 +546,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -591,31 +589,31 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// GetAllSchemas request
-	GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...RequestEditorFn) (*GetAllSchemasResponse, error)
+	GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error)
 
 	// CreateSchemas request with any body
-	CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSchemasResponse, error)
-	CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSchemasResponse, error)
+	CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
+	CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
 
 	// ArchiveObjectType request
-	ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...RequestEditorFn) (*ArchiveObjectTypeResponse, error)
+	ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error)
 
 	// GetObjectType request
-	GetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetObjectTypeResponse, error)
+	GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error)
 
 	// UpdateObjectType request with any body
-	UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateObjectTypeResponse, error)
-	UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateObjectTypeResponse, error)
+	UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
+	UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
 
 	// CreateAssociationAssociations request with any body
-	CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
-	CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
+	CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
+	CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
 
 	// ArchiveAssociationAssociationIdentifier request
-	ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error)
+	ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error)
 
 	// PurgeObjectType request
-	PurgeObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*PurgeObjectTypeResponse, error)
+	PurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*PurgeObjectTypeResponse, error)
 }
 
 type GetAllSchemasResponse struct {
@@ -792,7 +790,7 @@ func (r PurgeObjectTypeResponse) StatusCode() int {
 }
 
 // GetAllSchemas request returning *GetAllSchemasResponse
-func (c *Client) GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...RequestEditorFn) (*GetAllSchemasResponse, error) {
+func (c *Client) GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error) {
 	rsp, err := c.doGetAllSchemas(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -801,7 +799,7 @@ func (c *Client) GetAllSchemas(ctx context.Context, params *GetAllSchemasParams,
 }
 
 // CreateSchemasWithBody request with arbitrary body returning *CreateSchemasResponse
-func (c *Client) CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSchemasResponse, error) {
+func (c *Client) CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
 	rsp, err := c.doCreateSchemasWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -809,7 +807,7 @@ func (c *Client) CreateSchemasWithBody(ctx context.Context, contentType string, 
 	return parseCreateSchemasResponse(rsp)
 }
 
-func (c *Client) CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSchemasResponse, error) {
+func (c *Client) CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
 	rsp, err := c.doCreateSchemas(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -818,7 +816,7 @@ func (c *Client) CreateSchemas(ctx context.Context, body CreateSchemasJSONReques
 }
 
 // ArchiveObjectType request returning *ArchiveObjectTypeResponse
-func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...RequestEditorFn) (*ArchiveObjectTypeResponse, error) {
+func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error) {
 	rsp, err := c.doArchiveObjectType(ctx, objectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -827,7 +825,7 @@ func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, param
 }
 
 // GetObjectType request returning *GetObjectTypeResponse
-func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetObjectTypeResponse, error) {
+func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error) {
 	rsp, err := c.doGetObjectType(ctx, objectType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -836,7 +834,7 @@ func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditor
 }
 
 // UpdateObjectTypeWithBody request with arbitrary body returning *UpdateObjectTypeResponse
-func (c *Client) UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateObjectTypeResponse, error) {
+func (c *Client) UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
 	rsp, err := c.doUpdateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -844,7 +842,7 @@ func (c *Client) UpdateObjectTypeWithBody(ctx context.Context, objectType string
 	return parseUpdateObjectTypeResponse(rsp)
 }
 
-func (c *Client) UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateObjectTypeResponse, error) {
+func (c *Client) UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
 	rsp, err := c.doUpdateObjectType(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -853,7 +851,7 @@ func (c *Client) UpdateObjectType(ctx context.Context, objectType string, body U
 }
 
 // CreateAssociationAssociationsWithBody request with arbitrary body returning *CreateAssociationAssociationsResponse
-func (c *Client) CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
+func (c *Client) CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
 	rsp, err := c.doCreateAssociationAssociationsWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -861,7 +859,7 @@ func (c *Client) CreateAssociationAssociationsWithBody(ctx context.Context, obje
 	return parseCreateAssociationAssociationsResponse(rsp)
 }
 
-func (c *Client) CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
+func (c *Client) CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
 	rsp, err := c.doCreateAssociationAssociations(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -870,7 +868,7 @@ func (c *Client) CreateAssociationAssociations(ctx context.Context, objectType s
 }
 
 // ArchiveAssociationAssociationIdentifier request returning *ArchiveAssociationAssociationIdentifierResponse
-func (c *Client) ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error) {
+func (c *Client) ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error) {
 	rsp, err := c.doArchiveAssociationAssociationIdentifier(ctx, objectType, associationIdentifier, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -879,7 +877,7 @@ func (c *Client) ArchiveAssociationAssociationIdentifier(ctx context.Context, ob
 }
 
 // PurgeObjectType request returning *PurgeObjectTypeResponse
-func (c *Client) PurgeObjectType(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*PurgeObjectTypeResponse, error) {
+func (c *Client) PurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*PurgeObjectTypeResponse, error) {
 	rsp, err := c.doPurgeObjectType(ctx, objectType, reqEditors...)
 	if err != nil {
 		return nil, err

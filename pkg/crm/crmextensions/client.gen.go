@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doGetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetCardsSampleResponseSampleResponseRequest(c.Server)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doGetCardsSampleResponseSampleResponse(ctx context.Context, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllAppRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doGetAllApp(ctx context.Context, appId int32, reqEditors ...Req
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAppRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentTy
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateAppRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSO
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveCardRequest(c.Server, appId, cardId)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetCardRequest(c.Server, appId, cardId)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqE
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateCardRequestWithBody(c.Server, appId, cardId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doUpdateCardWithBody(ctx context.Context, appId int32, cardId s
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateCardRequest(c.Server, appId, cardId, body)
 	if err != nil {
 		return nil, err
@@ -388,7 +386,7 @@ func newUpdateCardRequestWithBody(server string, appId int32, cardId string, con
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -416,7 +414,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -459,24 +457,24 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// GetCardsSampleResponseSampleResponse request
-	GetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCardsSampleResponseSampleResponseResponse, error)
+	GetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...client.RequestEditorFn) (*GetCardsSampleResponseSampleResponseResponse, error)
 
 	// GetAllApp request
-	GetAllApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllAppResponse, error)
+	GetAllApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllAppResponse, error)
 
 	// CreateApp request with any body
-	CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAppResponse, error)
-	CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAppResponse, error)
+	CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error)
+	CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error)
 
 	// ArchiveCard request
-	ArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*ArchiveCardResponse, error)
+	ArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*ArchiveCardResponse, error)
 
 	// GetCard request
-	GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetCardResponse, error)
+	GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*GetCardResponse, error)
 
 	// UpdateCard request with any body
-	UpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCardResponse, error)
-	UpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateCardResponse, error)
+	UpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateCardResponse, error)
+	UpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateCardResponse, error)
 }
 
 type GetCardsSampleResponseSampleResponseResponse struct {
@@ -611,7 +609,7 @@ func (r UpdateCardResponse) StatusCode() int {
 }
 
 // GetCardsSampleResponseSampleResponse request returning *GetCardsSampleResponseSampleResponseResponse
-func (c *Client) GetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCardsSampleResponseSampleResponseResponse, error) {
+func (c *Client) GetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...client.RequestEditorFn) (*GetCardsSampleResponseSampleResponseResponse, error) {
 	rsp, err := c.doGetCardsSampleResponseSampleResponse(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -620,7 +618,7 @@ func (c *Client) GetCardsSampleResponseSampleResponse(ctx context.Context, reqEd
 }
 
 // GetAllApp request returning *GetAllAppResponse
-func (c *Client) GetAllApp(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllAppResponse, error) {
+func (c *Client) GetAllApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllAppResponse, error) {
 	rsp, err := c.doGetAllApp(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -629,7 +627,7 @@ func (c *Client) GetAllApp(ctx context.Context, appId int32, reqEditors ...Reque
 }
 
 // CreateAppWithBody request with arbitrary body returning *CreateAppResponse
-func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAppResponse, error) {
+func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
 	rsp, err := c.doCreateAppWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -637,7 +635,7 @@ func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType
 	return parseCreateAppResponse(rsp)
 }
 
-func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAppResponse, error) {
+func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
 	rsp, err := c.doCreateApp(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -646,7 +644,7 @@ func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONR
 }
 
 // ArchiveCard request returning *ArchiveCardResponse
-func (c *Client) ArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*ArchiveCardResponse, error) {
+func (c *Client) ArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*ArchiveCardResponse, error) {
 	rsp, err := c.doArchiveCard(ctx, appId, cardId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -655,7 +653,7 @@ func (c *Client) ArchiveCard(ctx context.Context, appId int32, cardId string, re
 }
 
 // GetCard request returning *GetCardResponse
-func (c *Client) GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...RequestEditorFn) (*GetCardResponse, error) {
+func (c *Client) GetCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*GetCardResponse, error) {
 	rsp, err := c.doGetCard(ctx, appId, cardId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -664,7 +662,7 @@ func (c *Client) GetCard(ctx context.Context, appId int32, cardId string, reqEdi
 }
 
 // UpdateCardWithBody request with arbitrary body returning *UpdateCardResponse
-func (c *Client) UpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateCardResponse, error) {
+func (c *Client) UpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateCardResponse, error) {
 	rsp, err := c.doUpdateCardWithBody(ctx, appId, cardId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -672,7 +670,7 @@ func (c *Client) UpdateCardWithBody(ctx context.Context, appId int32, cardId str
 	return parseUpdateCardResponse(rsp)
 }
 
-func (c *Client) UpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateCardResponse, error) {
+func (c *Client) UpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateCardResponse, error) {
 	rsp, err := c.doUpdateCard(ctx, appId, cardId, body, reqEditors...)
 	if err != nil {
 		return nil, err

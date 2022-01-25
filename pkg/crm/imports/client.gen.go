@@ -14,10 +14,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -40,14 +38,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -59,7 +57,7 @@ func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...R
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -71,7 +69,7 @@ func (c *Client) doCreateWithBody(ctx context.Context, contentType string, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetImportRequest(c.Server, importId)
 	if err != nil {
 		return nil, err
@@ -83,7 +81,7 @@ func (c *Client) doGetImport(ctx context.Context, importId int64, reqEditors ...
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCancelImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCancelImportRequest(c.Server, importId)
 	if err != nil {
 		return nil, err
@@ -95,7 +93,7 @@ func (c *Client) doCancelImport(ctx context.Context, importId int64, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetErrorsRequest(c.Server, importId, params)
 	if err != nil {
 		return nil, err
@@ -343,7 +341,7 @@ func newGetErrorsRequest(server string, importId int64, params *GetErrorsParams)
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -371,7 +369,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -414,19 +412,19 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// List request
-	List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error)
+	List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error)
 
 	// Create request with any body
-	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error)
+	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error)
 
 	// GetImport request
-	GetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetImportResponse, error)
+	GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error)
 
 	// CancelImport request
-	CancelImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*CancelImportResponse, error)
+	CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error)
 
 	// GetErrors request
-	GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...RequestEditorFn) (*GetErrorsResponse, error)
+	GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*GetErrorsResponse, error)
 }
 
 type ListResponse struct {
@@ -540,7 +538,7 @@ func (r GetErrorsResponse) StatusCode() int {
 }
 
 // List request returning *ListResponse
-func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...RequestEditorFn) (*ListResponse, error) {
+func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error) {
 	rsp, err := c.doList(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -549,7 +547,7 @@ func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...Req
 }
 
 // CreateWithBody request with arbitrary body returning *CreateResponse
-func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateResponse, error) {
+func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error) {
 	rsp, err := c.doCreateWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -558,7 +556,7 @@ func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io
 }
 
 // GetImport request returning *GetImportResponse
-func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*GetImportResponse, error) {
+func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error) {
 	rsp, err := c.doGetImport(ctx, importId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -567,7 +565,7 @@ func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...Re
 }
 
 // CancelImport request returning *CancelImportResponse
-func (c *Client) CancelImport(ctx context.Context, importId int64, reqEditors ...RequestEditorFn) (*CancelImportResponse, error) {
+func (c *Client) CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error) {
 	rsp, err := c.doCancelImport(ctx, importId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -576,7 +574,7 @@ func (c *Client) CancelImport(ctx context.Context, importId int64, reqEditors ..
 }
 
 // GetErrors request returning *GetErrorsResponse
-func (c *Client) GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...RequestEditorFn) (*GetErrorsResponse, error) {
+func (c *Client) GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*GetErrorsResponse, error) {
 	rsp, err := c.doGetErrors(ctx, importId, params, reqEditors...)
 	if err != nil {
 		return nil, err

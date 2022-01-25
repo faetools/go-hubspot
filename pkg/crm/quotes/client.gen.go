@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newListQuotesRequest(c.Server, params)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doListQuotes(ctx context.Context, params *ListQuotesParams, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParam
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, bod
 	return c.Client.Do(req)
 }
 
-func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newDoSearchRequest(c.Server, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, r
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetQuoteRequest(c.Server, quoteId, params)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doGetQuote(ctx context.Context, quoteId string, params *GetQuot
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllToObjectTypeRequest(c.Server, quoteId, toObjectType, params)
 	if err != nil {
 		return nil, err
@@ -498,7 +496,7 @@ func newGetAllToObjectTypeRequest(server string, quoteId string, toObjectType st
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -526,7 +524,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -569,21 +567,21 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ListQuotes request
-	ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*ListQuotesResponse, error)
+	ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...client.RequestEditorFn) (*ListQuotesResponse, error)
 
 	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
 
 	// DoSearch request with any body
-	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
-	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error)
+	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
+	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
 
 	// GetQuote request
-	GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*GetQuoteResponse, error)
+	GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...client.RequestEditorFn) (*GetQuoteResponse, error)
 
 	// GetAllToObjectType request
-	GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error)
+	GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error)
 }
 
 type ListQuotesResponse struct {
@@ -698,7 +696,7 @@ func (r GetAllToObjectTypeResponse) StatusCode() int {
 }
 
 // ListQuotes request returning *ListQuotesResponse
-func (c *Client) ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...RequestEditorFn) (*ListQuotesResponse, error) {
+func (c *Client) ListQuotes(ctx context.Context, params *ListQuotesParams, reqEditors ...client.RequestEditorFn) (*ListQuotesResponse, error) {
 	rsp, err := c.doListQuotes(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -707,7 +705,7 @@ func (c *Client) ListQuotes(ctx context.Context, params *ListQuotesParams, reqEd
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatchWithBody(ctx, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -715,7 +713,7 @@ func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams,
 	return parseReadBatchResponse(rsp)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatch(ctx, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -724,7 +722,7 @@ func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body Re
 }
 
 // DoSearchWithBody request with arbitrary body returning *DoSearchResponse
-func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearchWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -732,7 +730,7 @@ func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body 
 	return parseDoSearchResponse(rsp)
 }
 
-func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...RequestEditorFn) (*DoSearchResponse, error) {
+func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
 	rsp, err := c.doDoSearch(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -741,7 +739,7 @@ func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, req
 }
 
 // GetQuote request returning *GetQuoteResponse
-func (c *Client) GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...RequestEditorFn) (*GetQuoteResponse, error) {
+func (c *Client) GetQuote(ctx context.Context, quoteId string, params *GetQuoteParams, reqEditors ...client.RequestEditorFn) (*GetQuoteResponse, error) {
 	rsp, err := c.doGetQuote(ctx, quoteId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -750,7 +748,7 @@ func (c *Client) GetQuote(ctx context.Context, quoteId string, params *GetQuoteP
 }
 
 // GetAllToObjectType request returning *GetAllToObjectTypeResponse
-func (c *Client) GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
+func (c *Client) GetAllToObjectType(ctx context.Context, quoteId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
 	rsp, err := c.doGetAllToObjectType(ctx, quoteId, toObjectType, params, reqEditors...)
 	if err != nil {
 		return nil, err

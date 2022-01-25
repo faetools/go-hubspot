@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newClearSettingsRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllSettingsRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors .
 	return c.Client.Do(req)
 }
 
-func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newConfigureSettingsRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, c
 	return c.Client.Do(req)
 }
 
-func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newConfigureSettingsRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body Conf
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllSubscriptionsRequest(c.Server, appId)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateSubscriptionsRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateSubscriptionsRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body Cr
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequestWithBody(c.Server, appId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, content
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateBatchRequest(c.Server, appId, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatc
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveSubscriptionRequest(c.Server, appId, subscriptionId)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetSubscriptionRequest(c.Server, appId, subscriptionId)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptio
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateSubscriptionRequestWithBody(c.Server, appId, subscriptionId, contentType, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateSubscriptionRequest(c.Server, appId, subscriptionId, body)
 	if err != nil {
 		return nil, err
@@ -583,7 +581,7 @@ func newUpdateSubscriptionRequestWithBody(server string, appId int32, subscripti
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -611,7 +609,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -654,35 +652,35 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// ClearSettings request
-	ClearSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ClearSettingsResponse, error)
+	ClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ClearSettingsResponse, error)
 
 	// GetAllSettings request
-	GetAllSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllSettingsResponse, error)
+	GetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSettingsResponse, error)
 
 	// ConfigureSettings request with any body
-	ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ConfigureSettingsResponse, error)
-	ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*ConfigureSettingsResponse, error)
+	ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error)
+	ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error)
 
 	// GetAllSubscriptions request
-	GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllSubscriptionsResponse, error)
+	GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSubscriptionsResponse, error)
 
 	// CreateSubscriptions request with any body
-	CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSubscriptionsResponse, error)
-	CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSubscriptionsResponse, error)
+	CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error)
+	CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error)
 
 	// UpdateBatch request with any body
-	UpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
-	UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
 
 	// ArchiveSubscription request
-	ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*ArchiveSubscriptionResponse, error)
+	ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSubscriptionResponse, error)
 
 	// GetSubscription request
-	GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetSubscriptionResponse, error)
+	GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*GetSubscriptionResponse, error)
 
 	// UpdateSubscription request with any body
-	UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSubscriptionResponse, error)
-	UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSubscriptionResponse, error)
+	UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error)
+	UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error)
 }
 
 type ClearSettingsResponse struct {
@@ -883,7 +881,7 @@ func (r UpdateSubscriptionResponse) StatusCode() int {
 }
 
 // ClearSettings request returning *ClearSettingsResponse
-func (c *Client) ClearSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*ClearSettingsResponse, error) {
+func (c *Client) ClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ClearSettingsResponse, error) {
 	rsp, err := c.doClearSettings(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -892,7 +890,7 @@ func (c *Client) ClearSettings(ctx context.Context, appId int32, reqEditors ...R
 }
 
 // GetAllSettings request returning *GetAllSettingsResponse
-func (c *Client) GetAllSettings(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllSettingsResponse, error) {
+func (c *Client) GetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSettingsResponse, error) {
 	rsp, err := c.doGetAllSettings(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -901,7 +899,7 @@ func (c *Client) GetAllSettings(ctx context.Context, appId int32, reqEditors ...
 }
 
 // ConfigureSettingsWithBody request with arbitrary body returning *ConfigureSettingsResponse
-func (c *Client) ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ConfigureSettingsResponse, error) {
+func (c *Client) ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
 	rsp, err := c.doConfigureSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -909,7 +907,7 @@ func (c *Client) ConfigureSettingsWithBody(ctx context.Context, appId int32, con
 	return parseConfigureSettingsResponse(rsp)
 }
 
-func (c *Client) ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*ConfigureSettingsResponse, error) {
+func (c *Client) ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
 	rsp, err := c.doConfigureSettings(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -918,7 +916,7 @@ func (c *Client) ConfigureSettings(ctx context.Context, appId int32, body Config
 }
 
 // GetAllSubscriptions request returning *GetAllSubscriptionsResponse
-func (c *Client) GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...RequestEditorFn) (*GetAllSubscriptionsResponse, error) {
+func (c *Client) GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSubscriptionsResponse, error) {
 	rsp, err := c.doGetAllSubscriptions(ctx, appId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -927,7 +925,7 @@ func (c *Client) GetAllSubscriptions(ctx context.Context, appId int32, reqEditor
 }
 
 // CreateSubscriptionsWithBody request with arbitrary body returning *CreateSubscriptionsResponse
-func (c *Client) CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSubscriptionsResponse, error) {
+func (c *Client) CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
 	rsp, err := c.doCreateSubscriptionsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -935,7 +933,7 @@ func (c *Client) CreateSubscriptionsWithBody(ctx context.Context, appId int32, c
 	return parseCreateSubscriptionsResponse(rsp)
 }
 
-func (c *Client) CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSubscriptionsResponse, error) {
+func (c *Client) CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
 	rsp, err := c.doCreateSubscriptions(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -944,7 +942,7 @@ func (c *Client) CreateSubscriptions(ctx context.Context, appId int32, body Crea
 }
 
 // UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
-func (c *Client) UpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatchWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -952,7 +950,7 @@ func (c *Client) UpdateBatchWithBody(ctx context.Context, appId int32, contentTy
 	return parseUpdateBatchResponse(rsp)
 }
 
-func (c *Client) UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateBatchResponse, error) {
+func (c *Client) UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
 	rsp, err := c.doUpdateBatch(ctx, appId, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -961,7 +959,7 @@ func (c *Client) UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJ
 }
 
 // ArchiveSubscription request returning *ArchiveSubscriptionResponse
-func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*ArchiveSubscriptionResponse, error) {
+func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSubscriptionResponse, error) {
 	rsp, err := c.doArchiveSubscription(ctx, appId, subscriptionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -970,7 +968,7 @@ func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscript
 }
 
 // GetSubscription request returning *GetSubscriptionResponse
-func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...RequestEditorFn) (*GetSubscriptionResponse, error) {
+func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*GetSubscriptionResponse, error) {
 	rsp, err := c.doGetSubscription(ctx, appId, subscriptionId, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -979,7 +977,7 @@ func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionI
 }
 
 // UpdateSubscriptionWithBody request with arbitrary body returning *UpdateSubscriptionResponse
-func (c *Client) UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateSubscriptionResponse, error) {
+func (c *Client) UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
 	rsp, err := c.doUpdateSubscriptionWithBody(ctx, appId, subscriptionId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -987,7 +985,7 @@ func (c *Client) UpdateSubscriptionWithBody(ctx context.Context, appId int32, su
 	return parseUpdateSubscriptionResponse(rsp)
 }
 
-func (c *Client) UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSubscriptionResponse, error) {
+func (c *Client) UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
 	rsp, err := c.doUpdateSubscription(ctx, appId, subscriptionId, body, reqEditors...)
 	if err != nil {
 		return nil, err

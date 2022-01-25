@@ -15,10 +15,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -41,14 +39,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllObjectTypeRequest(c.Server, objectType, params)
 	if err != nil {
 		return nil, err
@@ -60,7 +58,7 @@ func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, para
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -72,7 +70,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateObjectTypeRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -84,7 +82,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -96,7 +94,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -108,7 +106,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body Arc
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -120,7 +118,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, c
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -132,7 +130,7 @@ func (c *Client) doCreateBatch(ctx context.Context, objectType string, body Crea
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -144,7 +142,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, con
 	return c.Client.Do(req)
 }
 
-func (c *Client) doReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newReadBatchRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -156,7 +154,7 @@ func (c *Client) doReadBatch(ctx context.Context, objectType string, body ReadBa
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetAllGroups(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAllGroupsRequest(c.Server, objectType)
 	if err != nil {
 		return nil, err
@@ -168,7 +166,7 @@ func (c *Client) doGetAllGroups(ctx context.Context, objectType string, reqEdito
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateGroupsRequestWithBody(c.Server, objectType, contentType, body)
 	if err != nil {
 		return nil, err
@@ -180,7 +178,7 @@ func (c *Client) doCreateGroupsWithBody(ctx context.Context, objectType string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateGroupsRequest(c.Server, objectType, body)
 	if err != nil {
 		return nil, err
@@ -192,7 +190,7 @@ func (c *Client) doCreateGroups(ctx context.Context, objectType string, body Cre
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveGroupNameRequest(c.Server, objectType, groupName)
 	if err != nil {
 		return nil, err
@@ -204,7 +202,7 @@ func (c *Client) doArchiveGroupName(ctx context.Context, objectType string, grou
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetByNameGroupNameRequest(c.Server, objectType, groupName)
 	if err != nil {
 		return nil, err
@@ -216,7 +214,7 @@ func (c *Client) doGetByNameGroupName(ctx context.Context, objectType string, gr
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateGroupNameRequestWithBody(c.Server, objectType, groupName, contentType, body)
 	if err != nil {
 		return nil, err
@@ -228,7 +226,7 @@ func (c *Client) doUpdateGroupNameWithBody(ctx context.Context, objectType strin
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdateGroupNameRequest(c.Server, objectType, groupName, body)
 	if err != nil {
 		return nil, err
@@ -240,7 +238,7 @@ func (c *Client) doUpdateGroupName(ctx context.Context, objectType string, group
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchivePropertyNameRequest(c.Server, objectType, propertyName)
 	if err != nil {
 		return nil, err
@@ -252,7 +250,7 @@ func (c *Client) doArchivePropertyName(ctx context.Context, objectType string, p
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetByNamePropertyNameRequest(c.Server, objectType, propertyName, params)
 	if err != nil {
 		return nil, err
@@ -264,7 +262,7 @@ func (c *Client) doGetByNamePropertyName(ctx context.Context, objectType string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdatePropertyNameRequestWithBody(c.Server, objectType, propertyName, contentType, body)
 	if err != nil {
 		return nil, err
@@ -276,7 +274,7 @@ func (c *Client) doUpdatePropertyNameWithBody(ctx context.Context, objectType st
 	return c.Client.Do(req)
 }
 
-func (c *Client) doUpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doUpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newUpdatePropertyNameRequest(c.Server, objectType, propertyName, body)
 	if err != nil {
 		return nil, err
@@ -899,7 +897,7 @@ func newUpdatePropertyNameRequestWithBody(server string, objectType string, prop
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -927,7 +925,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -970,50 +968,50 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// GetAllObjectType request
-	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllObjectTypeResponse, error)
+	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error)
 
 	// CreateObjectType request with any body
-	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error)
-	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error)
+	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
+	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
 
 	// ArchiveBatch request with any body
-	ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
-	ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
 
 	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
 
 	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
 
 	// GetAllGroups request
-	GetAllGroups(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetAllGroupsResponse, error)
+	GetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetAllGroupsResponse, error)
 
 	// CreateGroups request with any body
-	CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupsResponse, error)
-	CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupsResponse, error)
+	CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error)
+	CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error)
 
 	// ArchiveGroupName request
-	ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*ArchiveGroupNameResponse, error)
+	ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*ArchiveGroupNameResponse, error)
 
 	// GetByNameGroupName request
-	GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*GetByNameGroupNameResponse, error)
+	GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*GetByNameGroupNameResponse, error)
 
 	// UpdateGroupName request with any body
-	UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupNameResponse, error)
-	UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupNameResponse, error)
+	UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error)
+	UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error)
 
 	// ArchivePropertyName request
-	ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...RequestEditorFn) (*ArchivePropertyNameResponse, error)
+	ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*ArchivePropertyNameResponse, error)
 
 	// GetByNamePropertyName request
-	GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...RequestEditorFn) (*GetByNamePropertyNameResponse, error)
+	GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*GetByNamePropertyNameResponse, error)
 
 	// UpdatePropertyName request with any body
-	UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePropertyNameResponse, error)
-	UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePropertyNameResponse, error)
+	UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error)
+	UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error)
 }
 
 type GetAllObjectTypeResponse struct {
@@ -1302,7 +1300,7 @@ func (r UpdatePropertyNameResponse) StatusCode() int {
 }
 
 // GetAllObjectType request returning *GetAllObjectTypeResponse
-func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...RequestEditorFn) (*GetAllObjectTypeResponse, error) {
+func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error) {
 	rsp, err := c.doGetAllObjectType(ctx, objectType, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1311,7 +1309,7 @@ func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params
 }
 
 // CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
-func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error) {
+func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
 	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1319,7 +1317,7 @@ func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string
 	return parseCreateObjectTypeResponse(rsp)
 }
 
-func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectTypeResponse, error) {
+func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
 	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1328,7 +1326,7 @@ func (c *Client) CreateObjectType(ctx context.Context, objectType string, body C
 }
 
 // ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1336,7 +1334,7 @@ func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, co
 	return parseArchiveBatchResponse(rsp)
 }
 
-func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ArchiveBatchResponse, error) {
+func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
 	rsp, err := c.doArchiveBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1345,7 +1343,7 @@ func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body Archi
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1353,7 +1351,7 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, con
 	return parseCreateBatchResponse(rsp)
 }
 
-func (c *Client) CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateBatchResponse, error) {
+func (c *Client) CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
 	rsp, err := c.doCreateBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1362,7 +1360,7 @@ func (c *Client) CreateBatch(ctx context.Context, objectType string, body Create
 }
 
 // ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1370,7 +1368,7 @@ func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, conte
 	return parseReadBatchResponse(rsp)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...RequestEditorFn) (*ReadBatchResponse, error) {
+func (c *Client) ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
 	rsp, err := c.doReadBatch(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1379,7 +1377,7 @@ func (c *Client) ReadBatch(ctx context.Context, objectType string, body ReadBatc
 }
 
 // GetAllGroups request returning *GetAllGroupsResponse
-func (c *Client) GetAllGroups(ctx context.Context, objectType string, reqEditors ...RequestEditorFn) (*GetAllGroupsResponse, error) {
+func (c *Client) GetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetAllGroupsResponse, error) {
 	rsp, err := c.doGetAllGroups(ctx, objectType, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1388,7 +1386,7 @@ func (c *Client) GetAllGroups(ctx context.Context, objectType string, reqEditors
 }
 
 // CreateGroupsWithBody request with arbitrary body returning *CreateGroupsResponse
-func (c *Client) CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupsResponse, error) {
+func (c *Client) CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
 	rsp, err := c.doCreateGroupsWithBody(ctx, objectType, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1396,7 +1394,7 @@ func (c *Client) CreateGroupsWithBody(ctx context.Context, objectType string, co
 	return parseCreateGroupsResponse(rsp)
 }
 
-func (c *Client) CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupsResponse, error) {
+func (c *Client) CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
 	rsp, err := c.doCreateGroups(ctx, objectType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1405,7 +1403,7 @@ func (c *Client) CreateGroups(ctx context.Context, objectType string, body Creat
 }
 
 // ArchiveGroupName request returning *ArchiveGroupNameResponse
-func (c *Client) ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*ArchiveGroupNameResponse, error) {
+func (c *Client) ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*ArchiveGroupNameResponse, error) {
 	rsp, err := c.doArchiveGroupName(ctx, objectType, groupName, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1414,7 +1412,7 @@ func (c *Client) ArchiveGroupName(ctx context.Context, objectType string, groupN
 }
 
 // GetByNameGroupName request returning *GetByNameGroupNameResponse
-func (c *Client) GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...RequestEditorFn) (*GetByNameGroupNameResponse, error) {
+func (c *Client) GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*GetByNameGroupNameResponse, error) {
 	rsp, err := c.doGetByNameGroupName(ctx, objectType, groupName, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1423,7 +1421,7 @@ func (c *Client) GetByNameGroupName(ctx context.Context, objectType string, grou
 }
 
 // UpdateGroupNameWithBody request with arbitrary body returning *UpdateGroupNameResponse
-func (c *Client) UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupNameResponse, error) {
+func (c *Client) UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
 	rsp, err := c.doUpdateGroupNameWithBody(ctx, objectType, groupName, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1431,7 +1429,7 @@ func (c *Client) UpdateGroupNameWithBody(ctx context.Context, objectType string,
 	return parseUpdateGroupNameResponse(rsp)
 }
 
-func (c *Client) UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupNameResponse, error) {
+func (c *Client) UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
 	rsp, err := c.doUpdateGroupName(ctx, objectType, groupName, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1440,7 +1438,7 @@ func (c *Client) UpdateGroupName(ctx context.Context, objectType string, groupNa
 }
 
 // ArchivePropertyName request returning *ArchivePropertyNameResponse
-func (c *Client) ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...RequestEditorFn) (*ArchivePropertyNameResponse, error) {
+func (c *Client) ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*ArchivePropertyNameResponse, error) {
 	rsp, err := c.doArchivePropertyName(ctx, objectType, propertyName, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1449,7 +1447,7 @@ func (c *Client) ArchivePropertyName(ctx context.Context, objectType string, pro
 }
 
 // GetByNamePropertyName request returning *GetByNamePropertyNameResponse
-func (c *Client) GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...RequestEditorFn) (*GetByNamePropertyNameResponse, error) {
+func (c *Client) GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*GetByNamePropertyNameResponse, error) {
 	rsp, err := c.doGetByNamePropertyName(ctx, objectType, propertyName, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1458,7 +1456,7 @@ func (c *Client) GetByNamePropertyName(ctx context.Context, objectType string, p
 }
 
 // UpdatePropertyNameWithBody request with arbitrary body returning *UpdatePropertyNameResponse
-func (c *Client) UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdatePropertyNameResponse, error) {
+func (c *Client) UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
 	rsp, err := c.doUpdatePropertyNameWithBody(ctx, objectType, propertyName, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1466,7 +1464,7 @@ func (c *Client) UpdatePropertyNameWithBody(ctx context.Context, objectType stri
 	return parseUpdatePropertyNameResponse(rsp)
 }
 
-func (c *Client) UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdatePropertyNameResponse, error) {
+func (c *Client) UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
 	rsp, err := c.doUpdatePropertyName(ctx, objectType, propertyName, body, reqEditors...)
 	if err != nil {
 		return nil, err

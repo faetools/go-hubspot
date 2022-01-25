@@ -14,10 +14,8 @@ import (
 	"strings"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/faetools/client"
 )
-
-// RequestEditorFn  is the function signature for the RequestEditor callback function
-type RequestEditorFn func(ctx context.Context, req *http.Request) error
 
 // Doer performs HTTP requests.
 //
@@ -40,14 +38,14 @@ func WithHTTPClient(doer HttpRequestDoer) ClientOption {
 
 // WithRequestEditorFn allows setting up a callback function, which will be
 // called right before sending the request. This can be used to mutate the request.
-func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
+func WithRequestEditorFn(fn client.RequestEditorFn) ClientOption {
 	return func(c *Client) error {
 		c.RequestEditors = append(c.RequestEditors, fn)
 		return nil
 	}
 }
 
-func (c *Client) doGetAccessToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetAccessToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetAccessTokenRequest(c.Server, token)
 	if err != nil {
 		return nil, err
@@ -59,7 +57,7 @@ func (c *Client) doGetAccessToken(ctx context.Context, token string, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) doArchiveRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doArchiveRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newArchiveRefreshTokenRequest(c.Server, token)
 	if err != nil {
 		return nil, err
@@ -71,7 +69,7 @@ func (c *Client) doArchiveRefreshToken(ctx context.Context, token string, reqEdi
 	return c.Client.Do(req)
 }
 
-func (c *Client) doGetRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doGetRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newGetRefreshTokenRequest(c.Server, token)
 	if err != nil {
 		return nil, err
@@ -83,7 +81,7 @@ func (c *Client) doGetRefreshToken(ctx context.Context, token string, reqEditors
 	return c.Client.Do(req)
 }
 
-func (c *Client) doCreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) doCreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
 	req, err := newCreateTokenRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
@@ -226,7 +224,7 @@ func newCreateTokenRequestWithBody(server string, contentType string, body io.Re
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
 			return err
@@ -254,7 +252,7 @@ type Client struct {
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
-	RequestEditors []RequestEditorFn
+	RequestEditors []client.RequestEditorFn
 }
 
 // NewClient creates a new Client, with reasonable defaults.
@@ -297,16 +295,16 @@ func WithBaseURL(baseURL string) ClientOption {
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
 	// GetAccessToken request
-	GetAccessToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*GetAccessTokenResponse, error)
+	GetAccessToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*GetAccessTokenResponse, error)
 
 	// ArchiveRefreshToken request
-	ArchiveRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*ArchiveRefreshTokenResponse, error)
+	ArchiveRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*ArchiveRefreshTokenResponse, error)
 
 	// GetRefreshToken request
-	GetRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*GetRefreshTokenResponse, error)
+	GetRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*GetRefreshTokenResponse, error)
 
 	// CreateToken request with any body
-	CreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error)
+	CreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokenResponse, error)
 }
 
 type GetAccessTokenResponse struct {
@@ -397,7 +395,7 @@ func (r CreateTokenResponse) StatusCode() int {
 }
 
 // GetAccessToken request returning *GetAccessTokenResponse
-func (c *Client) GetAccessToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*GetAccessTokenResponse, error) {
+func (c *Client) GetAccessToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*GetAccessTokenResponse, error) {
 	rsp, err := c.doGetAccessToken(ctx, token, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -406,7 +404,7 @@ func (c *Client) GetAccessToken(ctx context.Context, token string, reqEditors ..
 }
 
 // ArchiveRefreshToken request returning *ArchiveRefreshTokenResponse
-func (c *Client) ArchiveRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*ArchiveRefreshTokenResponse, error) {
+func (c *Client) ArchiveRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*ArchiveRefreshTokenResponse, error) {
 	rsp, err := c.doArchiveRefreshToken(ctx, token, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -415,7 +413,7 @@ func (c *Client) ArchiveRefreshToken(ctx context.Context, token string, reqEdito
 }
 
 // GetRefreshToken request returning *GetRefreshTokenResponse
-func (c *Client) GetRefreshToken(ctx context.Context, token string, reqEditors ...RequestEditorFn) (*GetRefreshTokenResponse, error) {
+func (c *Client) GetRefreshToken(ctx context.Context, token string, reqEditors ...client.RequestEditorFn) (*GetRefreshTokenResponse, error) {
 	rsp, err := c.doGetRefreshToken(ctx, token, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -424,7 +422,7 @@ func (c *Client) GetRefreshToken(ctx context.Context, token string, reqEditors .
 }
 
 // CreateTokenWithBody request with arbitrary body returning *CreateTokenResponse
-func (c *Client) CreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error) {
+func (c *Client) CreateTokenWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokenResponse, error) {
 	rsp, err := c.doCreateTokenWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
