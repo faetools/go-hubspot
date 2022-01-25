@@ -36,7 +36,7 @@ func (c SimplePublicObjectWithAssociations) LastName() string {
 // Email returns the email addresses of the contact.
 func (c SimplePublicObjectWithAssociations) Emails() []string {
 	primary := c.Properties.AdditionalProperties[keyEmail]
-	if primary != "" {
+	if primary == "" {
 		return nil
 	}
 
