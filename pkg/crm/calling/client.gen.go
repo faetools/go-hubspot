@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -90,24 +89,23 @@ func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateS
 	return c.client.Do(req)
 }
 
+const opPathArchiveSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+
 // newArchiveSettingsRequest generates requests for ArchiveSettings
 func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -115,24 +113,23 @@ func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, er
 	return req, nil
 }
 
+const opPathGetSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+
 // newGetSettingsRequest generates requests for GetSettings
 func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -148,32 +145,31 @@ func newUpdateSettingsRequest(baseURL *url.URL, appId int32, body UpdateSettings
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newUpdateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
 
 // newUpdateSettingsRequestWithBody generates requests for UpdateSettings with any type of body
 func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -186,32 +182,31 @@ func newCreateSettingsRequest(baseURL *url.URL, appId int32, body CreateSettings
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newCreateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
 
 // newCreateSettingsRequestWithBody generates requests for CreateSettings with any type of body
 func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

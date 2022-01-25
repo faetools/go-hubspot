@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -110,37 +109,36 @@ func newArchiveBatchRequest(baseURL *url.URL, fromObjectType string, toObjectTyp
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, fromObjectType, toObjectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathArchiveBatchFormat = "./crm/v3/associations/%s/%s/batch/archive"
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "fromObjectType", runtime.ParamLocationPath, fromObjectType)
+	pathParam0, err := client.GetPathParam("fromObjectType", fromObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/archive", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveBatchFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -153,37 +151,36 @@ func newCreateBatchRequest(baseURL *url.URL, fromObjectType string, toObjectType
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, fromObjectType, toObjectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateBatchFormat = "./crm/v3/associations/%s/%s/batch/create"
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "fromObjectType", runtime.ParamLocationPath, fromObjectType)
+	pathParam0, err := client.GetPathParam("fromObjectType", fromObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/create", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateBatchFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -196,64 +193,62 @@ func newReadBatchRequest(baseURL *url.URL, fromObjectType string, toObjectType s
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newReadBatchRequestWithBody(baseURL, fromObjectType, toObjectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReadBatchFormat = "./crm/v3/associations/%s/%s/batch/read"
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "fromObjectType", runtime.ParamLocationPath, fromObjectType)
+	pathParam0, err := client.GetPathParam("fromObjectType", fromObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/read", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReadBatchFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAllTypesFormat = "./crm/v3/associations/%s/%s/types"
+
 // newGetAllTypesRequest generates requests for GetAllTypes
 func newGetAllTypesRequest(baseURL *url.URL, fromObjectType string, toObjectType string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "fromObjectType", runtime.ParamLocationPath, fromObjectType)
+	pathParam0, err := client.GetPathParam("fromObjectType", fromObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/associations/%s/%s/types", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllTypesFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

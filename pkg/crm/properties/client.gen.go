@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -258,42 +257,33 @@ func (c *Client) doUpdatePropertyName(ctx context.Context, objectType string, pr
 	return c.client.Do(req)
 }
 
+const opPathGetAllObjectTypeFormat = "./crm/v3/properties/%s"
+
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
 func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllObjectTypeFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -309,32 +299,31 @@ func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body Create
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateObjectTypeFormat = "./crm/v3/properties/%s"
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
 func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateObjectTypeFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -347,32 +336,31 @@ func newArchiveBatchRequest(baseURL *url.URL, objectType string, body ArchiveBat
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathArchiveBatchFormat = "./crm/v3/properties/%s/batch/archive"
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/batch/archive", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveBatchFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -385,32 +373,31 @@ func newCreateBatchRequest(baseURL *url.URL, objectType string, body CreateBatch
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateBatchFormat = "./crm/v3/properties/%s/batch/create"
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/batch/create", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateBatchFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -423,54 +410,52 @@ func newReadBatchRequest(baseURL *url.URL, objectType string, body ReadBatchJSON
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newReadBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReadBatchFormat = "./crm/v3/properties/%s/batch/read"
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/batch/read", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReadBatchFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAllGroupsFormat = "./crm/v3/properties/%s/groups"
+
 // newGetAllGroupsRequest generates requests for GetAllGroups
 func newGetAllGroupsRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/groups", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllGroupsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -486,59 +471,57 @@ func newCreateGroupsRequest(baseURL *url.URL, objectType string, body CreateGrou
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateGroupsRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newCreateGroupsRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateGroupsFormat = "./crm/v3/properties/%s/groups"
 
 // newCreateGroupsRequestWithBody generates requests for CreateGroups with any type of body
 func newCreateGroupsRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/groups", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateGroupsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
 
 // newArchiveGroupNameRequest generates requests for ArchiveGroupName
 func newArchiveGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "groupName", runtime.ParamLocationPath, groupName)
+	pathParam1, err := client.GetPathParam("groupName", groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/groups/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveGroupNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -546,29 +529,28 @@ func newArchiveGroupNameRequest(baseURL *url.URL, objectType string, groupName s
 	return req, nil
 }
 
+const opPathGetByNameGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
+
 // newGetByNameGroupNameRequest generates requests for GetByNameGroupName
 func newGetByNameGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "groupName", runtime.ParamLocationPath, groupName)
+	pathParam1, err := client.GetPathParam("groupName", groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/groups/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetByNameGroupNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -584,64 +566,62 @@ func newUpdateGroupNameRequest(baseURL *url.URL, objectType string, groupName st
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateGroupNameRequestWithBody(baseURL, objectType, groupName, "application/json", bodyReader)
+	return newUpdateGroupNameRequestWithBody(baseURL, objectType, groupName, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
 
 // newUpdateGroupNameRequestWithBody generates requests for UpdateGroupName with any type of body
 func newUpdateGroupNameRequestWithBody(baseURL *url.URL, objectType string, groupName string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "groupName", runtime.ParamLocationPath, groupName)
+	pathParam1, err := client.GetPathParam("groupName", groupName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/groups/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateGroupNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchivePropertyNameFormat = "./crm/v3/properties/%s/%s"
 
 // newArchivePropertyNameRequest generates requests for ArchivePropertyName
 func newArchivePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "propertyName", runtime.ParamLocationPath, propertyName)
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchivePropertyNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -649,47 +629,38 @@ func newArchivePropertyNameRequest(baseURL *url.URL, objectType string, property
 	return req, nil
 }
 
+const opPathGetByNamePropertyNameFormat = "./crm/v3/properties/%s/%s"
+
 // newGetByNamePropertyNameRequest generates requests for GetByNamePropertyName
 func newGetByNamePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string, params *GetByNamePropertyNameParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "propertyName", runtime.ParamLocationPath, propertyName)
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetByNamePropertyNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -705,37 +676,36 @@ func newUpdatePropertyNameRequest(baseURL *url.URL, objectType string, propertyN
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdatePropertyNameRequestWithBody(baseURL, objectType, propertyName, "application/json", bodyReader)
+	return newUpdatePropertyNameRequestWithBody(baseURL, objectType, propertyName, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdatePropertyNameFormat = "./crm/v3/properties/%s/%s"
 
 // newUpdatePropertyNameRequestWithBody generates requests for UpdatePropertyName with any type of body
 func newUpdatePropertyNameRequestWithBody(baseURL *url.URL, objectType string, propertyName string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "propertyName", runtime.ParamLocationPath, propertyName)
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/properties/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdatePropertyNameFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

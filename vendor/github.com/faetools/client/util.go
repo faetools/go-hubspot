@@ -11,9 +11,18 @@ import (
 )
 
 const (
-	form        = "form" // parameter style
+	// parameter styles
+	form   = "form"
+	simple = "simple"
+
 	contentType = "Content-Type"
 	json        = "json"
+
+	// MIMEApplicationJSON defines standard type "application/json"
+	MIMEApplicationJSON = "application/json"
+
+	// ContentType is the header key to define the type of content.
+	ContentType = "Content-Type"
 )
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
@@ -89,10 +98,6 @@ func MustParseURL(rawURL string) *url.URL {
 
 // AddQueryParam adds a certain parameter with its value to the query.
 func AddQueryParam(query url.Values, paramName string, value interface{}) error {
-	if value == nil {
-		return nil
-	}
-
 	queryFrag, err := runtime.StyleParamWithLocation(form, true, paramName, runtime.ParamLocationQuery, value)
 	if err != nil {
 		return err
@@ -112,17 +117,7 @@ func AddQueryParam(query url.Values, paramName string, value interface{}) error 
 	return nil
 }
 
-// IsJSONResponseWithCode checks whether the response is a JSON response with the given code.
-func IsJSONResponseWithCode(rsp *http.Response, code int) bool {
-	return rsp.StatusCode == code && strings.Contains(rsp.Header.Get(contentType), json)
+// GetPathParam returns the path parameter value.
+func GetPathParam(paramName string, value interface{}) (string, error) {
+	return runtime.StyleParamWithLocation(simple, false, paramName, runtime.ParamLocationPath, value)
 }
-
-// TODO:
-// - make static paths constant
-// operationPath := fmt.Sprintf("/crm/v3/objects/contacts")
-// 	if operationPath[0] == '/' {
-// 		operationPath = "." + operationPath
-// 	}
-// - replace serverURL.Parse with serverURL.ResolveReference
-// - maybe even keep queryURL on hand
-// - method to http.Method

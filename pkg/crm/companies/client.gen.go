@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -264,81 +263,41 @@ var opPathListCompanies = client.MustParseURL("./crm/v3/objects/companies")
 func newListCompaniesRequest(baseURL *url.URL, params *ListCompaniesParams) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathListCompanies)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Properties != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "properties", runtime.ParamLocationQuery, *params.Properties); err != nil {
+		if err := client.AddQueryParam(q, "properties", *params.Properties); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Associations != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "associations", runtime.ParamLocationQuery, *params.Associations); err != nil {
+		if err := client.AddQueryParam(q, "associations", *params.Associations); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +313,7 @@ func newCreateCompaniesRequest(baseURL *url.URL, body CreateCompaniesJSONRequest
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateCompaniesRequestWithBody(baseURL, "application/json", bodyReader)
+	return newCreateCompaniesRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathCreateCompanies = client.MustParseURL("./crm/v3/objects/companies")
@@ -363,12 +322,12 @@ var opPathCreateCompanies = client.MustParseURL("./crm/v3/objects/companies")
 func newCreateCompaniesRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathCreateCompanies)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -381,7 +340,7 @@ func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) 
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(baseURL, "application/json", bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathArchiveBatch = client.MustParseURL("./crm/v3/objects/companies/batch/archive")
@@ -390,12 +349,12 @@ var opPathArchiveBatch = client.MustParseURL("./crm/v3/objects/companies/batch/a
 func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathArchiveBatch)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -408,7 +367,7 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathCreateBatch = client.MustParseURL("./crm/v3/objects/companies/batch/create")
@@ -417,12 +376,12 @@ var opPathCreateBatch = client.MustParseURL("./crm/v3/objects/companies/batch/cr
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathCreateBatch)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -435,7 +394,7 @@ func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBat
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(baseURL, params, "application/json", bodyReader)
+	return newReadBatchRequestWithBody(baseURL, params, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathReadBatch = client.MustParseURL("./crm/v3/objects/companies/batch/read")
@@ -444,30 +403,22 @@ var opPathReadBatch = client.MustParseURL("./crm/v3/objects/companies/batch/read
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathReadBatch)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -480,7 +431,7 @@ func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateBatchRequestWithBody(baseURL, "application/json", bodyReader)
+	return newUpdateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathUpdateBatch = client.MustParseURL("./crm/v3/objects/companies/batch/update")
@@ -489,12 +440,12 @@ var opPathUpdateBatch = client.MustParseURL("./crm/v3/objects/companies/batch/up
 func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathUpdateBatch)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -507,7 +458,7 @@ func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.R
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoSearchRequestWithBody(baseURL, "application/json", bodyReader)
+	return newDoSearchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathDoSearch = client.MustParseURL("./crm/v3/objects/companies/search")
@@ -516,34 +467,33 @@ var opPathDoSearch = client.MustParseURL("./crm/v3/objects/companies/search")
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathDoSearch)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveCompanyFormat = "./crm/v3/objects/companies/%s"
 
 // newArchiveCompanyRequest generates requests for ArchiveCompany
 func newArchiveCompanyRequest(baseURL *url.URL, companyId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveCompanyFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -551,84 +501,51 @@ func newArchiveCompanyRequest(baseURL *url.URL, companyId string) (*http.Request
 	return req, nil
 }
 
+const opPathGetCompanyFormat = "./crm/v3/objects/companies/%s"
+
 // newGetCompanyRequest generates requests for GetCompany
 func newGetCompanyRequest(baseURL *url.URL, companyId string, params *GetCompanyParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetCompanyFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Properties != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "properties", runtime.ParamLocationQuery, *params.Properties); err != nil {
+		if err := client.AddQueryParam(q, "properties", *params.Properties); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Associations != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "associations", runtime.ParamLocationQuery, *params.Associations); err != nil {
+		if err := client.AddQueryParam(q, "associations", *params.Associations); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.IdProperty != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "idProperty", runtime.ParamLocationQuery, *params.IdProperty); err != nil {
+		if err := client.AddQueryParam(q, "idProperty", *params.IdProperty); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -644,149 +561,122 @@ func newUpdateCompanyRequest(baseURL *url.URL, companyId string, params *UpdateC
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateCompanyRequestWithBody(baseURL, companyId, params, "application/json", bodyReader)
+	return newUpdateCompanyRequestWithBody(baseURL, companyId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateCompanyFormat = "./crm/v3/objects/companies/%s"
 
 // newUpdateCompanyRequestWithBody generates requests for UpdateCompany with any type of body
 func newUpdateCompanyRequestWithBody(baseURL *url.URL, companyId string, params *UpdateCompanyParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateCompanyFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.IdProperty != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "idProperty", runtime.ParamLocationQuery, *params.IdProperty); err != nil {
+		if err := client.AddQueryParam(q, "idProperty", *params.IdProperty); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAllToObjectTypeFormat = "./crm/v3/objects/companies/%s/associations/%s"
+
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
 func newGetAllToObjectTypeRequest(baseURL *url.URL, companyId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s/associations/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllToObjectTypeFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathArchiveAssociationTypeFormat = "./crm/v3/objects/companies/%s/associations/%s/%s/%s"
 
 // newArchiveAssociationTypeRequest generates requests for ArchiveAssociationType
 func newArchiveAssociationTypeRequest(baseURL *url.URL, companyId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam2, err := client.GetPathParam("toObjectId", toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam3, err := client.GetPathParam("associationType", associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveAssociationTypeFormat, pathParam0, pathParam1, pathParam2, pathParam3)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -794,39 +684,38 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, companyId string, toObje
 	return req, nil
 }
 
+const opPathCreateAssociationTypeFormat = "./crm/v3/objects/companies/%s/associations/%s/%s/%s"
+
 // newCreateAssociationTypeRequest generates requests for CreateAssociationType
 func newCreateAssociationTypeRequest(baseURL *url.URL, companyId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "companyId", runtime.ParamLocationPath, companyId)
+	pathParam0, err := client.GetPathParam("companyId", companyId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "toObjectType", runtime.ParamLocationPath, toObjectType)
+	pathParam1, err := client.GetPathParam("toObjectType", toObjectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "toObjectId", runtime.ParamLocationPath, toObjectId)
+	pathParam2, err := client.GetPathParam("toObjectId", toObjectId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "associationType", runtime.ParamLocationPath, associationType)
+	pathParam3, err := client.GetPathParam("associationType", associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/objects/companies/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateAssociationTypeFormat, pathParam0, pathParam1, pathParam2, pathParam3)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

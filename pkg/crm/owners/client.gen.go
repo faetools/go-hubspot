@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -46,67 +45,35 @@ var opPathList = client.MustParseURL("./crm/v3/owners/")
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathList)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Email != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "email", runtime.ParamLocationQuery, *params.Email); err != nil {
+		if err := client.AddQueryParam(q, "email", *params.Email); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -114,56 +81,39 @@ func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error)
 	return req, nil
 }
 
+const opPathGetOwnerFormat = "./crm/v3/owners/%s"
+
 // newGetOwnerRequest generates requests for GetOwner
 func newGetOwnerRequest(baseURL *url.URL, ownerId int32, params *GetOwnerParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "ownerId", runtime.ParamLocationPath, ownerId)
+	pathParam0, err := client.GetPathParam("ownerId", ownerId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetOwnerFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.IdProperty != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "idProperty", runtime.ParamLocationQuery, *params.IdProperty); err != nil {
+		if err := client.AddQueryParam(q, "idProperty", *params.IdProperty); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

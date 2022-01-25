@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -120,7 +119,7 @@ var opPathGetCardsSampleResponseSampleResponse = client.MustParseURL("./crm/v3/e
 func newGetCardsSampleResponseSampleResponseRequest(baseURL *url.URL) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathGetCardsSampleResponseSampleResponse)
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -128,24 +127,23 @@ func newGetCardsSampleResponseSampleResponseRequest(baseURL *url.URL) (*http.Req
 	return req, nil
 }
 
+const opPathGetAllAppFormat = "./crm/v3/extensions/cards/%s"
+
 // newGetAllAppRequest generates requests for GetAllApp
 func newGetAllAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -161,59 +159,57 @@ func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONReques
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newCreateAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateAppFormat = "./crm/v3/extensions/cards/%s"
 
 // newCreateAppRequestWithBody generates requests for CreateApp with any type of body
 func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveCardFormat = "./crm/v3/extensions/cards/%s/%s"
 
 // newArchiveCardRequest generates requests for ArchiveCard
 func newArchiveCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := client.GetPathParam("cardId", cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveCardFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -221,29 +217,28 @@ func newArchiveCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.
 	return req, nil
 }
 
+const opPathGetCardFormat = "./crm/v3/extensions/cards/%s/%s"
+
 // newGetCardRequest generates requests for GetCard
 func newGetCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := client.GetPathParam("cardId", cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetCardFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -259,37 +254,36 @@ func newUpdateCardRequest(baseURL *url.URL, appId int32, cardId string, body Upd
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateCardRequestWithBody(baseURL, appId, cardId, "application/json", bodyReader)
+	return newUpdateCardRequestWithBody(baseURL, appId, cardId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateCardFormat = "./crm/v3/extensions/cards/%s/%s"
 
 // newUpdateCardRequestWithBody generates requests for UpdateCard with any type of body
 func newUpdateCardRequestWithBody(baseURL *url.URL, appId int32, cardId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "cardId", runtime.ParamLocationPath, cardId)
+	pathParam1, err := client.GetPathParam("cardId", cardId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateCardFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

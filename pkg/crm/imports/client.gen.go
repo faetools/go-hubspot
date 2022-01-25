@@ -13,7 +13,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -83,53 +82,29 @@ var opPathList = client.MustParseURL("./crm/v3/imports/")
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathList)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Before != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "before", runtime.ParamLocationQuery, *params.Before); err != nil {
+		if err := client.AddQueryParam(q, "before", *params.Before); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -143,59 +118,57 @@ var opPathCreate = client.MustParseURL("./crm/v3/imports/")
 func newCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathCreate)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathGetImportFormat = "./crm/v3/imports/%s"
 
 // newGetImportRequest generates requests for GetImport
 func newGetImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := client.GetPathParam("importId", importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/imports/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetImportFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathCancelImportFormat = "./crm/v3/imports/%s/cancel"
 
 // newCancelImportRequest generates requests for CancelImport
 func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := client.GetPathParam("importId", importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/imports/%s/cancel", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCancelImportFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -203,56 +176,39 @@ func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, er
 	return req, nil
 }
 
+const opPathGetErrorsFormat = "./crm/v3/imports/%s/errors"
+
 // newGetErrorsRequest generates requests for GetErrors
 func newGetErrorsRequest(baseURL *url.URL, importId int64, params *GetErrorsParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "importId", runtime.ParamLocationPath, importId)
+	pathParam0, err := client.GetPathParam("importId", importId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/imports/%s/errors", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetErrorsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -278,7 +277,7 @@ func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEvent
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newEventsMarketingEventsRequestWithBody(baseURL, "application/json", bodyReader)
+	return newEventsMarketingEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathEventsMarketingEvents = client.MustParseURL("./marketing/v3/marketing-events/events")
@@ -287,12 +286,12 @@ var opPathEventsMarketingEvents = client.MustParseURL("./marketing/v3/marketing-
 func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathEventsMarketingEvents)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -305,7 +304,7 @@ func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) 
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDeleteEventsRequestWithBody(baseURL, "application/json", bodyReader)
+	return newDeleteEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathDeleteEvents = client.MustParseURL("./marketing/v3/marketing-events/events/delete")
@@ -314,12 +313,12 @@ var opPathDeleteEvents = client.MustParseURL("./marketing/v3/marketing-events/ev
 func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathDeleteEvents)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -330,23 +329,15 @@ var opPathSearchEvents = client.MustParseURL("./marketing/v3/marketing-events/ev
 func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathSearchEvents)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "q", runtime.ParamLocationQuery, params.Q); err != nil {
+	if err := client.AddQueryParam(q, "q", params.Q); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +353,7 @@ func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) 
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpsertEventsRequestWithBody(baseURL, "application/json", bodyReader)
+	return newUpsertEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathUpsertEvents = client.MustParseURL("./marketing/v3/marketing-events/events/upsert")
@@ -371,50 +362,41 @@ var opPathUpsertEvents = client.MustParseURL("./marketing/v3/marketing-events/ev
 func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathUpsertEvents)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathDeleteExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
 
 // newDeleteExternalEventRequest generates requests for DeleteExternalEvent
 func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathDeleteExternalEventFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -422,40 +404,31 @@ func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, par
 	return req, nil
 }
 
+const opPathGetExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
+
 // newGetExternalEventRequest generates requests for GetExternalEvent
 func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetExternalEventFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -471,48 +444,39 @@ func newPatchExternalEventRequest(baseURL *url.URL, externalEventId string, para
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPatchExternalEventRequestWithBody(baseURL, externalEventId, params, "application/json", bodyReader)
+	return newPatchExternalEventRequestWithBody(baseURL, externalEventId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathPatchExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
 
 // newPatchExternalEventRequestWithBody generates requests for PatchExternalEvent with any type of body
 func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathPatchExternalEventFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -525,70 +489,60 @@ func newPutExternalEventRequest(baseURL *url.URL, externalEventId string, body P
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPutExternalEventRequestWithBody(baseURL, externalEventId, "application/json", bodyReader)
+	return newPutExternalEventRequestWithBody(baseURL, externalEventId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathPutExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
 
 // newPutExternalEventRequestWithBody generates requests for PutExternalEvent with any type of body
 func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathPutExternalEventFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathCancelExternalEventFormat = "./marketing/v3/marketing-events/events/%s/cancel"
+
 // newCancelExternalEventRequest generates requests for CancelExternalEvent
 func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCancelExternalEventFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -604,53 +558,44 @@ func newEmailUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId stri
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newEmailUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, "application/json", bodyReader)
+	return newEmailUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathEmailUpsertSubscriberStateFormat = "./marketing/v3/marketing-events/events/%s/%s/email-upsert"
 
 // newEmailUpsertSubscriberStateRequestWithBody generates requests for EmailUpsertSubscriberState with any type of body
 func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
+	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathEmailUpsertSubscriberStateFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -663,75 +608,65 @@ func newUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, s
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, "application/json", bodyReader)
+	return newUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpsertSubscriberStateFormat = "./marketing/v3/marketing-events/events/%s/%s/upsert"
 
 // newUpsertSubscriberStateRequestWithBody generates requests for UpsertSubscriberState with any type of body
 func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "externalEventId", runtime.ParamLocationPath, externalEventId)
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "subscriberState", runtime.ParamLocationPath, subscriberState)
+	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpsertSubscriberStateFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "externalAccountId", runtime.ParamLocationQuery, params.ExternalAccountId); err != nil {
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAppSettingsFormat = "./marketing/v3/marketing-events/%s/settings"
+
 // newGetAppSettingsRequest generates requests for GetAppSettings
 func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAppSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -747,32 +682,31 @@ func newPostAppSettingsRequest(baseURL *url.URL, appId int32, body PostAppSettin
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPostAppSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newPostAppSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathPostAppSettingsFormat = "./marketing/v3/marketing-events/%s/settings"
 
 // newPostAppSettingsRequestWithBody generates requests for PostAppSettings with any type of body
 func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathPostAppSettingsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

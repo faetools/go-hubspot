@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -66,24 +65,23 @@ func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJ
 	return c.client.Do(req)
 }
 
+const opPathArchiveAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+
 // newArchiveAppRequest generates requests for ArchiveApp
 func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -91,24 +89,23 @@ func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) 
 	return req, nil
 }
 
+const opPathGetAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+
 // newGetAppRequest generates requests for GetApp
 func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -124,32 +121,31 @@ func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequ
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReplaceAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
 func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReplaceAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

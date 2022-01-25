@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -266,7 +265,7 @@ func newCompleteBatchRequest(baseURL *url.URL, body CompleteBatchJSONRequestBody
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCompleteBatchRequestWithBody(baseURL, "application/json", bodyReader)
+	return newCompleteBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathCompleteBatch = client.MustParseURL("./automation/v4/actions/callbacks/complete")
@@ -275,12 +274,12 @@ var opPathCompleteBatch = client.MustParseURL("./automation/v4/actions/callbacks
 func newCompleteBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathCompleteBatch)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -293,100 +292,74 @@ func newCompleteCallbackRequest(baseURL *url.URL, callbackId string, body Comple
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCompleteCallbackRequestWithBody(baseURL, callbackId, "application/json", bodyReader)
+	return newCompleteCallbackRequestWithBody(baseURL, callbackId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCompleteCallbackFormat = "./automation/v4/actions/callbacks/%s/complete"
 
 // newCompleteCallbackRequestWithBody generates requests for CompleteCallback with any type of body
 func newCompleteCallbackRequestWithBody(baseURL *url.URL, callbackId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "callbackId", runtime.ParamLocationPath, callbackId)
+	pathParam0, err := client.GetPathParam("callbackId", callbackId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/callbacks/%s/complete", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCompleteCallbackFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathListAppFormat = "./automation/v4/actions/%s"
+
 // newListAppRequest generates requests for ListApp
 func newListAppRequest(baseURL *url.URL, appId int32, params *ListAppParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathListAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -402,59 +375,57 @@ func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONReques
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newCreateAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateAppFormat = "./automation/v4/actions/%s"
 
 // newCreateAppRequestWithBody generates requests for CreateApp with any type of body
 func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveDefinitionFormat = "./automation/v4/actions/%s/%s"
 
 // newArchiveDefinitionRequest generates requests for ArchiveDefinition
 func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveDefinitionFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -462,47 +433,38 @@ func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId str
 	return req, nil
 }
 
+const opPathGetDefinitionFormat = "./automation/v4/actions/%s/%s"
+
 // newGetDefinitionRequest generates requests for GetDefinition
 func newGetDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetDefinitionFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -518,355 +480,330 @@ func newUpdateDefinitionRequest(baseURL *url.URL, appId int32, definitionId stri
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateDefinitionRequestWithBody(baseURL, appId, definitionId, "application/json", bodyReader)
+	return newUpdateDefinitionRequestWithBody(baseURL, appId, definitionId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateDefinitionFormat = "./automation/v4/actions/%s/%s"
 
 // newUpdateDefinitionRequestWithBody generates requests for UpdateDefinition with any type of body
 func newUpdateDefinitionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateDefinitionFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathListFunctionsFormat = "./automation/v4/actions/%s/%s/functions"
 
 // newListFunctionsRequest generates requests for ListFunctions
 func newListFunctionsRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathListFunctionsFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathArchiveByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
 
 // newArchiveByFunctionTypeRequest generates requests for ArchiveByFunctionType
 func newArchiveByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathGetByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
 
 // newGetByFunctionTypeRequest generates requests for GetByFunctionType
 func newGetByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathCreateOrReplaceByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
 
 // newCreateOrReplaceByFunctionTypeRequestWithBody generates requests for CreateOrReplaceByFunctionType with any type of body
 func newCreateOrReplaceByFunctionTypeRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateOrReplaceByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
 
 // newArchiveFunctionRequest generates requests for ArchiveFunction
 func newArchiveFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "functionId", runtime.ParamLocationPath, functionId)
+	pathParam3, err := client.GetPathParam("functionId", functionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathGetFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
 
 // newGetFunctionRequest generates requests for GetFunction
 func newGetFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "functionId", runtime.ParamLocationPath, functionId)
+	pathParam3, err := client.GetPathParam("functionId", functionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathCreateOrReplaceFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
 
 // newCreateOrReplaceFunctionRequestWithBody generates requests for CreateOrReplaceFunction with any type of body
 func newCreateOrReplaceFunctionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "functionType", runtime.ParamLocationPath, functionType)
+	pathParam2, err := client.GetPathParam("functionType", functionType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam3, err := runtime.StyleParamWithLocation("simple", false, "functionId", runtime.ParamLocationPath, functionId)
+	pathParam3, err := client.GetPathParam("functionId", functionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateOrReplaceFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathListRevisionsFormat = "./automation/v4/actions/%s/%s/revisions"
+
 // newListRevisionsRequest generates requests for ListRevisions
 func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathListRevisionsFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -874,34 +811,33 @@ func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string,
 	return req, nil
 }
 
+const opPathGetRevisionFormat = "./automation/v4/actions/%s/%s/revisions/%s"
+
 // newGetRevisionRequest generates requests for GetRevision
 func newGetRevisionRequest(baseURL *url.URL, appId int32, definitionId string, revisionId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "definitionId", runtime.ParamLocationPath, definitionId)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "revisionId", runtime.ParamLocationPath, revisionId)
+	pathParam2, err := client.GetPathParam("revisionId", revisionId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetRevisionFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

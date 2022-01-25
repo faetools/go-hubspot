@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -122,7 +121,7 @@ func newSendEmailRequest(baseURL *url.URL, body SendEmailJSONRequestBody) (*http
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newSendEmailRequestWithBody(baseURL, "application/json", bodyReader)
+	return newSendEmailRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathSendEmail = client.MustParseURL("./marketing/v3/transactional/single-email/send")
@@ -131,12 +130,12 @@ var opPathSendEmail = client.MustParseURL("./marketing/v3/transactional/single-e
 func newSendEmailRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathSendEmail)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -147,67 +146,35 @@ var opPathGetTokensPageSmtpTokens = client.MustParseURL("./marketing/v3/transact
 func newGetTokensPageSmtpTokensRequest(baseURL *url.URL, params *GetTokensPageSmtpTokensParams) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathGetTokensPageSmtpTokens)
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.CampaignName != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "campaignName", runtime.ParamLocationQuery, *params.CampaignName); err != nil {
+		if err := client.AddQueryParam(q, "campaignName", *params.CampaignName); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.EmailCampaignId != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "emailCampaignId", runtime.ParamLocationQuery, *params.EmailCampaignId); err != nil {
+		if err := client.AddQueryParam(q, "emailCampaignId", *params.EmailCampaignId); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.After != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "after", runtime.ParamLocationQuery, *params.After); err != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
 	if params.Limit != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +190,7 @@ func newCreateTokenSmtpTokensRequest(baseURL *url.URL, body CreateTokenSmtpToken
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateTokenSmtpTokensRequestWithBody(baseURL, "application/json", bodyReader)
+	return newCreateTokenSmtpTokensRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathCreateTokenSmtpTokens = client.MustParseURL("./marketing/v3/transactional/smtp-tokens")
@@ -232,59 +199,57 @@ var opPathCreateTokenSmtpTokens = client.MustParseURL("./marketing/v3/transactio
 func newCreateTokenSmtpTokensRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathCreateTokenSmtpTokens)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveTokenFormat = "./marketing/v3/transactional/smtp-tokens/%s"
 
 // newArchiveTokenRequest generates requests for ArchiveToken
 func newArchiveTokenRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "tokenId", runtime.ParamLocationPath, tokenId)
+	pathParam0, err := client.GetPathParam("tokenId", tokenId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveTokenFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	return req, nil
 }
+
+const opPathGetTokenByIdFormat = "./marketing/v3/transactional/smtp-tokens/%s"
 
 // newGetTokenByIdRequest generates requests for GetTokenById
 func newGetTokenByIdRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "tokenId", runtime.ParamLocationPath, tokenId)
+	pathParam0, err := client.GetPathParam("tokenId", tokenId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetTokenByIdFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -292,24 +257,23 @@ func newGetTokenByIdRequest(baseURL *url.URL, tokenId string) (*http.Request, er
 	return req, nil
 }
 
+const opPathResetPasswordPasswordResetFormat = "./marketing/v3/transactional/smtp-tokens/%s/password-reset"
+
 // newResetPasswordPasswordResetRequest generates requests for ResetPasswordPasswordReset
 func newResetPasswordPasswordResetRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "tokenId", runtime.ParamLocationPath, tokenId)
+	pathParam0, err := client.GetPathParam("tokenId", tokenId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s/password-reset", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathResetPasswordPasswordResetFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

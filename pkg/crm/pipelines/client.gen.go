@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -234,42 +233,33 @@ func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipeline
 	return c.client.Do(req)
 }
 
+const opPathGetAllObjectTypeFormat = "./crm/v3/pipelines/%s"
+
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
 func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllObjectTypeFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -285,59 +275,57 @@ func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body Create
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateObjectTypeFormat = "./crm/v3/pipelines/%s"
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
 func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateObjectTypeFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchivePipelineFormat = "./crm/v3/pipelines/%s/%s"
 
 // newArchivePipelineRequest generates requests for ArchivePipeline
 func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchivePipelineFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -345,47 +333,38 @@ func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 	return req, nil
 }
 
+const opPathGetPipelineFormat = "./crm/v3/pipelines/%s/%s"
+
 // newGetPipelineRequest generates requests for GetPipeline
 func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetPipelineFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -401,55 +380,46 @@ func newUpdatePipelineRequest(baseURL *url.URL, objectType string, pipelineId st
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdatePipelineRequestWithBody(baseURL, objectType, pipelineId, params, "application/json", bodyReader)
+	return newUpdatePipelineRequestWithBody(baseURL, objectType, pipelineId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdatePipelineFormat = "./crm/v3/pipelines/%s/%s"
 
 // newUpdatePipelineRequestWithBody generates requests for UpdatePipeline with any type of body
 func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdatePipelineFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -462,82 +432,72 @@ func newReplacePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplacePipelineRequestWithBody(baseURL, objectType, pipelineId, "application/json", bodyReader)
+	return newReplacePipelineRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReplacePipelineFormat = "./crm/v3/pipelines/%s/%s"
 
 // newReplacePipelineRequestWithBody generates requests for ReplacePipeline with any type of body
 func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReplacePipelineFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAllStagesFormat = "./crm/v3/pipelines/%s/%s/stages"
+
 // newGetAllStagesRequest generates requests for GetAllStages
 func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetAllStagesParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAllStagesFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -553,69 +513,67 @@ func newCreateStagesRequest(baseURL *url.URL, objectType string, pipelineId stri
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateStagesRequestWithBody(baseURL, objectType, pipelineId, "application/json", bodyReader)
+	return newCreateStagesRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateStagesFormat = "./crm/v3/pipelines/%s/%s/stages"
 
 // newCreateStagesRequestWithBody generates requests for CreateStages with any type of body
 func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateStagesFormat, pathParam0, pathParam1)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
+
+const opPathArchiveStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
 
 // newArchiveStageRequest generates requests for ArchiveStage
 func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := client.GetPathParam("stageId", stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveStageFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -623,52 +581,43 @@ func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 	return req, nil
 }
 
+const opPathGetStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
+
 // newGetStageRequest generates requests for GetStage
 func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := client.GetPathParam("stageId", stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetStageFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -684,60 +633,51 @@ func newUpdateStageRequest(baseURL *url.URL, objectType string, pipelineId strin
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateStageRequestWithBody(baseURL, objectType, pipelineId, stageId, params, "application/json", bodyReader)
+	return newUpdateStageRequestWithBody(baseURL, objectType, pipelineId, stageId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
 
 // newUpdateStageRequestWithBody generates requests for UpdateStage with any type of body
 func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := client.GetPathParam("stageId", stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateStageFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.Archived != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "archived", runtime.ParamLocationQuery, *params.Archived); err != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -750,42 +690,41 @@ func newReplaceStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceStageRequestWithBody(baseURL, objectType, pipelineId, stageId, "application/json", bodyReader)
+	return newReplaceStageRequestWithBody(baseURL, objectType, pipelineId, stageId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReplaceStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
 
 // newReplaceStageRequestWithBody generates requests for ReplaceStage with any type of body
 func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "objectType", runtime.ParamLocationPath, objectType)
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam1, err := runtime.StyleParamWithLocation("simple", false, "pipelineId", runtime.ParamLocationPath, pipelineId)
+	pathParam1, err := client.GetPathParam("pipelineId", pipelineId)
 	if err != nil {
 		return nil, err
 	}
 
-	pathParam2, err := runtime.StyleParamWithLocation("simple", false, "stageId", runtime.ParamLocationPath, stageId)
+	pathParam2, err := client.GetPathParam("stageId", stageId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReplaceStageFormat, pathParam0, pathParam1, pathParam2)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }

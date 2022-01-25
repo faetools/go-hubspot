@@ -14,7 +14,6 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/faetools/client"
 )
 
@@ -446,32 +445,31 @@ func newCreateCustomerRequestRequest(baseURL *url.URL, requestId string, body Cr
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateCustomerRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newCreateCustomerRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateCustomerRequestFormat = "./crm/v3/extensions/accounting/callback/customer-create/%s"
 
 // newCreateCustomerRequestRequestWithBody generates requests for CreateCustomerRequest with any type of body
 func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateCustomerRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -484,32 +482,31 @@ func newDoCustomerSearchRequestRequest(baseURL *url.URL, requestId string, body 
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoCustomerSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newDoCustomerSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathDoCustomerSearchRequestFormat = "./crm/v3/extensions/accounting/callback/customer-search/%s"
 
 // newDoCustomerSearchRequestRequestWithBody generates requests for DoCustomerSearchRequest with any type of body
 func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathDoCustomerSearchRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -522,32 +519,31 @@ func newCreateExchangeRateRequestRequest(baseURL *url.URL, requestId string, bod
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateExchangeRateRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newCreateExchangeRateRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateExchangeRateRequestFormat = "./crm/v3/extensions/accounting/callback/exchange-rate/%s"
 
 // newCreateExchangeRateRequestRequestWithBody generates requests for CreateExchangeRateRequest with any type of body
 func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateExchangeRateRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -560,32 +556,31 @@ func newCreateInvoiceRequestRequest(baseURL *url.URL, requestId string, body Cre
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateInvoiceRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newCreateInvoiceRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateInvoiceRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-create/%s"
 
 // newCreateInvoiceRequestRequestWithBody generates requests for CreateInvoiceRequest with any type of body
 func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateInvoiceRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -598,32 +593,31 @@ func newInvoicePdfRequestRequest(baseURL *url.URL, requestId string, body Invoic
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newInvoicePdfRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newInvoicePdfRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathInvoicePdfRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-pdf/%s"
 
 // newInvoicePdfRequestRequestWithBody generates requests for InvoicePdfRequest with any type of body
 func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathInvoicePdfRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -636,32 +630,31 @@ func newDoInvoiceSearchRequestRequest(baseURL *url.URL, requestId string, body D
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoInvoiceSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newDoInvoiceSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathDoInvoiceSearchRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-search/%s"
 
 // newDoInvoiceSearchRequestRequestWithBody generates requests for DoInvoiceSearchRequest with any type of body
 func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathDoInvoiceSearchRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -674,32 +667,31 @@ func newGetRequestRequest(baseURL *url.URL, requestId string, body GetRequestJSO
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGetRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newGetRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathGetRequestFormat = "./crm/v3/extensions/accounting/callback/invoices/%s"
 
 // newGetRequestRequestWithBody generates requests for GetRequest with any type of body
 func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -712,32 +704,31 @@ func newDoProductSearchRequestRequest(baseURL *url.URL, requestId string, body D
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoProductSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newDoProductSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathDoProductSearchRequestFormat = "./crm/v3/extensions/accounting/callback/product-search/%s"
 
 // newDoProductSearchRequestRequestWithBody generates requests for DoProductSearchRequest with any type of body
 func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathDoProductSearchRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -750,32 +741,31 @@ func newDoTaxSearchRequestRequest(baseURL *url.URL, requestId string, body DoTax
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoTaxSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newDoTaxSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathDoTaxSearchRequestFormat = "./crm/v3/extensions/accounting/callback/tax-search/%s"
 
 // newDoTaxSearchRequestRequestWithBody generates requests for DoTaxSearchRequest with any type of body
 func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathDoTaxSearchRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -788,70 +778,60 @@ func newCreateTermRequestRequest(baseURL *url.URL, requestId string, body Create
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateTermRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
+	return newCreateTermRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateTermRequestFormat = "./crm/v3/extensions/accounting/callback/terms/%s"
 
 // newCreateTermRequestRequestWithBody generates requests for CreateTermRequest with any type of body
 func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "requestId", runtime.ParamLocationPath, requestId)
+	pathParam0, err := client.GetPathParam("requestId", requestId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateTermRequestFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetInvoiceFormat = "./crm/v3/extensions/accounting/invoice/%s"
+
 // newGetInvoiceRequest generates requests for GetInvoice
 func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetInvoiceFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "accountId", runtime.ParamLocationQuery, params.AccountId); err != nil {
+	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -867,48 +847,39 @@ func newUpdateInvoiceRequest(baseURL *url.URL, invoiceId string, params *UpdateI
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateInvoiceRequestWithBody(baseURL, invoiceId, params, "application/json", bodyReader)
+	return newUpdateInvoiceRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathUpdateInvoiceFormat = "./crm/v3/extensions/accounting/invoice/%s"
 
 // newUpdateInvoiceRequestWithBody generates requests for UpdateInvoice with any type of body
 func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathUpdateInvoiceFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
-	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "accountId", runtime.ParamLocationQuery, params.AccountId); err != nil {
+	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
 		return nil, err
-	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-		return nil, err
-	} else {
-		for k, v := range parsed {
-			for _, v2 := range v {
-				queryValues.Add(k, v2)
-			}
-		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -921,72 +892,62 @@ func newCreatePaymentRequest(baseURL *url.URL, invoiceId string, params *CreateP
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreatePaymentRequestWithBody(baseURL, invoiceId, params, "application/json", bodyReader)
+	return newCreatePaymentRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreatePaymentFormat = "./crm/v3/extensions/accounting/invoice/%s/payment"
 
 // newCreatePaymentRequestWithBody generates requests for CreatePayment with any type of body
 func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "invoiceId", runtime.ParamLocationPath, invoiceId)
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreatePaymentFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	queryValues := queryURL.Query()
+	q := queryURL.Query()
 
 	if params.AccountId != nil {
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "accountId", runtime.ParamLocationQuery, *params.AccountId); err != nil {
+		if err := client.AddQueryParam(q, "accountId", *params.AccountId); err != nil {
 			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
 		}
 	}
 
-	queryURL.RawQuery = queryValues.Encode()
+	queryURL.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathGetAppFormat = "./crm/v3/extensions/accounting/settings/%s"
+
 // newGetAppRequest generates requests for GetApp
 func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathGetAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1002,32 +963,31 @@ func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequ
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathReplaceAppFormat = "./crm/v3/extensions/accounting/settings/%s"
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
 func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathReplaceAppFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -1040,32 +1000,31 @@ func newCreateContactContactsRequest(baseURL *url.URL, appId int32, body CreateC
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateContactContactsRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newCreateContactContactsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateContactContactsFormat = "./crm/v3/extensions/accounting/sync/%s/contacts"
 
 // newCreateContactContactsRequestWithBody generates requests for CreateContactContacts with any type of body
 func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateContactContactsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -1078,32 +1037,31 @@ func newCreateProductProductsRequest(baseURL *url.URL, appId int32, body CreateP
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateProductProductsRequestWithBody(baseURL, appId, "application/json", bodyReader)
+	return newCreateProductProductsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
+
+const opPathCreateProductProductsFormat = "./crm/v3/extensions/accounting/sync/%s/products"
 
 // newCreateProductProductsRequestWithBody generates requests for CreateProductProducts with any type of body
 func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "appId", runtime.ParamLocationPath, appId)
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathCreateProductProductsFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
@@ -1116,7 +1074,7 @@ func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSO
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceUserAccountsRequestWithBody(baseURL, "application/json", bodyReader)
+	return newReplaceUserAccountsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathReplaceUserAccounts = client.MustParseURL("./crm/v3/extensions/accounting/user-accounts")
@@ -1125,34 +1083,33 @@ var opPathReplaceUserAccounts = client.MustParseURL("./crm/v3/extensions/account
 func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathReplaceUserAccounts)
 
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
 
+const opPathArchiveAccountFormat = "./crm/v3/extensions/accounting/user-accounts/%s"
+
 // newArchiveAccountRequest generates requests for ArchiveAccount
 func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request, error) {
-	pathParam0, err := runtime.StyleParamWithLocation("simple", false, "accountId", runtime.ParamLocationPath, accountId)
+	pathParam0, err := client.GetPathParam("accountId", accountId)
 	if err != nil {
 		return nil, err
 	}
 
-	opPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
-	if opPath[0] == '/' {
-		opPath = "." + opPath
-	}
+	opPath := fmt.Sprintf(opPathArchiveAccountFormat, pathParam0)
 
 	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}

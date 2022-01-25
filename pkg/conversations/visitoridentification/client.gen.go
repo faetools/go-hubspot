@@ -48,7 +48,7 @@ func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSO
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGenerateTokenCreateRequestWithBody(baseURL, "application/json", bodyReader)
+	return newGenerateTokenCreateRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
 var opPathGenerateTokenCreate = client.MustParseURL("./conversations/v3/visitor-identification/tokens/create")
@@ -57,12 +57,12 @@ var opPathGenerateTokenCreate = client.MustParseURL("./conversations/v3/visitor-
 func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	queryURL := baseURL.ResolveReference(opPathGenerateTokenCreate)
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Add(client.ContentType, contentType)
 
 	return req, nil
 }
