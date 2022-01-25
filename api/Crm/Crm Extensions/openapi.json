@@ -560,10 +560,10 @@
         "properties": {
           "type": {
             "type": "string",
+            "default": "ACTION_HOOK",
             "enum": [
               "ACTION_HOOK"
-            ],
-            "default": "ACTION_HOOK"
+            ]
           },
           "confirmation": {
             "$ref": "#/components/schemas/ActionConfirmationBody"
@@ -1049,10 +1049,10 @@
         "properties": {
           "type": {
             "type": "string",
+            "default": "IFRAME",
             "enum": [
               "IFRAME"
-            ],
-            "default": "IFRAME"
+            ]
           },
           "width": {
             "type": "integer",

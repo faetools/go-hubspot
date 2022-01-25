@@ -131,11 +131,11 @@
             "explode": true,
             "schema": {
               "type": "string",
+              "default": "id",
               "enum": [
                 "id",
                 "userId"
-              ],
-              "default": "id"
+              ]
             }
           },
           {

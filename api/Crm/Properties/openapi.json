@@ -2271,12 +2271,12 @@
             "authorizationUrl": "https://app.hubspot.com/oauth/authorize",
             "tokenUrl": "https://api.hubapi.com/oauth/v1/token",
             "scopes": {
-              "e-commerce": "e-commerce",
-              "contacts": "Read from and write to my Contacts",
               "media_bridge.read": "Read media and media events",
-              "tickets": "Read and write tickets",
+              "contacts": "Read from and write to my Contacts",
+              "e-commerce": "e-commerce",
+              "timeline": "Create timeline events",
               "crm.schemas.custom.read": "View custom object definitions",
-              "timeline": "Create timeline events"
+              "tickets": "Read and write tickets"
             }
           }
         }
@@ -2293,18 +2293,18 @@
             "authorizationUrl": "https://app.hubspot.com/oauth/authorize",
             "tokenUrl": "https://api.hubapi.com/oauth/v1/token",
             "scopes": {
-              "crm.objects.companies.read": " ",
               "crm.objects.deals.read": " ",
-              "crm.objects.companies.write": " ",
-              "crm.objects.contacts.write": " ",
-              "crm.schemas.deals.read": " ",
-              "crm.objects.contacts.read": " ",
-              "crm.objects.deals.write": " ",
-              "crm.schemas.contacts.read": " ",
+              "crm.objects.companies.read": " ",
               "crm.schemas.companies.read": " ",
+              "crm.schemas.contacts.read": " ",
+              "crm.objects.deals.write": " ",
+              "crm.objects.contacts.read": " ",
+              "crm.schemas.deals.read": " ",
+              "crm.objects.contacts.write": " ",
+              "crm.objects.companies.write": " ",
               "crm.schemas.contacts.write": " ",
-              "crm.schemas.deals.write": " ",
-              "crm.schemas.companies.write": " "
+              "crm.schemas.companies.write": " ",
+              "crm.schemas.deals.write": " "
             }
           }
         }

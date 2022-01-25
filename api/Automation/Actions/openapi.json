@@ -1987,10 +1987,10 @@
         "properties": {
           "dependencyType": {
             "type": "string",
+            "default": "CONDITIONAL_SINGLE_FIELD",
             "enum": [
               "CONDITIONAL_SINGLE_FIELD"
-            ],
-            "default": "CONDITIONAL_SINGLE_FIELD"
+            ]
           },
           "dependentFieldNames": {
             "type": "array",
@@ -2569,10 +2569,10 @@
         "properties": {
           "dependencyType": {
             "type": "string",
+            "default": "SINGLE_FIELD",
             "enum": [
               "SINGLE_FIELD"
-            ],
-            "default": "SINGLE_FIELD"
+            ]
           },
           "dependentFieldNames": {
             "type": "array",
