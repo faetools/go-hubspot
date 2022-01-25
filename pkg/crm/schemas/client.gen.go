@@ -18,19 +18,12 @@ import (
 	"github.com/faetools/client"
 )
 
-// Doer performs HTTP requests.
-//
-// The standard http.Client implements this interface.
-type HttpRequestDoer interface {
-	Do(req *http.Request) (*http.Response, error)
-}
-
 // ClientOption allows setting custom parameters during construction.
 type ClientOption func(*Client) error
 
 // WithHTTPClient allows overriding the default Doer, which is
 // automatically created using http.Client. This is useful for tests.
-func WithHTTPClient(doer HttpRequestDoer) ClientOption {
+func WithHTTPClient(doer client.HTTPRequestDoer) ClientOption {
 	return func(c *Client) error {
 		c.Client = doer
 		return nil
@@ -542,7 +535,7 @@ type Client struct {
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
-	Client HttpRequestDoer
+	Client client.HTTPRequestDoer
 
 	// A list of callbacks for modifying requests which are generated before sending over
 	// the network.
