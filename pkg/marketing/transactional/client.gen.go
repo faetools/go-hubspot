@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doSendEmailWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newSendEmailRequestWithBody(c.Server, contentType, body)
+	req, err := newSendEmailRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doSendEmailWithBody(ctx context.Context, contentType string, bo
 }
 
 func (c *Client) doSendEmail(ctx context.Context, body SendEmailJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newSendEmailRequest(c.Server, body)
+	req, err := newSendEmailRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doSendEmail(ctx context.Context, body SendEmailJSONRequestBody,
 }
 
 func (c *Client) doGetTokensPageSmtpTokens(ctx context.Context, params *GetTokensPageSmtpTokensParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetTokensPageSmtpTokensRequest(c.Server, params)
+	req, err := newGetTokensPageSmtpTokensRequest(c.baseURL, params)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doGetTokensPageSmtpTokens(ctx context.Context, params *GetToken
 }
 
 func (c *Client) doCreateTokenSmtpTokensWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokenSmtpTokensRequestWithBody(c.Server, contentType, body)
+	req, err := newCreateTokenSmtpTokensRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doCreateTokenSmtpTokensWithBody(ctx context.Context, contentTyp
 }
 
 func (c *Client) doCreateTokenSmtpTokens(ctx context.Context, body CreateTokenSmtpTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokenSmtpTokensRequest(c.Server, body)
+	req, err := newCreateTokenSmtpTokensRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doCreateTokenSmtpTokens(ctx context.Context, body CreateTokenSm
 }
 
 func (c *Client) doArchiveToken(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveTokenRequest(c.Server, tokenId)
+	req, err := newArchiveTokenRequest(c.baseURL, tokenId)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doArchiveToken(ctx context.Context, tokenId string, reqEditors 
 }
 
 func (c *Client) doGetTokenById(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetTokenByIdRequest(c.Server, tokenId)
+	req, err := newGetTokenByIdRequest(c.baseURL, tokenId)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doGetTokenById(ctx context.Context, tokenId string, reqEditors 
 }
 
 func (c *Client) doResetPasswordPasswordReset(ctx context.Context, tokenId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newResetPasswordPasswordResetRequest(c.Server, tokenId)
+	req, err := newResetPasswordPasswordResetRequest(c.baseURL, tokenId)
 	if err != nil {
 		return nil, err
 	}
@@ -118,31 +115,26 @@ func (c *Client) doResetPasswordPasswordReset(ctx context.Context, tokenId strin
 }
 
 // newSendEmailRequest calls the generic SendEmail builder with application/json body.
-func newSendEmailRequest(server string, body SendEmailJSONRequestBody) (*http.Request, error) {
+func newSendEmailRequest(baseURL *url.URL, body SendEmailJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newSendEmailRequestWithBody(server, "application/json", bodyReader)
+	return newSendEmailRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newSendEmailRequestWithBody generates requests for SendEmail with any type of body
-func newSendEmailRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newSendEmailRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/single-email/send")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -158,20 +150,15 @@ func newSendEmailRequestWithBody(server string, contentType string, body io.Read
 }
 
 // newGetTokensPageSmtpTokensRequest generates requests for GetTokensPageSmtpTokens
-func newGetTokensPageSmtpTokensRequest(server string, params *GetTokensPageSmtpTokensParams) (*http.Request, error) {
+func newGetTokensPageSmtpTokensRequest(baseURL *url.URL, params *GetTokensPageSmtpTokensParams) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -245,31 +232,26 @@ func newGetTokensPageSmtpTokensRequest(server string, params *GetTokensPageSmtpT
 }
 
 // newCreateTokenSmtpTokensRequest calls the generic CreateTokenSmtpTokens builder with application/json body.
-func newCreateTokenSmtpTokensRequest(server string, body CreateTokenSmtpTokensJSONRequestBody) (*http.Request, error) {
+func newCreateTokenSmtpTokensRequest(baseURL *url.URL, body CreateTokenSmtpTokensJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateTokenSmtpTokensRequestWithBody(server, "application/json", bodyReader)
+	return newCreateTokenSmtpTokensRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newCreateTokenSmtpTokensRequestWithBody generates requests for CreateTokenSmtpTokens with any type of body
-func newCreateTokenSmtpTokensRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateTokenSmtpTokensRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +267,7 @@ func newCreateTokenSmtpTokensRequestWithBody(server string, contentType string, 
 }
 
 // newArchiveTokenRequest generates requests for ArchiveToken
-func newArchiveTokenRequest(server string, tokenId string) (*http.Request, error) {
+func newArchiveTokenRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -295,17 +277,12 @@ func newArchiveTokenRequest(server string, tokenId string) (*http.Request, error
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +296,7 @@ func newArchiveTokenRequest(server string, tokenId string) (*http.Request, error
 }
 
 // newGetTokenByIdRequest generates requests for GetTokenById
-func newGetTokenByIdRequest(server string, tokenId string) (*http.Request, error) {
+func newGetTokenByIdRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -329,17 +306,12 @@ func newGetTokenByIdRequest(server string, tokenId string) (*http.Request, error
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +325,7 @@ func newGetTokenByIdRequest(server string, tokenId string) (*http.Request, error
 }
 
 // newResetPasswordPasswordResetRequest generates requests for ResetPasswordPasswordReset
-func newResetPasswordPasswordResetRequest(server string, tokenId string) (*http.Request, error) {
+func newResetPasswordPasswordResetRequest(baseURL *url.URL, tokenId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -363,17 +335,12 @@ func newResetPasswordPasswordResetRequest(server string, tokenId string) (*http.
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s/password-reset", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -409,7 +376,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -430,41 +397,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

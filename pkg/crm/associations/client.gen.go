@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
+	req, err := newArchiveBatchRequestWithBody(c.baseURL, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, fromObjectType stri
 }
 
 func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequest(c.Server, fromObjectType, toObjectType, body)
+	req, err := newArchiveBatchRequest(c.baseURL, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, fromObjectType string, toOb
 }
 
 func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
+	req, err := newCreateBatchRequestWithBody(c.baseURL, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, fromObjectType strin
 }
 
 func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.Server, fromObjectType, toObjectType, body)
+	req, err := newCreateBatchRequest(c.baseURL, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doCreateBatch(ctx context.Context, fromObjectType string, toObj
 }
 
 func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string, toObjectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequestWithBody(c.Server, fromObjectType, toObjectType, contentType, body)
+	req, err := newReadBatchRequestWithBody(c.baseURL, fromObjectType, toObjectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, fromObjectType string,
 }
 
 func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequest(c.Server, fromObjectType, toObjectType, body)
+	req, err := newReadBatchRequest(c.baseURL, fromObjectType, toObjectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doReadBatch(ctx context.Context, fromObjectType string, toObjec
 }
 
 func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObjectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllTypesRequest(c.Server, fromObjectType, toObjectType)
+	req, err := newGetAllTypesRequest(c.baseURL, fromObjectType, toObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -106,18 +103,18 @@ func (c *Client) doGetAllTypes(ctx context.Context, fromObjectType string, toObj
 }
 
 // newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
-func newArchiveBatchRequest(server string, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
+func newArchiveBatchRequest(baseURL *url.URL, fromObjectType string, toObjectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(server, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
 }
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
-func newArchiveBatchRequestWithBody(server string, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newArchiveBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -134,17 +131,12 @@ func newArchiveBatchRequestWithBody(server string, fromObjectType string, toObje
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/archive", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -160,18 +152,18 @@ func newArchiveBatchRequestWithBody(server string, fromObjectType string, toObje
 }
 
 // newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(server string, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
+func newCreateBatchRequest(baseURL *url.URL, fromObjectType string, toObjectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(server, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
 }
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
-func newCreateBatchRequestWithBody(server string, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -188,17 +180,12 @@ func newCreateBatchRequestWithBody(server string, fromObjectType string, toObjec
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/create", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -214,18 +201,18 @@ func newCreateBatchRequestWithBody(server string, fromObjectType string, toObjec
 }
 
 // newReadBatchRequest calls the generic ReadBatch builder with application/json body.
-func newReadBatchRequest(server string, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody) (*http.Request, error) {
+func newReadBatchRequest(baseURL *url.URL, fromObjectType string, toObjectType string, body ReadBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(server, fromObjectType, toObjectType, "application/json", bodyReader)
+	return newReadBatchRequestWithBody(baseURL, fromObjectType, toObjectType, "application/json", bodyReader)
 }
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
-func newReadBatchRequestWithBody(server string, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newReadBatchRequestWithBody(baseURL *url.URL, fromObjectType string, toObjectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -242,17 +229,12 @@ func newReadBatchRequestWithBody(server string, fromObjectType string, toObjectT
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/associations/%s/%s/batch/read", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +250,7 @@ func newReadBatchRequestWithBody(server string, fromObjectType string, toObjectT
 }
 
 // newGetAllTypesRequest generates requests for GetAllTypes
-func newGetAllTypesRequest(server string, fromObjectType string, toObjectType string) (*http.Request, error) {
+func newGetAllTypesRequest(baseURL *url.URL, fromObjectType string, toObjectType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -285,17 +267,12 @@ func newGetAllTypesRequest(server string, fromObjectType string, toObjectType st
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/associations/%s/%s/types", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -331,7 +308,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -352,41 +329,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

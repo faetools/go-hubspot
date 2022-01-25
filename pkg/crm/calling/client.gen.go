@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveSettingsRequest(c.Server, appId)
+	req, err := newArchiveSettingsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doArchiveSettings(ctx context.Context, appId int32, reqEditors 
 }
 
 func (c *Client) doGetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetSettingsRequest(c.Server, appId)
+	req, err := newGetSettingsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doGetSettings(ctx context.Context, appId int32, reqEditors ...c
 }
 
 func (c *Client) doUpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSettingsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newUpdateSettingsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doUpdateSettingsWithBody(ctx context.Context, appId int32, cont
 }
 
 func (c *Client) doUpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSettingsRequest(c.Server, appId, body)
+	req, err := newUpdateSettingsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doUpdateSettings(ctx context.Context, appId int32, body UpdateS
 }
 
 func (c *Client) doCreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSettingsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateSettingsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doCreateSettingsWithBody(ctx context.Context, appId int32, cont
 }
 
 func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSettingsRequest(c.Server, appId, body)
+	req, err := newCreateSettingsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateS
 }
 
 // newArchiveSettingsRequest generates requests for ArchiveSettings
-func newArchiveSettingsRequest(server string, appId int32) (*http.Request, error) {
+func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -104,17 +101,12 @@ func newArchiveSettingsRequest(server string, appId int32) (*http.Request, error
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +120,7 @@ func newArchiveSettingsRequest(server string, appId int32) (*http.Request, error
 }
 
 // newGetSettingsRequest generates requests for GetSettings
-func newGetSettingsRequest(server string, appId int32) (*http.Request, error) {
+func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -138,17 +130,12 @@ func newGetSettingsRequest(server string, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -162,18 +149,18 @@ func newGetSettingsRequest(server string, appId int32) (*http.Request, error) {
 }
 
 // newUpdateSettingsRequest calls the generic UpdateSettings builder with application/json body.
-func newUpdateSettingsRequest(server string, appId int32, body UpdateSettingsJSONRequestBody) (*http.Request, error) {
+func newUpdateSettingsRequest(baseURL *url.URL, appId int32, body UpdateSettingsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateSettingsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newUpdateSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newUpdateSettingsRequestWithBody generates requests for UpdateSettings with any type of body
-func newUpdateSettingsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -183,17 +170,12 @@ func newUpdateSettingsRequestWithBody(server string, appId int32, contentType st
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -209,18 +191,18 @@ func newUpdateSettingsRequestWithBody(server string, appId int32, contentType st
 }
 
 // newCreateSettingsRequest calls the generic CreateSettings builder with application/json body.
-func newCreateSettingsRequest(server string, appId int32, body CreateSettingsJSONRequestBody) (*http.Request, error) {
+func newCreateSettingsRequest(baseURL *url.URL, appId int32, body CreateSettingsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateSettingsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateSettingsRequestWithBody generates requests for CreateSettings with any type of body
-func newCreateSettingsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -230,17 +212,12 @@ func newCreateSettingsRequestWithBody(server string, appId int32, contentType st
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +255,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -299,41 +276,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

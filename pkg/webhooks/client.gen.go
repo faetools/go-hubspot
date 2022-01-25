@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newClearSettingsRequest(c.Server, appId)
+	req, err := newClearSettingsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ..
 }
 
 func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSettingsRequest(c.Server, appId)
+	req, err := newGetAllSettingsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors .
 }
 
 func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newConfigureSettingsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newConfigureSettingsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, c
 }
 
 func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newConfigureSettingsRequest(c.Server, appId, body)
+	req, err := newConfigureSettingsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body Conf
 }
 
 func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSubscriptionsRequest(c.Server, appId)
+	req, err := newGetAllSubscriptionsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEdit
 }
 
 func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSubscriptionsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateSubscriptionsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32,
 }
 
 func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSubscriptionsRequest(c.Server, appId, body)
+	req, err := newCreateSubscriptionsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body Cr
 }
 
 func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newUpdateBatchRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, content
 }
 
 func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequest(c.Server, appId, body)
+	req, err := newUpdateBatchRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatc
 }
 
 func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveSubscriptionRequest(c.Server, appId, subscriptionId)
+	req, err := newArchiveSubscriptionRequest(c.baseURL, appId, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscri
 }
 
 func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetSubscriptionRequest(c.Server, appId, subscriptionId)
+	req, err := newGetSubscriptionRequest(c.baseURL, appId, subscriptionId)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptio
 }
 
 func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSubscriptionRequestWithBody(c.Server, appId, subscriptionId, contentType, body)
+	req, err := newUpdateSubscriptionRequestWithBody(c.baseURL, appId, subscriptionId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, 
 }
 
 func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSubscriptionRequest(c.Server, appId, subscriptionId, body)
+	req, err := newUpdateSubscriptionRequest(c.baseURL, appId, subscriptionId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscrip
 }
 
 // newClearSettingsRequest generates requests for ClearSettings
-func newClearSettingsRequest(server string, appId int32) (*http.Request, error) {
+func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -188,17 +185,12 @@ func newClearSettingsRequest(server string, appId int32) (*http.Request, error) 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +204,7 @@ func newClearSettingsRequest(server string, appId int32) (*http.Request, error) 
 }
 
 // newGetAllSettingsRequest generates requests for GetAllSettings
-func newGetAllSettingsRequest(server string, appId int32) (*http.Request, error) {
+func newGetAllSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -222,17 +214,12 @@ func newGetAllSettingsRequest(server string, appId int32) (*http.Request, error)
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -246,18 +233,18 @@ func newGetAllSettingsRequest(server string, appId int32) (*http.Request, error)
 }
 
 // newConfigureSettingsRequest calls the generic ConfigureSettings builder with application/json body.
-func newConfigureSettingsRequest(server string, appId int32, body ConfigureSettingsJSONRequestBody) (*http.Request, error) {
+func newConfigureSettingsRequest(baseURL *url.URL, appId int32, body ConfigureSettingsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newConfigureSettingsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newConfigureSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newConfigureSettingsRequestWithBody generates requests for ConfigureSettings with any type of body
-func newConfigureSettingsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -267,17 +254,12 @@ func newConfigureSettingsRequestWithBody(server string, appId int32, contentType
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +275,7 @@ func newConfigureSettingsRequestWithBody(server string, appId int32, contentType
 }
 
 // newGetAllSubscriptionsRequest generates requests for GetAllSubscriptions
-func newGetAllSubscriptionsRequest(server string, appId int32) (*http.Request, error) {
+func newGetAllSubscriptionsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -303,17 +285,12 @@ func newGetAllSubscriptionsRequest(server string, appId int32) (*http.Request, e
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -327,18 +304,18 @@ func newGetAllSubscriptionsRequest(server string, appId int32) (*http.Request, e
 }
 
 // newCreateSubscriptionsRequest calls the generic CreateSubscriptions builder with application/json body.
-func newCreateSubscriptionsRequest(server string, appId int32, body CreateSubscriptionsJSONRequestBody) (*http.Request, error) {
+func newCreateSubscriptionsRequest(baseURL *url.URL, appId int32, body CreateSubscriptionsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateSubscriptionsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateSubscriptionsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateSubscriptionsRequestWithBody generates requests for CreateSubscriptions with any type of body
-func newCreateSubscriptionsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateSubscriptionsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -348,17 +325,12 @@ func newCreateSubscriptionsRequestWithBody(server string, appId int32, contentTy
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -374,18 +346,18 @@ func newCreateSubscriptionsRequestWithBody(server string, appId int32, contentTy
 }
 
 // newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
-func newUpdateBatchRequest(server string, appId int32, body UpdateBatchJSONRequestBody) (*http.Request, error) {
+func newUpdateBatchRequest(baseURL *url.URL, appId int32, body UpdateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateBatchRequestWithBody(server, appId, "application/json", bodyReader)
+	return newUpdateBatchRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
-func newUpdateBatchRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -395,17 +367,12 @@ func newUpdateBatchRequestWithBody(server string, appId int32, contentType strin
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/batch/update", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -421,7 +388,7 @@ func newUpdateBatchRequestWithBody(server string, appId int32, contentType strin
 }
 
 // newArchiveSubscriptionRequest generates requests for ArchiveSubscription
-func newArchiveSubscriptionRequest(server string, appId int32, subscriptionId int32) (*http.Request, error) {
+func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -438,17 +405,12 @@ func newArchiveSubscriptionRequest(server string, appId int32, subscriptionId in
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -462,7 +424,7 @@ func newArchiveSubscriptionRequest(server string, appId int32, subscriptionId in
 }
 
 // newGetSubscriptionRequest generates requests for GetSubscription
-func newGetSubscriptionRequest(server string, appId int32, subscriptionId int32) (*http.Request, error) {
+func newGetSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -479,17 +441,12 @@ func newGetSubscriptionRequest(server string, appId int32, subscriptionId int32)
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -503,18 +460,18 @@ func newGetSubscriptionRequest(server string, appId int32, subscriptionId int32)
 }
 
 // newUpdateSubscriptionRequest calls the generic UpdateSubscription builder with application/json body.
-func newUpdateSubscriptionRequest(server string, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody) (*http.Request, error) {
+func newUpdateSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateSubscriptionRequestWithBody(server, appId, subscriptionId, "application/json", bodyReader)
+	return newUpdateSubscriptionRequestWithBody(baseURL, appId, subscriptionId, "application/json", bodyReader)
 }
 
 // newUpdateSubscriptionRequestWithBody generates requests for UpdateSubscription with any type of body
-func newUpdateSubscriptionRequestWithBody(server string, appId int32, subscriptionId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateSubscriptionRequestWithBody(baseURL *url.URL, appId int32, subscriptionId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -531,17 +488,12 @@ func newUpdateSubscriptionRequestWithBody(server string, appId int32, subscripti
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -579,7 +531,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -600,41 +552,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"text/template"
 
+	"github.com/deepmap/oapi-codegen/pkg/codegen"
 	"github.com/spf13/cobra"
 )
 
@@ -31,9 +32,13 @@ var (
 
 	// For HTTP service:.
 
-	OpenAPISample                       = parse("OpenAPISample")
-	EndpointsSample                     = parse("EndpointsSample")
-	Imports                             = getString("Imports")
+	OpenAPISample       = parse("OpenAPISample")
+	EndpointsSample     = parse("EndpointsSample")
+	Imports             = getString("Imports")
+	Client              = getString("Client")
+	ClientWithResponses = getString("ClientWithResponses")
+	Severs              = parse("Severs")
+
 	EndpointsTest                       = getString("EndpointsTest")
 	EndpointsTestServerInterfaceWrapper = getString("EndpointsTestServerInterfaceWrapper")
 	EndpointsTestHelpers                = getString("EndpointsTestHelpers")
@@ -49,5 +54,6 @@ func getBytes(name string) []byte {
 func getString(name string) string { return string(getBytes(name)) }
 
 func parse(name string) *template.Template {
-	return template.Must(template.New(name).Parse(getString(name)))
+	return template.Must(template.New(name).
+		Funcs(codegen.TemplateFunctions).Parse(getString(name)))
 }

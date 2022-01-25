@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteBatchRequestWithBody(c.Server, contentType, body)
+	req, err := newCompleteBatchRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string
 }
 
 func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteBatchRequest(c.Server, body)
+	req, err := newCompleteBatchRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequ
 }
 
 func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteCallbackRequestWithBody(c.Server, callbackId, contentType, body)
+	req, err := newCompleteCallbackRequestWithBody(c.baseURL, callbackId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId stri
 }
 
 func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteCallbackRequest(c.Server, callbackId, body)
+	req, err := newCompleteCallbackRequest(c.baseURL, callbackId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body
 }
 
 func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListAppRequest(c.Server, appId, params)
+	req, err := newListAppRequest(c.baseURL, appId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppPara
 }
 
 func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateAppRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentTy
 }
 
 func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequest(c.Server, appId, body)
+	req, err := newCreateAppRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSO
 }
 
 func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveDefinitionRequest(c.Server, appId, definitionId)
+	req, err := newArchiveDefinitionRequest(c.baseURL, appId, definitionId)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitio
 }
 
 func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetDefinitionRequest(c.Server, appId, definitionId, params)
+	req, err := newGetDefinitionRequest(c.baseURL, appId, definitionId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId 
 }
 
 func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateDefinitionRequestWithBody(c.Server, appId, definitionId, contentType, body)
+	req, err := newUpdateDefinitionRequestWithBody(c.baseURL, appId, definitionId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, de
 }
 
 func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateDefinitionRequest(c.Server, appId, definitionId, body)
+	req, err := newUpdateDefinitionRequest(c.baseURL, appId, definitionId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definition
 }
 
 func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListFunctionsRequest(c.Server, appId, definitionId)
+	req, err := newListFunctionsRequest(c.baseURL, appId, definitionId)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId 
 }
 
 func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveByFunctionTypeRequest(c.Server, appId, definitionId, functionType)
+	req, err := newArchiveByFunctionTypeRequest(c.baseURL, appId, definitionId, functionType)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, defin
 }
 
 func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByFunctionTypeRequest(c.Server, appId, definitionId, functionType)
+	req, err := newGetByFunctionTypeRequest(c.baseURL, appId, definitionId, functionType)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitio
 }
 
 func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateOrReplaceByFunctionTypeRequestWithBody(c.Server, appId, definitionId, functionType, contentType, body)
+	req, err := newCreateOrReplaceByFunctionTypeRequestWithBody(c.baseURL, appId, definitionId, functionType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, ap
 }
 
 func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
+	req, err := newArchiveFunctionRequest(c.baseURL, appId, definitionId, functionType, functionId)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionI
 }
 
 func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetFunctionRequest(c.Server, appId, definitionId, functionType, functionId)
+	req, err := newGetFunctionRequest(c.baseURL, appId, definitionId, functionType, functionId)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId st
 }
 
 func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateOrReplaceFunctionRequestWithBody(c.Server, appId, definitionId, functionType, functionId, contentType, body)
+	req, err := newCreateOrReplaceFunctionRequestWithBody(c.baseURL, appId, definitionId, functionType, functionId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId in
 }
 
 func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListRevisionsRequest(c.Server, appId, definitionId, params)
+	req, err := newListRevisionsRequest(c.baseURL, appId, definitionId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +247,7 @@ func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId 
 }
 
 func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRevisionRequest(c.Server, appId, definitionId, revisionId)
+	req, err := newGetRevisionRequest(c.baseURL, appId, definitionId, revisionId)
 	if err != nil {
 		return nil, err
 	}
@@ -262,31 +259,26 @@ func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId st
 }
 
 // newCompleteBatchRequest calls the generic CompleteBatch builder with application/json body.
-func newCompleteBatchRequest(server string, body CompleteBatchJSONRequestBody) (*http.Request, error) {
+func newCompleteBatchRequest(baseURL *url.URL, body CompleteBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCompleteBatchRequestWithBody(server, "application/json", bodyReader)
+	return newCompleteBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newCompleteBatchRequestWithBody generates requests for CompleteBatch with any type of body
-func newCompleteBatchRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newCompleteBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/automation/v4/actions/callbacks/complete")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -302,18 +294,18 @@ func newCompleteBatchRequestWithBody(server string, contentType string, body io.
 }
 
 // newCompleteCallbackRequest calls the generic CompleteCallback builder with application/json body.
-func newCompleteCallbackRequest(server string, callbackId string, body CompleteCallbackJSONRequestBody) (*http.Request, error) {
+func newCompleteCallbackRequest(baseURL *url.URL, callbackId string, body CompleteCallbackJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCompleteCallbackRequestWithBody(server, callbackId, "application/json", bodyReader)
+	return newCompleteCallbackRequestWithBody(baseURL, callbackId, "application/json", bodyReader)
 }
 
 // newCompleteCallbackRequestWithBody generates requests for CompleteCallback with any type of body
-func newCompleteCallbackRequestWithBody(server string, callbackId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCompleteCallbackRequestWithBody(baseURL *url.URL, callbackId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -323,17 +315,12 @@ func newCompleteCallbackRequestWithBody(server string, callbackId string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/callbacks/%s/complete", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -349,7 +336,7 @@ func newCompleteCallbackRequestWithBody(server string, callbackId string, conten
 }
 
 // newListAppRequest generates requests for ListApp
-func newListAppRequest(server string, appId int32, params *ListAppParams) (*http.Request, error) {
+func newListAppRequest(baseURL *url.URL, appId int32, params *ListAppParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -359,17 +346,12 @@ func newListAppRequest(server string, appId int32, params *ListAppParams) (*http
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -429,18 +411,18 @@ func newListAppRequest(server string, appId int32, params *ListAppParams) (*http
 }
 
 // newCreateAppRequest calls the generic CreateApp builder with application/json body.
-func newCreateAppRequest(server string, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
+func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAppRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateAppRequestWithBody generates requests for CreateApp with any type of body
-func newCreateAppRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -450,17 +432,12 @@ func newCreateAppRequestWithBody(server string, appId int32, contentType string,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -476,7 +453,7 @@ func newCreateAppRequestWithBody(server string, appId int32, contentType string,
 }
 
 // newArchiveDefinitionRequest generates requests for ArchiveDefinition
-func newArchiveDefinitionRequest(server string, appId int32, definitionId string) (*http.Request, error) {
+func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -493,17 +470,12 @@ func newArchiveDefinitionRequest(server string, appId int32, definitionId string
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -517,7 +489,7 @@ func newArchiveDefinitionRequest(server string, appId int32, definitionId string
 }
 
 // newGetDefinitionRequest generates requests for GetDefinition
-func newGetDefinitionRequest(server string, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
+func newGetDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -534,17 +506,12 @@ func newGetDefinitionRequest(server string, appId int32, definitionId string, pa
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -576,18 +543,18 @@ func newGetDefinitionRequest(server string, appId int32, definitionId string, pa
 }
 
 // newUpdateDefinitionRequest calls the generic UpdateDefinition builder with application/json body.
-func newUpdateDefinitionRequest(server string, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody) (*http.Request, error) {
+func newUpdateDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateDefinitionRequestWithBody(server, appId, definitionId, "application/json", bodyReader)
+	return newUpdateDefinitionRequestWithBody(baseURL, appId, definitionId, "application/json", bodyReader)
 }
 
 // newUpdateDefinitionRequestWithBody generates requests for UpdateDefinition with any type of body
-func newUpdateDefinitionRequestWithBody(server string, appId int32, definitionId string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateDefinitionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -604,17 +571,12 @@ func newUpdateDefinitionRequestWithBody(server string, appId int32, definitionId
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -630,7 +592,7 @@ func newUpdateDefinitionRequestWithBody(server string, appId int32, definitionId
 }
 
 // newListFunctionsRequest generates requests for ListFunctions
-func newListFunctionsRequest(server string, appId int32, definitionId string) (*http.Request, error) {
+func newListFunctionsRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -647,17 +609,12 @@ func newListFunctionsRequest(server string, appId int32, definitionId string) (*
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -671,7 +628,7 @@ func newListFunctionsRequest(server string, appId int32, definitionId string) (*
 }
 
 // newArchiveByFunctionTypeRequest generates requests for ArchiveByFunctionType
-func newArchiveByFunctionTypeRequest(server string, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType) (*http.Request, error) {
+func newArchiveByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -695,17 +652,12 @@ func newArchiveByFunctionTypeRequest(server string, appId int32, definitionId st
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -719,7 +671,7 @@ func newArchiveByFunctionTypeRequest(server string, appId int32, definitionId st
 }
 
 // newGetByFunctionTypeRequest generates requests for GetByFunctionType
-func newGetByFunctionTypeRequest(server string, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType) (*http.Request, error) {
+func newGetByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -743,17 +695,12 @@ func newGetByFunctionTypeRequest(server string, appId int32, definitionId string
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -767,7 +714,7 @@ func newGetByFunctionTypeRequest(server string, appId int32, definitionId string
 }
 
 // newCreateOrReplaceByFunctionTypeRequestWithBody generates requests for CreateOrReplaceByFunctionType with any type of body
-func newCreateOrReplaceByFunctionTypeRequestWithBody(server string, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateOrReplaceByFunctionTypeRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -791,17 +738,12 @@ func newCreateOrReplaceByFunctionTypeRequestWithBody(server string, appId int32,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -817,7 +759,7 @@ func newCreateOrReplaceByFunctionTypeRequestWithBody(server string, appId int32,
 }
 
 // newArchiveFunctionRequest generates requests for ArchiveFunction
-func newArchiveFunctionRequest(server string, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string) (*http.Request, error) {
+func newArchiveFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -848,17 +790,12 @@ func newArchiveFunctionRequest(server string, appId int32, definitionId string, 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -872,7 +809,7 @@ func newArchiveFunctionRequest(server string, appId int32, definitionId string, 
 }
 
 // newGetFunctionRequest generates requests for GetFunction
-func newGetFunctionRequest(server string, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
+func newGetFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -903,17 +840,12 @@ func newGetFunctionRequest(server string, appId int32, definitionId string, func
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -927,7 +859,7 @@ func newGetFunctionRequest(server string, appId int32, definitionId string, func
 }
 
 // newCreateOrReplaceFunctionRequestWithBody generates requests for CreateOrReplaceFunction with any type of body
-func newCreateOrReplaceFunctionRequestWithBody(server string, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateOrReplaceFunctionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -958,17 +890,12 @@ func newCreateOrReplaceFunctionRequestWithBody(server string, appId int32, defin
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -984,7 +911,7 @@ func newCreateOrReplaceFunctionRequestWithBody(server string, appId int32, defin
 }
 
 // newListRevisionsRequest generates requests for ListRevisions
-func newListRevisionsRequest(server string, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
+func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1001,17 +928,12 @@ func newListRevisionsRequest(server string, appId int32, definitionId string, pa
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1057,7 +979,7 @@ func newListRevisionsRequest(server string, appId int32, definitionId string, pa
 }
 
 // newGetRevisionRequest generates requests for GetRevision
-func newGetRevisionRequest(server string, appId int32, definitionId string, revisionId string) (*http.Request, error) {
+func newGetRevisionRequest(baseURL *url.URL, appId int32, definitionId string, revisionId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1081,17 +1003,12 @@ func newGetRevisionRequest(server string, appId int32, definitionId string, revi
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1127,7 +1044,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -1148,41 +1065,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

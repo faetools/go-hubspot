@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllObjectTypeRequest(c.Server, objectType, params)
+	req, err := newGetAllObjectTypeRequest(c.baseURL, objectType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, para
 }
 
 func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newCreateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 }
 
 func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequest(c.Server, objectType, body)
+	req, err := newCreateObjectTypeRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 }
 
 func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchivePipelineRequest(c.Server, objectType, pipelineId)
+	req, err := newArchivePipelineRequest(c.baseURL, objectType, pipelineId)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipel
 }
 
 func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPipelineRequest(c.Server, objectType, pipelineId, params)
+	req, err := newGetPipelineRequest(c.baseURL, objectType, pipelineId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineI
 }
 
 func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePipelineRequestWithBody(c.Server, objectType, pipelineId, params, contentType, body)
+	req, err := newUpdatePipelineRequestWithBody(c.baseURL, objectType, pipelineId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string
 }
 
 func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePipelineRequest(c.Server, objectType, pipelineId, params, body)
+	req, err := newUpdatePipelineRequest(c.baseURL, objectType, pipelineId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipeli
 }
 
 func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplacePipelineRequestWithBody(c.Server, objectType, pipelineId, contentType, body)
+	req, err := newReplacePipelineRequestWithBody(c.baseURL, objectType, pipelineId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType strin
 }
 
 func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplacePipelineRequest(c.Server, objectType, pipelineId, body)
+	req, err := newReplacePipelineRequest(c.baseURL, objectType, pipelineId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipel
 }
 
 func (c *Client) doGetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllStagesRequest(c.Server, objectType, pipelineId, params)
+	req, err := newGetAllStagesRequest(c.baseURL, objectType, pipelineId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doGetAllStages(ctx context.Context, objectType string, pipeline
 }
 
 func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateStagesRequestWithBody(c.Server, objectType, pipelineId, contentType, body)
+	req, err := newCreateStagesRequestWithBody(c.baseURL, objectType, pipelineId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, 
 }
 
 func (c *Client) doCreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateStagesRequest(c.Server, objectType, pipelineId, body)
+	req, err := newCreateStagesRequest(c.baseURL, objectType, pipelineId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doCreateStages(ctx context.Context, objectType string, pipeline
 }
 
 func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveStageRequest(c.Server, objectType, pipelineId, stageId)
+	req, err := newArchiveStageRequest(c.baseURL, objectType, pipelineId, stageId)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipeline
 }
 
 func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetStageRequest(c.Server, objectType, pipelineId, stageId, params)
+	req, err := newGetStageRequest(c.baseURL, objectType, pipelineId, stageId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId s
 }
 
 func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateStageRequestWithBody(c.Server, objectType, pipelineId, stageId, params, contentType, body)
+	req, err := newUpdateStageRequestWithBody(c.baseURL, objectType, pipelineId, stageId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, p
 }
 
 func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateStageRequest(c.Server, objectType, pipelineId, stageId, params, body)
+	req, err := newUpdateStageRequest(c.baseURL, objectType, pipelineId, stageId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineI
 }
 
 func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceStageRequestWithBody(c.Server, objectType, pipelineId, stageId, contentType, body)
+	req, err := newReplaceStageRequestWithBody(c.baseURL, objectType, pipelineId, stageId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, 
 }
 
 func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceStageRequest(c.Server, objectType, pipelineId, stageId, body)
+	req, err := newReplaceStageRequest(c.baseURL, objectType, pipelineId, stageId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipeline
 }
 
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
-func newGetAllObjectTypeRequest(server string, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
+func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -248,17 +245,12 @@ func newGetAllObjectTypeRequest(server string, objectType string, params *GetAll
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -290,18 +282,18 @@ func newGetAllObjectTypeRequest(server string, objectType string, params *GetAll
 }
 
 // newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
-func newCreateObjectTypeRequest(server string, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
+func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
-func newCreateObjectTypeRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -311,17 +303,12 @@ func newCreateObjectTypeRequestWithBody(server string, objectType string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -337,7 +324,7 @@ func newCreateObjectTypeRequestWithBody(server string, objectType string, conten
 }
 
 // newArchivePipelineRequest generates requests for ArchivePipeline
-func newArchivePipelineRequest(server string, objectType string, pipelineId string) (*http.Request, error) {
+func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -354,17 +341,12 @@ func newArchivePipelineRequest(server string, objectType string, pipelineId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -378,7 +360,7 @@ func newArchivePipelineRequest(server string, objectType string, pipelineId stri
 }
 
 // newGetPipelineRequest generates requests for GetPipeline
-func newGetPipelineRequest(server string, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
+func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -395,17 +377,12 @@ func newGetPipelineRequest(server string, objectType string, pipelineId string, 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -437,18 +414,18 @@ func newGetPipelineRequest(server string, objectType string, pipelineId string, 
 }
 
 // newUpdatePipelineRequest calls the generic UpdatePipeline builder with application/json body.
-func newUpdatePipelineRequest(server string, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody) (*http.Request, error) {
+func newUpdatePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdatePipelineRequestWithBody(server, objectType, pipelineId, params, "application/json", bodyReader)
+	return newUpdatePipelineRequestWithBody(baseURL, objectType, pipelineId, params, "application/json", bodyReader)
 }
 
 // newUpdatePipelineRequestWithBody generates requests for UpdatePipeline with any type of body
-func newUpdatePipelineRequestWithBody(server string, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -465,17 +442,12 @@ func newUpdatePipelineRequestWithBody(server string, objectType string, pipeline
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -509,18 +481,18 @@ func newUpdatePipelineRequestWithBody(server string, objectType string, pipeline
 }
 
 // newReplacePipelineRequest calls the generic ReplacePipeline builder with application/json body.
-func newReplacePipelineRequest(server string, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody) (*http.Request, error) {
+func newReplacePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplacePipelineRequestWithBody(server, objectType, pipelineId, "application/json", bodyReader)
+	return newReplacePipelineRequestWithBody(baseURL, objectType, pipelineId, "application/json", bodyReader)
 }
 
 // newReplacePipelineRequestWithBody generates requests for ReplacePipeline with any type of body
-func newReplacePipelineRequestWithBody(server string, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
+func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -537,17 +509,12 @@ func newReplacePipelineRequestWithBody(server string, objectType string, pipelin
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -563,7 +530,7 @@ func newReplacePipelineRequestWithBody(server string, objectType string, pipelin
 }
 
 // newGetAllStagesRequest generates requests for GetAllStages
-func newGetAllStagesRequest(server string, objectType string, pipelineId string, params *GetAllStagesParams) (*http.Request, error) {
+func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetAllStagesParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -580,17 +547,12 @@ func newGetAllStagesRequest(server string, objectType string, pipelineId string,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -622,18 +584,18 @@ func newGetAllStagesRequest(server string, objectType string, pipelineId string,
 }
 
 // newCreateStagesRequest calls the generic CreateStages builder with application/json body.
-func newCreateStagesRequest(server string, objectType string, pipelineId string, body CreateStagesJSONRequestBody) (*http.Request, error) {
+func newCreateStagesRequest(baseURL *url.URL, objectType string, pipelineId string, body CreateStagesJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateStagesRequestWithBody(server, objectType, pipelineId, "application/json", bodyReader)
+	return newCreateStagesRequestWithBody(baseURL, objectType, pipelineId, "application/json", bodyReader)
 }
 
 // newCreateStagesRequestWithBody generates requests for CreateStages with any type of body
-func newCreateStagesRequestWithBody(server string, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -650,17 +612,12 @@ func newCreateStagesRequestWithBody(server string, objectType string, pipelineId
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -676,7 +633,7 @@ func newCreateStagesRequestWithBody(server string, objectType string, pipelineId
 }
 
 // newArchiveStageRequest generates requests for ArchiveStage
-func newArchiveStageRequest(server string, objectType string, pipelineId string, stageId string) (*http.Request, error) {
+func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -700,17 +657,12 @@ func newArchiveStageRequest(server string, objectType string, pipelineId string,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -724,7 +676,7 @@ func newArchiveStageRequest(server string, objectType string, pipelineId string,
 }
 
 // newGetStageRequest generates requests for GetStage
-func newGetStageRequest(server string, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
+func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -748,17 +700,12 @@ func newGetStageRequest(server string, objectType string, pipelineId string, sta
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -790,18 +737,18 @@ func newGetStageRequest(server string, objectType string, pipelineId string, sta
 }
 
 // newUpdateStageRequest calls the generic UpdateStage builder with application/json body.
-func newUpdateStageRequest(server string, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody) (*http.Request, error) {
+func newUpdateStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateStageRequestWithBody(server, objectType, pipelineId, stageId, params, "application/json", bodyReader)
+	return newUpdateStageRequestWithBody(baseURL, objectType, pipelineId, stageId, params, "application/json", bodyReader)
 }
 
 // newUpdateStageRequestWithBody generates requests for UpdateStage with any type of body
-func newUpdateStageRequestWithBody(server string, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -825,17 +772,12 @@ func newUpdateStageRequestWithBody(server string, objectType string, pipelineId 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -869,18 +811,18 @@ func newUpdateStageRequestWithBody(server string, objectType string, pipelineId 
 }
 
 // newReplaceStageRequest calls the generic ReplaceStage builder with application/json body.
-func newReplaceStageRequest(server string, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody) (*http.Request, error) {
+func newReplaceStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceStageRequestWithBody(server, objectType, pipelineId, stageId, "application/json", bodyReader)
+	return newReplaceStageRequestWithBody(baseURL, objectType, pipelineId, stageId, "application/json", bodyReader)
 }
 
 // newReplaceStageRequestWithBody generates requests for ReplaceStage with any type of body
-func newReplaceStageRequestWithBody(server string, objectType string, pipelineId string, stageId string, contentType string, body io.Reader) (*http.Request, error) {
+func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -904,17 +846,12 @@ func newReplaceStageRequestWithBody(server string, objectType string, pipelineId
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -952,7 +889,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -973,41 +910,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

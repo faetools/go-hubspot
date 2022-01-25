@@ -98,8 +98,8 @@ func main() {
 	pubhttpsrv.Use(sentryecho.New(sentryecho.Options{Repanic: true}))
 
 	// Default endpoint
-	pubhttpsrv.GET("/ping", func(ctx echo.Context) error {
-		return ctx.String(http.StatusOK, "Pong")
+	pubhttpsrv.GET("/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Pong")
 	})
 	{{ end }}
 

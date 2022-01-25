@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doListObjectType(ctx context.Context, objectType string, params *ListObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListObjectTypeRequest(c.Server, objectType, params)
+	req, err := newListObjectTypeRequest(c.baseURL, objectType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doListObjectType(ctx context.Context, objectType string, params
 }
 
 func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newCreateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType stri
 }
 
 func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequest(c.Server, objectType, body)
+	req, err := newCreateObjectTypeRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body
 }
 
 func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newArchiveBatchRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, 
 }
 
 func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequest(c.Server, objectType, body)
+	req, err := newArchiveBatchRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body Arc
 }
 
 func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newCreateBatchRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, c
 }
 
 func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.Server, objectType, body)
+	req, err := newCreateBatchRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doCreateBatch(ctx context.Context, objectType string, body Crea
 }
 
 func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequestWithBody(c.Server, objectType, params, contentType, body)
+	req, err := newReadBatchRequestWithBody(c.baseURL, objectType, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, par
 }
 
 func (c *Client) doReadBatch(ctx context.Context, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequest(c.Server, objectType, params, body)
+	req, err := newReadBatchRequest(c.baseURL, objectType, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doReadBatch(ctx context.Context, objectType string, params *Rea
 }
 
 func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newUpdateBatchRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doUpdateBatchWithBody(ctx context.Context, objectType string, c
 }
 
 func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequest(c.Server, objectType, body)
+	req, err := newUpdateBatchRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doUpdateBatch(ctx context.Context, objectType string, body Upda
 }
 
 func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGdprDeleteObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newGdprDeleteObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doGdprDeleteObjectTypeWithBody(ctx context.Context, objectType 
 }
 
 func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, body GdprDeleteObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGdprDeleteObjectTypeRequest(c.Server, objectType, body)
+	req, err := newGdprDeleteObjectTypeRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doGdprDeleteObjectType(ctx context.Context, objectType string, 
 }
 
 func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoSearchRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newDoSearchRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doDoSearchWithBody(ctx context.Context, objectType string, cont
 }
 
 func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoSearchRequest(c.Server, objectType, body)
+	req, err := newDoSearchRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doDoSearch(ctx context.Context, objectType string, body DoSearc
 }
 
 func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveObjectRequest(c.Server, objectType, objectId)
+	req, err := newArchiveObjectRequest(c.baseURL, objectType, objectId)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doArchiveObject(ctx context.Context, objectType string, objectI
 }
 
 func (c *Client) doGetObject(ctx context.Context, objectType string, objectId string, params *GetObjectParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetObjectRequest(c.Server, objectType, objectId, params)
+	req, err := newGetObjectRequest(c.baseURL, objectType, objectId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doGetObject(ctx context.Context, objectType string, objectId st
 }
 
 func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectRequestWithBody(c.Server, objectType, objectId, params, contentType, body)
+	req, err := newUpdateObjectRequestWithBody(c.baseURL, objectType, objectId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doUpdateObjectWithBody(ctx context.Context, objectType string, 
 }
 
 func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectRequest(c.Server, objectType, objectId, params, body)
+	req, err := newUpdateObjectRequest(c.baseURL, objectType, objectId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +247,7 @@ func (c *Client) doUpdateObject(ctx context.Context, objectType string, objectId
 }
 
 func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllToObjectTypeRequest(c.Server, objectType, objectId, toObjectType, params)
+	req, err := newGetAllToObjectTypeRequest(c.baseURL, objectType, objectId, toObjectType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +259,7 @@ func (c *Client) doGetAllToObjectType(ctx context.Context, objectType string, ob
 }
 
 func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAssociationTypeRequest(c.Server, objectType, objectId, toObjectType, toObjectId, associationType)
+	req, err := newArchiveAssociationTypeRequest(c.baseURL, objectType, objectId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +271,7 @@ func (c *Client) doArchiveAssociationType(ctx context.Context, objectType string
 }
 
 func (c *Client) doCreateAssociationType(ctx context.Context, objectType string, objectId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationTypeRequest(c.Server, objectType, objectId, toObjectType, toObjectId, associationType)
+	req, err := newCreateAssociationTypeRequest(c.baseURL, objectType, objectId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +283,7 @@ func (c *Client) doCreateAssociationType(ctx context.Context, objectType string,
 }
 
 // newListObjectTypeRequest generates requests for ListObjectType
-func newListObjectTypeRequest(server string, objectType string, params *ListObjectTypeParams) (*http.Request, error) {
+func newListObjectTypeRequest(baseURL *url.URL, objectType string, params *ListObjectTypeParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -296,17 +293,12 @@ func newListObjectTypeRequest(server string, objectType string, params *ListObje
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -394,18 +386,18 @@ func newListObjectTypeRequest(server string, objectType string, params *ListObje
 }
 
 // newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
-func newCreateObjectTypeRequest(server string, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
+func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
-func newCreateObjectTypeRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -415,17 +407,12 @@ func newCreateObjectTypeRequestWithBody(server string, objectType string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -441,18 +428,18 @@ func newCreateObjectTypeRequestWithBody(server string, objectType string, conten
 }
 
 // newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
-func newArchiveBatchRequest(server string, objectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
+func newArchiveBatchRequest(baseURL *url.URL, objectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
-func newArchiveBatchRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -462,17 +449,12 @@ func newArchiveBatchRequestWithBody(server string, objectType string, contentTyp
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/archive", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -488,18 +470,18 @@ func newArchiveBatchRequestWithBody(server string, objectType string, contentTyp
 }
 
 // newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(server string, objectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
+func newCreateBatchRequest(baseURL *url.URL, objectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
-func newCreateBatchRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -509,17 +491,12 @@ func newCreateBatchRequestWithBody(server string, objectType string, contentType
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/create", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -535,18 +512,18 @@ func newCreateBatchRequestWithBody(server string, objectType string, contentType
 }
 
 // newReadBatchRequest calls the generic ReadBatch builder with application/json body.
-func newReadBatchRequest(server string, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody) (*http.Request, error) {
+func newReadBatchRequest(baseURL *url.URL, objectType string, params *ReadBatchParams, body ReadBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(server, objectType, params, "application/json", bodyReader)
+	return newReadBatchRequestWithBody(baseURL, objectType, params, "application/json", bodyReader)
 }
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
-func newReadBatchRequestWithBody(server string, objectType string, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
+func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -556,17 +533,12 @@ func newReadBatchRequestWithBody(server string, objectType string, params *ReadB
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/read", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -600,18 +572,18 @@ func newReadBatchRequestWithBody(server string, objectType string, params *ReadB
 }
 
 // newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
-func newUpdateBatchRequest(server string, objectType string, body UpdateBatchJSONRequestBody) (*http.Request, error) {
+func newUpdateBatchRequest(baseURL *url.URL, objectType string, body UpdateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateBatchRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newUpdateBatchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
-func newUpdateBatchRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -621,17 +593,12 @@ func newUpdateBatchRequestWithBody(server string, objectType string, contentType
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/update", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -647,18 +614,18 @@ func newUpdateBatchRequestWithBody(server string, objectType string, contentType
 }
 
 // newGdprDeleteObjectTypeRequest calls the generic GdprDeleteObjectType builder with application/json body.
-func newGdprDeleteObjectTypeRequest(server string, objectType string, body GdprDeleteObjectTypeJSONRequestBody) (*http.Request, error) {
+func newGdprDeleteObjectTypeRequest(baseURL *url.URL, objectType string, body GdprDeleteObjectTypeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGdprDeleteObjectTypeRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newGdprDeleteObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newGdprDeleteObjectTypeRequestWithBody generates requests for GdprDeleteObjectType with any type of body
-func newGdprDeleteObjectTypeRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newGdprDeleteObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -668,17 +635,12 @@ func newGdprDeleteObjectTypeRequestWithBody(server string, objectType string, co
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/gdpr-delete", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -694,18 +656,18 @@ func newGdprDeleteObjectTypeRequestWithBody(server string, objectType string, co
 }
 
 // newDoSearchRequest calls the generic DoSearch builder with application/json body.
-func newDoSearchRequest(server string, objectType string, body DoSearchJSONRequestBody) (*http.Request, error) {
+func newDoSearchRequest(baseURL *url.URL, objectType string, body DoSearchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoSearchRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newDoSearchRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
-func newDoSearchRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newDoSearchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -715,17 +677,12 @@ func newDoSearchRequestWithBody(server string, objectType string, contentType st
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/search", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -741,7 +698,7 @@ func newDoSearchRequestWithBody(server string, objectType string, contentType st
 }
 
 // newArchiveObjectRequest generates requests for ArchiveObject
-func newArchiveObjectRequest(server string, objectType string, objectId string) (*http.Request, error) {
+func newArchiveObjectRequest(baseURL *url.URL, objectType string, objectId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -758,17 +715,12 @@ func newArchiveObjectRequest(server string, objectType string, objectId string) 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -782,7 +734,7 @@ func newArchiveObjectRequest(server string, objectType string, objectId string) 
 }
 
 // newGetObjectRequest generates requests for GetObject
-func newGetObjectRequest(server string, objectType string, objectId string, params *GetObjectParams) (*http.Request, error) {
+func newGetObjectRequest(baseURL *url.URL, objectType string, objectId string, params *GetObjectParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -799,17 +751,12 @@ func newGetObjectRequest(server string, objectType string, objectId string, para
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -883,18 +830,18 @@ func newGetObjectRequest(server string, objectType string, objectId string, para
 }
 
 // newUpdateObjectRequest calls the generic UpdateObject builder with application/json body.
-func newUpdateObjectRequest(server string, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody) (*http.Request, error) {
+func newUpdateObjectRequest(baseURL *url.URL, objectType string, objectId string, params *UpdateObjectParams, body UpdateObjectJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateObjectRequestWithBody(server, objectType, objectId, params, "application/json", bodyReader)
+	return newUpdateObjectRequestWithBody(baseURL, objectType, objectId, params, "application/json", bodyReader)
 }
 
 // newUpdateObjectRequestWithBody generates requests for UpdateObject with any type of body
-func newUpdateObjectRequestWithBody(server string, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateObjectRequestWithBody(baseURL *url.URL, objectType string, objectId string, params *UpdateObjectParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -911,17 +858,12 @@ func newUpdateObjectRequestWithBody(server string, objectType string, objectId s
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -955,7 +897,7 @@ func newUpdateObjectRequestWithBody(server string, objectType string, objectId s
 }
 
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
-func newGetAllToObjectTypeRequest(server string, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
+func newGetAllToObjectTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -979,17 +921,12 @@ func newGetAllToObjectTypeRequest(server string, objectType string, objectId str
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1035,7 +972,7 @@ func newGetAllToObjectTypeRequest(server string, objectType string, objectId str
 }
 
 // newArchiveAssociationTypeRequest generates requests for ArchiveAssociationType
-func newArchiveAssociationTypeRequest(server string, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
+func newArchiveAssociationTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1073,17 +1010,12 @@ func newArchiveAssociationTypeRequest(server string, objectType string, objectId
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1097,7 +1029,7 @@ func newArchiveAssociationTypeRequest(server string, objectType string, objectId
 }
 
 // newCreateAssociationTypeRequest generates requests for CreateAssociationType
-func newCreateAssociationTypeRequest(server string, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
+func newCreateAssociationTypeRequest(baseURL *url.URL, objectType string, objectId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1135,17 +1067,12 @@ func newCreateAssociationTypeRequest(server string, objectType string, objectId 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1181,7 +1108,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -1202,41 +1129,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

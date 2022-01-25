@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateCustomerRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newCreateCustomerRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId 
 }
 
 func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateCustomerRequestRequest(c.Server, requestId, body)
+	req, err := newCreateCustomerRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, 
 }
 
 func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoCustomerSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newDoCustomerSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestI
 }
 
 func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoCustomerSearchRequestRequest(c.Server, requestId, body)
+	req, err := newDoCustomerSearchRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string
 }
 
 func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateExchangeRateRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newCreateExchangeRateRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, reques
 }
 
 func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateExchangeRateRequestRequest(c.Server, requestId, body)
+	req, err := newCreateExchangeRateRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId stri
 }
 
 func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateInvoiceRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newCreateInvoiceRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId s
 }
 
 func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateInvoiceRequestRequest(c.Server, requestId, body)
+	req, err := newCreateInvoiceRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, b
 }
 
 func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newInvoicePdfRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newInvoicePdfRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId stri
 }
 
 func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newInvoicePdfRequestRequest(c.Server, requestId, body)
+	req, err := newInvoicePdfRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body
 }
 
 func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoInvoiceSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newDoInvoiceSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId
 }
 
 func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoInvoiceSearchRequestRequest(c.Server, requestId, body)
+	req, err := newDoInvoiceSearchRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string,
 }
 
 func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newGetRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, con
 }
 
 func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRequestRequest(c.Server, requestId, body)
+	req, err := newGetRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetReq
 }
 
 func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoProductSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newDoProductSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId
 }
 
 func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoProductSearchRequestRequest(c.Server, requestId, body)
+	req, err := newDoProductSearchRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string,
 }
 
 func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoTaxSearchRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newDoTaxSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId str
 }
 
 func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoTaxSearchRequestRequest(c.Server, requestId, body)
+	req, err := newDoTaxSearchRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, bod
 }
 
 func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTermRequestRequestWithBody(c.Server, requestId, contentType, body)
+	req, err := newCreateTermRequestRequestWithBody(c.baseURL, requestId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +247,7 @@ func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId stri
 }
 
 func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTermRequestRequest(c.Server, requestId, body)
+	req, err := newCreateTermRequestRequest(c.baseURL, requestId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +259,7 @@ func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body
 }
 
 func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetInvoiceRequest(c.Server, invoiceId, params)
+	req, err := newGetInvoiceRequest(c.baseURL, invoiceId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +271,7 @@ func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *Get
 }
 
 func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateInvoiceRequestWithBody(c.Server, invoiceId, params, contentType, body)
+	req, err := newUpdateInvoiceRequestWithBody(c.baseURL, invoiceId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +283,7 @@ func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, 
 }
 
 func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateInvoiceRequest(c.Server, invoiceId, params, body)
+	req, err := newUpdateInvoiceRequest(c.baseURL, invoiceId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -298,7 +295,7 @@ func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *
 }
 
 func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreatePaymentRequestWithBody(c.Server, invoiceId, params, contentType, body)
+	req, err := newCreatePaymentRequestWithBody(c.baseURL, invoiceId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +307,7 @@ func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, 
 }
 
 func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreatePaymentRequest(c.Server, invoiceId, params, body)
+	req, err := newCreatePaymentRequest(c.baseURL, invoiceId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +319,7 @@ func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *
 }
 
 func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppRequest(c.Server, appId)
+	req, err := newGetAppRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +331,7 @@ func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client
 }
 
 func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newReplaceAppRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +343,7 @@ func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentT
 }
 
 func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequest(c.Server, appId, body)
+	req, err := newReplaceAppRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -358,7 +355,7 @@ func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJ
 }
 
 func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateContactContactsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateContactContactsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -370,7 +367,7 @@ func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int3
 }
 
 func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateContactContactsRequest(c.Server, appId, body)
+	req, err := newCreateContactContactsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +379,7 @@ func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body 
 }
 
 func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateProductProductsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateProductProductsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -394,7 +391,7 @@ func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int3
 }
 
 func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateProductProductsRequest(c.Server, appId, body)
+	req, err := newCreateProductProductsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -406,7 +403,7 @@ func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body 
 }
 
 func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceUserAccountsRequestWithBody(c.Server, contentType, body)
+	req, err := newReplaceUserAccountsRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -418,7 +415,7 @@ func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType 
 }
 
 func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceUserAccountsRequest(c.Server, body)
+	req, err := newReplaceUserAccountsRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -430,7 +427,7 @@ func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAcco
 }
 
 func (c *Client) doArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAccountRequest(c.Server, accountId)
+	req, err := newArchiveAccountRequest(c.baseURL, accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -442,18 +439,18 @@ func (c *Client) doArchiveAccount(ctx context.Context, accountId string, reqEdit
 }
 
 // newCreateCustomerRequestRequest calls the generic CreateCustomerRequest builder with application/json body.
-func newCreateCustomerRequestRequest(server string, requestId string, body CreateCustomerRequestJSONRequestBody) (*http.Request, error) {
+func newCreateCustomerRequestRequest(baseURL *url.URL, requestId string, body CreateCustomerRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateCustomerRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newCreateCustomerRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newCreateCustomerRequestRequestWithBody generates requests for CreateCustomerRequest with any type of body
-func newCreateCustomerRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -463,17 +460,12 @@ func newCreateCustomerRequestRequestWithBody(server string, requestId string, co
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -489,18 +481,18 @@ func newCreateCustomerRequestRequestWithBody(server string, requestId string, co
 }
 
 // newDoCustomerSearchRequestRequest calls the generic DoCustomerSearchRequest builder with application/json body.
-func newDoCustomerSearchRequestRequest(server string, requestId string, body DoCustomerSearchRequestJSONRequestBody) (*http.Request, error) {
+func newDoCustomerSearchRequestRequest(baseURL *url.URL, requestId string, body DoCustomerSearchRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoCustomerSearchRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newDoCustomerSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newDoCustomerSearchRequestRequestWithBody generates requests for DoCustomerSearchRequest with any type of body
-func newDoCustomerSearchRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -510,17 +502,12 @@ func newDoCustomerSearchRequestRequestWithBody(server string, requestId string, 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -536,18 +523,18 @@ func newDoCustomerSearchRequestRequestWithBody(server string, requestId string, 
 }
 
 // newCreateExchangeRateRequestRequest calls the generic CreateExchangeRateRequest builder with application/json body.
-func newCreateExchangeRateRequestRequest(server string, requestId string, body CreateExchangeRateRequestJSONRequestBody) (*http.Request, error) {
+func newCreateExchangeRateRequestRequest(baseURL *url.URL, requestId string, body CreateExchangeRateRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateExchangeRateRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newCreateExchangeRateRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newCreateExchangeRateRequestRequestWithBody generates requests for CreateExchangeRateRequest with any type of body
-func newCreateExchangeRateRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -557,17 +544,12 @@ func newCreateExchangeRateRequestRequestWithBody(server string, requestId string
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -583,18 +565,18 @@ func newCreateExchangeRateRequestRequestWithBody(server string, requestId string
 }
 
 // newCreateInvoiceRequestRequest calls the generic CreateInvoiceRequest builder with application/json body.
-func newCreateInvoiceRequestRequest(server string, requestId string, body CreateInvoiceRequestJSONRequestBody) (*http.Request, error) {
+func newCreateInvoiceRequestRequest(baseURL *url.URL, requestId string, body CreateInvoiceRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateInvoiceRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newCreateInvoiceRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newCreateInvoiceRequestRequestWithBody generates requests for CreateInvoiceRequest with any type of body
-func newCreateInvoiceRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -604,17 +586,12 @@ func newCreateInvoiceRequestRequestWithBody(server string, requestId string, con
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -630,18 +607,18 @@ func newCreateInvoiceRequestRequestWithBody(server string, requestId string, con
 }
 
 // newInvoicePdfRequestRequest calls the generic InvoicePdfRequest builder with application/json body.
-func newInvoicePdfRequestRequest(server string, requestId string, body InvoicePdfRequestJSONRequestBody) (*http.Request, error) {
+func newInvoicePdfRequestRequest(baseURL *url.URL, requestId string, body InvoicePdfRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newInvoicePdfRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newInvoicePdfRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newInvoicePdfRequestRequestWithBody generates requests for InvoicePdfRequest with any type of body
-func newInvoicePdfRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -651,17 +628,12 @@ func newInvoicePdfRequestRequestWithBody(server string, requestId string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -677,18 +649,18 @@ func newInvoicePdfRequestRequestWithBody(server string, requestId string, conten
 }
 
 // newDoInvoiceSearchRequestRequest calls the generic DoInvoiceSearchRequest builder with application/json body.
-func newDoInvoiceSearchRequestRequest(server string, requestId string, body DoInvoiceSearchRequestJSONRequestBody) (*http.Request, error) {
+func newDoInvoiceSearchRequestRequest(baseURL *url.URL, requestId string, body DoInvoiceSearchRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoInvoiceSearchRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newDoInvoiceSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newDoInvoiceSearchRequestRequestWithBody generates requests for DoInvoiceSearchRequest with any type of body
-func newDoInvoiceSearchRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -698,17 +670,12 @@ func newDoInvoiceSearchRequestRequestWithBody(server string, requestId string, c
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -724,18 +691,18 @@ func newDoInvoiceSearchRequestRequestWithBody(server string, requestId string, c
 }
 
 // newGetRequestRequest calls the generic GetRequest builder with application/json body.
-func newGetRequestRequest(server string, requestId string, body GetRequestJSONRequestBody) (*http.Request, error) {
+func newGetRequestRequest(baseURL *url.URL, requestId string, body GetRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGetRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newGetRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newGetRequestRequestWithBody generates requests for GetRequest with any type of body
-func newGetRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -745,17 +712,12 @@ func newGetRequestRequestWithBody(server string, requestId string, contentType s
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -771,18 +733,18 @@ func newGetRequestRequestWithBody(server string, requestId string, contentType s
 }
 
 // newDoProductSearchRequestRequest calls the generic DoProductSearchRequest builder with application/json body.
-func newDoProductSearchRequestRequest(server string, requestId string, body DoProductSearchRequestJSONRequestBody) (*http.Request, error) {
+func newDoProductSearchRequestRequest(baseURL *url.URL, requestId string, body DoProductSearchRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoProductSearchRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newDoProductSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newDoProductSearchRequestRequestWithBody generates requests for DoProductSearchRequest with any type of body
-func newDoProductSearchRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -792,17 +754,12 @@ func newDoProductSearchRequestRequestWithBody(server string, requestId string, c
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -818,18 +775,18 @@ func newDoProductSearchRequestRequestWithBody(server string, requestId string, c
 }
 
 // newDoTaxSearchRequestRequest calls the generic DoTaxSearchRequest builder with application/json body.
-func newDoTaxSearchRequestRequest(server string, requestId string, body DoTaxSearchRequestJSONRequestBody) (*http.Request, error) {
+func newDoTaxSearchRequestRequest(baseURL *url.URL, requestId string, body DoTaxSearchRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoTaxSearchRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newDoTaxSearchRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newDoTaxSearchRequestRequestWithBody generates requests for DoTaxSearchRequest with any type of body
-func newDoTaxSearchRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -839,17 +796,12 @@ func newDoTaxSearchRequestRequestWithBody(server string, requestId string, conte
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -865,18 +817,18 @@ func newDoTaxSearchRequestRequestWithBody(server string, requestId string, conte
 }
 
 // newCreateTermRequestRequest calls the generic CreateTermRequest builder with application/json body.
-func newCreateTermRequestRequest(server string, requestId string, body CreateTermRequestJSONRequestBody) (*http.Request, error) {
+func newCreateTermRequestRequest(baseURL *url.URL, requestId string, body CreateTermRequestJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateTermRequestRequestWithBody(server, requestId, "application/json", bodyReader)
+	return newCreateTermRequestRequestWithBody(baseURL, requestId, "application/json", bodyReader)
 }
 
 // newCreateTermRequestRequestWithBody generates requests for CreateTermRequest with any type of body
-func newCreateTermRequestRequestWithBody(server string, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -886,17 +838,12 @@ func newCreateTermRequestRequestWithBody(server string, requestId string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -912,7 +859,7 @@ func newCreateTermRequestRequestWithBody(server string, requestId string, conten
 }
 
 // newGetInvoiceRequest generates requests for GetInvoice
-func newGetInvoiceRequest(server string, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
+func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -922,17 +869,12 @@ func newGetInvoiceRequest(server string, invoiceId string, params *GetInvoicePar
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -962,18 +904,18 @@ func newGetInvoiceRequest(server string, invoiceId string, params *GetInvoicePar
 }
 
 // newUpdateInvoiceRequest calls the generic UpdateInvoice builder with application/json body.
-func newUpdateInvoiceRequest(server string, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody) (*http.Request, error) {
+func newUpdateInvoiceRequest(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateInvoiceRequestWithBody(server, invoiceId, params, "application/json", bodyReader)
+	return newUpdateInvoiceRequestWithBody(baseURL, invoiceId, params, "application/json", bodyReader)
 }
 
 // newUpdateInvoiceRequestWithBody generates requests for UpdateInvoice with any type of body
-func newUpdateInvoiceRequestWithBody(server string, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -983,17 +925,12 @@ func newUpdateInvoiceRequestWithBody(server string, invoiceId string, params *Up
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1025,18 +962,18 @@ func newUpdateInvoiceRequestWithBody(server string, invoiceId string, params *Up
 }
 
 // newCreatePaymentRequest calls the generic CreatePayment builder with application/json body.
-func newCreatePaymentRequest(server string, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody) (*http.Request, error) {
+func newCreatePaymentRequest(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreatePaymentRequestWithBody(server, invoiceId, params, "application/json", bodyReader)
+	return newCreatePaymentRequestWithBody(baseURL, invoiceId, params, "application/json", bodyReader)
 }
 
 // newCreatePaymentRequestWithBody generates requests for CreatePayment with any type of body
-func newCreatePaymentRequestWithBody(server string, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
+func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1046,17 +983,12 @@ func newCreatePaymentRequestWithBody(server string, invoiceId string, params *Cr
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1090,7 +1022,7 @@ func newCreatePaymentRequestWithBody(server string, invoiceId string, params *Cr
 }
 
 // newGetAppRequest generates requests for GetApp
-func newGetAppRequest(server string, appId int32) (*http.Request, error) {
+func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1100,17 +1032,12 @@ func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1124,18 +1051,18 @@ func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 }
 
 // newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
-func newReplaceAppRequest(server string, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
+func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(server, appId, "application/json", bodyReader)
+	return newReplaceAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
-func newReplaceAppRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1145,17 +1072,12 @@ func newReplaceAppRequestWithBody(server string, appId int32, contentType string
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1171,18 +1093,18 @@ func newReplaceAppRequestWithBody(server string, appId int32, contentType string
 }
 
 // newCreateContactContactsRequest calls the generic CreateContactContacts builder with application/json body.
-func newCreateContactContactsRequest(server string, appId int32, body CreateContactContactsJSONRequestBody) (*http.Request, error) {
+func newCreateContactContactsRequest(baseURL *url.URL, appId int32, body CreateContactContactsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateContactContactsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateContactContactsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateContactContactsRequestWithBody generates requests for CreateContactContacts with any type of body
-func newCreateContactContactsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1192,17 +1114,12 @@ func newCreateContactContactsRequestWithBody(server string, appId int32, content
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1218,18 +1135,18 @@ func newCreateContactContactsRequestWithBody(server string, appId int32, content
 }
 
 // newCreateProductProductsRequest calls the generic CreateProductProducts builder with application/json body.
-func newCreateProductProductsRequest(server string, appId int32, body CreateProductProductsJSONRequestBody) (*http.Request, error) {
+func newCreateProductProductsRequest(baseURL *url.URL, appId int32, body CreateProductProductsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateProductProductsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateProductProductsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateProductProductsRequestWithBody generates requests for CreateProductProducts with any type of body
-func newCreateProductProductsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1239,17 +1156,12 @@ func newCreateProductProductsRequestWithBody(server string, appId int32, content
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1265,31 +1177,26 @@ func newCreateProductProductsRequestWithBody(server string, appId int32, content
 }
 
 // newReplaceUserAccountsRequest calls the generic ReplaceUserAccounts builder with application/json body.
-func newReplaceUserAccountsRequest(server string, body ReplaceUserAccountsJSONRequestBody) (*http.Request, error) {
+func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceUserAccountsRequestWithBody(server, "application/json", bodyReader)
+	return newReplaceUserAccountsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newReplaceUserAccountsRequestWithBody generates requests for ReplaceUserAccounts with any type of body
-func newReplaceUserAccountsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1305,7 +1212,7 @@ func newReplaceUserAccountsRequestWithBody(server string, contentType string, bo
 }
 
 // newArchiveAccountRequest generates requests for ArchiveAccount
-func newArchiveAccountRequest(server string, accountId string) (*http.Request, error) {
+func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1315,17 +1222,12 @@ func newArchiveAccountRequest(server string, accountId string) (*http.Request, e
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -1361,7 +1263,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -1382,41 +1284,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

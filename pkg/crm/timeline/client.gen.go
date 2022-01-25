@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventsRequestWithBody(c.Server, contentType, body)
+	req, err := newCreateEventsRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string,
 }
 
 func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventsRequest(c.Server, body)
+	req, err := newCreateEventsRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONReques
 }
 
 func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.Server, contentType, body)
+	req, err := newCreateBatchRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, 
 }
 
 func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.Server, body)
+	req, err := newCreateBatchRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestB
 }
 
 func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetEventRequest(c.Server, eventTemplateId, eventId)
+	req, err := newGetEventRequest(c.baseURL, eventTemplateId, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId
 }
 
 func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetDetailByIdRequest(c.Server, eventTemplateId, eventId)
+	req, err := newGetDetailByIdRequest(c.baseURL, eventTemplateId, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, ev
 }
 
 func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRenderByIdRequest(c.Server, eventTemplateId, eventId, params)
+	req, err := newGetRenderByIdRequest(c.baseURL, eventTemplateId, eventId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, ev
 }
 
 func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllEventTemplatesRequest(c.Server, appId)
+	req, err := newGetAllEventTemplatesRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEdi
 }
 
 func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventTemplatesRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateEventTemplatesRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32
 }
 
 func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventTemplatesRequest(c.Server, appId, body)
+	req, err := newCreateEventTemplatesRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body C
 }
 
 func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveEventTemplateRequest(c.Server, appId, eventTemplateId)
+	req, err := newArchiveEventTemplateRequest(c.baseURL, appId, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventT
 }
 
 func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetEventTemplateRequest(c.Server, appId, eventTemplateId)
+	req, err := newGetEventTemplateRequest(c.baseURL, appId, eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTempl
 }
 
 func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateEventTemplateRequestWithBody(c.Server, appId, eventTemplateId, contentType, body)
+	req, err := newUpdateEventTemplateRequestWithBody(c.baseURL, appId, eventTemplateId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32,
 }
 
 func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateEventTemplateRequest(c.Server, appId, eventTemplateId, body)
+	req, err := newUpdateEventTemplateRequest(c.baseURL, appId, eventTemplateId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTe
 }
 
 func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokensRequestWithBody(c.Server, appId, eventTemplateId, contentType, body)
+	req, err := newCreateTokensRequestWithBody(c.baseURL, appId, eventTemplateId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventT
 }
 
 func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokensRequest(c.Server, appId, eventTemplateId, body)
+	req, err := newCreateTokensRequest(c.baseURL, appId, eventTemplateId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateI
 }
 
 func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveTokenNameRequest(c.Server, appId, eventTemplateId, tokenName)
+	req, err := newArchiveTokenNameRequest(c.baseURL, appId, eventTemplateId, tokenName)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTempl
 }
 
 func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateTokenNameRequestWithBody(c.Server, appId, eventTemplateId, tokenName, contentType, body)
+	req, err := newUpdateTokenNameRequestWithBody(c.baseURL, appId, eventTemplateId, tokenName, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eve
 }
 
 func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateTokenNameRequest(c.Server, appId, eventTemplateId, tokenName, body)
+	req, err := newUpdateTokenNameRequest(c.baseURL, appId, eventTemplateId, tokenName, body)
 	if err != nil {
 		return nil, err
 	}
@@ -250,31 +247,26 @@ func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTempla
 }
 
 // newCreateEventsRequest calls the generic CreateEvents builder with application/json body.
-func newCreateEventsRequest(server string, body CreateEventsJSONRequestBody) (*http.Request, error) {
+func newCreateEventsRequest(baseURL *url.URL, body CreateEventsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateEventsRequestWithBody(server, "application/json", bodyReader)
+	return newCreateEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newCreateEventsRequestWithBody generates requests for CreateEvents with any type of body
-func newCreateEventsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/timeline/events")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -290,31 +282,26 @@ func newCreateEventsRequestWithBody(server string, contentType string, body io.R
 }
 
 // newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(server string, body CreateBatchJSONRequestBody) (*http.Request, error) {
+func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(server, "application/json", bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
-func newCreateBatchRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/timeline/events/batch/create")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +317,7 @@ func newCreateBatchRequestWithBody(server string, contentType string, body io.Re
 }
 
 // newGetEventRequest generates requests for GetEvent
-func newGetEventRequest(server string, eventTemplateId string, eventId string) (*http.Request, error) {
+func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -347,17 +334,12 @@ func newGetEventRequest(server string, eventTemplateId string, eventId string) (
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +353,7 @@ func newGetEventRequest(server string, eventTemplateId string, eventId string) (
 }
 
 // newGetDetailByIdRequest generates requests for GetDetailById
-func newGetDetailByIdRequest(server string, eventTemplateId string, eventId string) (*http.Request, error) {
+func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -388,17 +370,12 @@ func newGetDetailByIdRequest(server string, eventTemplateId string, eventId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/detail", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -412,7 +389,7 @@ func newGetDetailByIdRequest(server string, eventTemplateId string, eventId stri
 }
 
 // newGetRenderByIdRequest generates requests for GetRenderById
-func newGetRenderByIdRequest(server string, eventTemplateId string, eventId string, params *GetRenderByIdParams) (*http.Request, error) {
+func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string, params *GetRenderByIdParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -429,17 +406,12 @@ func newGetRenderByIdRequest(server string, eventTemplateId string, eventId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/render", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -471,7 +443,7 @@ func newGetRenderByIdRequest(server string, eventTemplateId string, eventId stri
 }
 
 // newGetAllEventTemplatesRequest generates requests for GetAllEventTemplates
-func newGetAllEventTemplatesRequest(server string, appId int32) (*http.Request, error) {
+func newGetAllEventTemplatesRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -481,17 +453,12 @@ func newGetAllEventTemplatesRequest(server string, appId int32) (*http.Request, 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -505,18 +472,18 @@ func newGetAllEventTemplatesRequest(server string, appId int32) (*http.Request, 
 }
 
 // newCreateEventTemplatesRequest calls the generic CreateEventTemplates builder with application/json body.
-func newCreateEventTemplatesRequest(server string, appId int32, body CreateEventTemplatesJSONRequestBody) (*http.Request, error) {
+func newCreateEventTemplatesRequest(baseURL *url.URL, appId int32, body CreateEventTemplatesJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateEventTemplatesRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateEventTemplatesRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateEventTemplatesRequestWithBody generates requests for CreateEventTemplates with any type of body
-func newCreateEventTemplatesRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -526,17 +493,12 @@ func newCreateEventTemplatesRequestWithBody(server string, appId int32, contentT
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -552,7 +514,7 @@ func newCreateEventTemplatesRequestWithBody(server string, appId int32, contentT
 }
 
 // newArchiveEventTemplateRequest generates requests for ArchiveEventTemplate
-func newArchiveEventTemplateRequest(server string, appId int32, eventTemplateId string) (*http.Request, error) {
+func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -569,17 +531,12 @@ func newArchiveEventTemplateRequest(server string, appId int32, eventTemplateId 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -593,7 +550,7 @@ func newArchiveEventTemplateRequest(server string, appId int32, eventTemplateId 
 }
 
 // newGetEventTemplateRequest generates requests for GetEventTemplate
-func newGetEventTemplateRequest(server string, appId int32, eventTemplateId string) (*http.Request, error) {
+func newGetEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -610,17 +567,12 @@ func newGetEventTemplateRequest(server string, appId int32, eventTemplateId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -634,18 +586,18 @@ func newGetEventTemplateRequest(server string, appId int32, eventTemplateId stri
 }
 
 // newUpdateEventTemplateRequest calls the generic UpdateEventTemplate builder with application/json body.
-func newUpdateEventTemplateRequest(server string, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody) (*http.Request, error) {
+func newUpdateEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateEventTemplateRequestWithBody(server, appId, eventTemplateId, "application/json", bodyReader)
+	return newUpdateEventTemplateRequestWithBody(baseURL, appId, eventTemplateId, "application/json", bodyReader)
 }
 
 // newUpdateEventTemplateRequestWithBody generates requests for UpdateEventTemplate with any type of body
-func newUpdateEventTemplateRequestWithBody(server string, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateEventTemplateRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -662,17 +614,12 @@ func newUpdateEventTemplateRequestWithBody(server string, appId int32, eventTemp
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -688,18 +635,18 @@ func newUpdateEventTemplateRequestWithBody(server string, appId int32, eventTemp
 }
 
 // newCreateTokensRequest calls the generic CreateTokens builder with application/json body.
-func newCreateTokensRequest(server string, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody) (*http.Request, error) {
+func newCreateTokensRequest(baseURL *url.URL, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateTokensRequestWithBody(server, appId, eventTemplateId, "application/json", bodyReader)
+	return newCreateTokensRequestWithBody(baseURL, appId, eventTemplateId, "application/json", bodyReader)
 }
 
 // newCreateTokensRequestWithBody generates requests for CreateTokens with any type of body
-func newCreateTokensRequestWithBody(server string, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -716,17 +663,12 @@ func newCreateTokensRequestWithBody(server string, appId int32, eventTemplateId 
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +684,7 @@ func newCreateTokensRequestWithBody(server string, appId int32, eventTemplateId 
 }
 
 // newArchiveTokenNameRequest generates requests for ArchiveTokenName
-func newArchiveTokenNameRequest(server string, appId int32, eventTemplateId string, tokenName string) (*http.Request, error) {
+func newArchiveTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -766,17 +708,12 @@ func newArchiveTokenNameRequest(server string, appId int32, eventTemplateId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -790,18 +727,18 @@ func newArchiveTokenNameRequest(server string, appId int32, eventTemplateId stri
 }
 
 // newUpdateTokenNameRequest calls the generic UpdateTokenName builder with application/json body.
-func newUpdateTokenNameRequest(server string, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody) (*http.Request, error) {
+func newUpdateTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateTokenNameRequestWithBody(server, appId, eventTemplateId, tokenName, "application/json", bodyReader)
+	return newUpdateTokenNameRequestWithBody(baseURL, appId, eventTemplateId, tokenName, "application/json", bodyReader)
 }
 
 // newUpdateTokenNameRequestWithBody generates requests for UpdateTokenName with any type of body
-func newUpdateTokenNameRequestWithBody(server string, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateTokenNameRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -825,17 +762,12 @@ func newUpdateTokenNameRequestWithBody(server string, appId int32, eventTemplate
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -873,7 +805,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -894,41 +826,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

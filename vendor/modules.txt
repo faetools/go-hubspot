@@ -1,8 +1,3 @@
-# github.com/AlecAivazis/survey/v2 v2.3.2
-## explicit; go 1.13
-github.com/AlecAivazis/survey/v2
-github.com/AlecAivazis/survey/v2/core
-github.com/AlecAivazis/survey/v2/terminal
 # github.com/containerd/typeurl v1.0.2
 ## explicit; go 1.13
 github.com/containerd/typeurl
@@ -11,21 +6,17 @@ github.com/containerd/typeurl
 github.com/deepmap/oapi-codegen/pkg/codegen
 github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
-# github.com/faetools/client v0.0.0-20220125082958-72beec4766c6
+# github.com/faetools/client v0.0.0-20220125090859-e86949b79454
 ## explicit; go 1.17
 github.com/faetools/client
-# github.com/faetools/devtool v0.0.0-20220122165158-9997bdc7bbf3
+# github.com/faetools/devtool v0.0.0-20220123204838-8ae48c447da6
 ## explicit; go 1.17
 github.com/faetools/devtool/cgtools
-github.com/faetools/devtool/devtool
 github.com/faetools/devtool/format
 github.com/faetools/devtool/format/golang
 github.com/faetools/devtool/format/markdown
 github.com/faetools/devtool/format/writers
 github.com/faetools/devtool/format/yaml
-github.com/faetools/devtool/internal/repo
-github.com/faetools/devtool/internal/repo/library
-github.com/faetools/devtool/internal/repo/service
 github.com/faetools/devtool/internal/templates
 github.com/faetools/devtool/internal/version
 # github.com/faetools/kit v0.0.7
@@ -77,9 +68,6 @@ github.com/hashicorp/hcl/json/token
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
-# github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
-## explicit
-github.com/kballard/go-shellquote
 # github.com/labstack/echo/v4 v4.6.3
 ## explicit; go 1.15
 github.com/labstack/echo/v4
@@ -104,9 +92,6 @@ github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.14
 ## explicit; go 1.12
 github.com/mattn/go-isatty
-# github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
-## explicit
-github.com/mgutz/ansi
 # github.com/mitchellh/mapstructure v1.4.3
 ## explicit; go 1.14
 github.com/mitchellh/mapstructure
@@ -122,7 +107,7 @@ github.com/pelletier/go-toml
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors
-# github.com/spf13/afero v1.6.0
+# github.com/spf13/afero v1.8.0
 ## explicit; go 1.13
 github.com/spf13/afero
 github.com/spf13/afero/mem
@@ -191,19 +176,13 @@ golang.org/x/sync/errgroup
 ## explicit; go 1.17
 golang.org/x/sys/execabs
 golang.org/x/sys/internal/unsafeheader
-golang.org/x/sys/plan9
 golang.org/x/sys/unix
-golang.org/x/sys/windows
-# golang.org/x/term v0.0.0-20210503060354-a79de5458b56
-## explicit; go 1.17
-golang.org/x/term
 # golang.org/x/text v0.3.7
 ## explicit; go 1.17
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-golang.org/x/text/width
 # golang.org/x/tools v0.1.9-0.20211209172050-90a85b2969be
 ## explicit; go 1.17
 golang.org/x/tools/go/ast/astutil

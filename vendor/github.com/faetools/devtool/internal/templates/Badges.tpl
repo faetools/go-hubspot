@@ -17,6 +17,6 @@ TODO: Get [YOUR_STATUS_API_TOKEN here](https://app.circleci.com/settings/project
 ![Devtool version](https://img.shields.io/badge/Devtool-{{ .DevtoolVersion }}-brightgreen.svg)
 ![Maintainer](https://img.shields.io/badge/team-{{ .Team }}-blue)
 {{ if .IsPublic -}}
-[![Go Report Card](https://goreportcard.com/badge/github/faetools/{{ .Name }})](https://goreportcard.com/report/github/faetools/{{ .Name }})
+[![Go Report Card](https://goreportcard.com/badge/github.com/faetools/{{ .Name }})](https://goreportcard.com/report/github.com/faetools/{{ .Name }})
 [![GoDoc Reference](https://img.shields.io/badge/godoc-reference-blue.svg)](https://pkg.go.dev/github.com/faetools/{{ .Name }})
 {{- end -}}

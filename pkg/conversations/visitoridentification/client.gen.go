@@ -17,11 +17,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGenerateTokenCreateRequestWithBody(c.Server, contentType, body)
+	req, err := newGenerateTokenCreateRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +30,7 @@ func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType 
 }
 
 func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGenerateTokenCreateRequest(c.Server, body)
+	req, err := newGenerateTokenCreateRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -45,31 +42,26 @@ func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCr
 }
 
 // newGenerateTokenCreateRequest calls the generic GenerateTokenCreate builder with application/json body.
-func newGenerateTokenCreateRequest(server string, body GenerateTokenCreateJSONRequestBody) (*http.Request, error) {
+func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newGenerateTokenCreateRequestWithBody(server, "application/json", bodyReader)
+	return newGenerateTokenCreateRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newGenerateTokenCreateRequestWithBody generates requests for GenerateTokenCreate with any type of body
-func newGenerateTokenCreateRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/conversations/v3/visitor-identification/tokens/create")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +99,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -128,41 +120,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

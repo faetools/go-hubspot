@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSchemasRequest(c.Server, params)
+	req, err := newGetAllSchemasRequest(c.baseURL, params)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParam
 }
 
 func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSchemasRequestWithBody(c.Server, contentType, body)
+	req, err := newCreateSchemasRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string
 }
 
 func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSchemasRequest(c.Server, body)
+	req, err := newCreateSchemasRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequ
 }
 
 func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveObjectTypeRequest(c.Server, objectType, params)
+	req, err := newArchiveObjectTypeRequest(c.baseURL, objectType, params)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, par
 }
 
 func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetObjectTypeRequest(c.Server, objectType)
+	req, err := newGetObjectTypeRequest(c.baseURL, objectType)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEdit
 }
 
 func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectTypeRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newUpdateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType stri
 }
 
 func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectTypeRequest(c.Server, objectType, body)
+	req, err := newUpdateObjectTypeRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body
 }
 
 func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationAssociationsRequestWithBody(c.Server, objectType, contentType, body)
+	req, err := newCreateAssociationAssociationsRequestWithBody(c.baseURL, objectType, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, ob
 }
 
 func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationAssociationsRequest(c.Server, objectType, body)
+	req, err := newCreateAssociationAssociationsRequest(c.baseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType
 }
 
 func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAssociationAssociationIdentifierRequest(c.Server, objectType, associationIdentifier)
+	req, err := newArchiveAssociationAssociationIdentifierRequest(c.baseURL, objectType, associationIdentifier)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, 
 }
 
 func (c *Client) doPurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPurgeObjectTypeRequest(c.Server, objectType)
+	req, err := newPurgeObjectTypeRequest(c.baseURL, objectType)
 	if err != nil {
 		return nil, err
 	}
@@ -154,20 +151,15 @@ func (c *Client) doPurgeObjectType(ctx context.Context, objectType string, reqEd
 }
 
 // newGetAllSchemasRequest generates requests for GetAllSchemas
-func newGetAllSchemasRequest(server string, params *GetAllSchemasParams) (*http.Request, error) {
+func newGetAllSchemasRequest(baseURL *url.URL, params *GetAllSchemasParams) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/schemas")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -199,31 +191,26 @@ func newGetAllSchemasRequest(server string, params *GetAllSchemasParams) (*http.
 }
 
 // newCreateSchemasRequest calls the generic CreateSchemas builder with application/json body.
-func newCreateSchemasRequest(server string, body CreateSchemasJSONRequestBody) (*http.Request, error) {
+func newCreateSchemasRequest(baseURL *url.URL, body CreateSchemasJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateSchemasRequestWithBody(server, "application/json", bodyReader)
+	return newCreateSchemasRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newCreateSchemasRequestWithBody generates requests for CreateSchemas with any type of body
-func newCreateSchemasRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateSchemasRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/schemas")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +226,7 @@ func newCreateSchemasRequestWithBody(server string, contentType string, body io.
 }
 
 // newArchiveObjectTypeRequest generates requests for ArchiveObjectType
-func newArchiveObjectTypeRequest(server string, objectType string, params *ArchiveObjectTypeParams) (*http.Request, error) {
+func newArchiveObjectTypeRequest(baseURL *url.URL, objectType string, params *ArchiveObjectTypeParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -249,17 +236,12 @@ func newArchiveObjectTypeRequest(server string, objectType string, params *Archi
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +273,7 @@ func newArchiveObjectTypeRequest(server string, objectType string, params *Archi
 }
 
 // newGetObjectTypeRequest generates requests for GetObjectType
-func newGetObjectTypeRequest(server string, objectType string) (*http.Request, error) {
+func newGetObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -301,17 +283,12 @@ func newGetObjectTypeRequest(server string, objectType string) (*http.Request, e
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -325,18 +302,18 @@ func newGetObjectTypeRequest(server string, objectType string) (*http.Request, e
 }
 
 // newUpdateObjectTypeRequest calls the generic UpdateObjectType builder with application/json body.
-func newUpdateObjectTypeRequest(server string, objectType string, body UpdateObjectTypeJSONRequestBody) (*http.Request, error) {
+func newUpdateObjectTypeRequest(baseURL *url.URL, objectType string, body UpdateObjectTypeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateObjectTypeRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newUpdateObjectTypeRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newUpdateObjectTypeRequestWithBody generates requests for UpdateObjectType with any type of body
-func newUpdateObjectTypeRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -346,17 +323,12 @@ func newUpdateObjectTypeRequestWithBody(server string, objectType string, conten
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -372,18 +344,18 @@ func newUpdateObjectTypeRequestWithBody(server string, objectType string, conten
 }
 
 // newCreateAssociationAssociationsRequest calls the generic CreateAssociationAssociations builder with application/json body.
-func newCreateAssociationAssociationsRequest(server string, objectType string, body CreateAssociationAssociationsJSONRequestBody) (*http.Request, error) {
+func newCreateAssociationAssociationsRequest(baseURL *url.URL, objectType string, body CreateAssociationAssociationsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAssociationAssociationsRequestWithBody(server, objectType, "application/json", bodyReader)
+	return newCreateAssociationAssociationsRequestWithBody(baseURL, objectType, "application/json", bodyReader)
 }
 
 // newCreateAssociationAssociationsRequestWithBody generates requests for CreateAssociationAssociations with any type of body
-func newCreateAssociationAssociationsRequestWithBody(server string, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateAssociationAssociationsRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -393,17 +365,12 @@ func newCreateAssociationAssociationsRequestWithBody(server string, objectType s
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s/associations", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -419,7 +386,7 @@ func newCreateAssociationAssociationsRequestWithBody(server string, objectType s
 }
 
 // newArchiveAssociationAssociationIdentifierRequest generates requests for ArchiveAssociationAssociationIdentifier
-func newArchiveAssociationAssociationIdentifierRequest(server string, objectType string, associationIdentifier string) (*http.Request, error) {
+func newArchiveAssociationAssociationIdentifierRequest(baseURL *url.URL, objectType string, associationIdentifier string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -436,17 +403,12 @@ func newArchiveAssociationAssociationIdentifierRequest(server string, objectType
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s/associations/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -460,7 +422,7 @@ func newArchiveAssociationAssociationIdentifierRequest(server string, objectType
 }
 
 // newPurgeObjectTypeRequest generates requests for PurgeObjectType
-func newPurgeObjectTypeRequest(server string, objectType string) (*http.Request, error) {
+func newPurgeObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -470,17 +432,12 @@ func newPurgeObjectTypeRequest(server string, objectType string) (*http.Request,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/schemas/%s/purge", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -516,7 +473,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -537,41 +494,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

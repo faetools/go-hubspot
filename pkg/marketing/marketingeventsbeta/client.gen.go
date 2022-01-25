@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEventsMarketingEventsRequestWithBody(c.Server, contentType, body)
+	req, err := newEventsMarketingEventsRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentTyp
 }
 
 func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEventsMarketingEventsRequest(c.Server, body)
+	req, err := newEventsMarketingEventsRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketi
 }
 
 func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteEventsRequestWithBody(c.Server, contentType, body)
+	req, err := newDeleteEventsRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string,
 }
 
 func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteEventsRequest(c.Server, body)
+	req, err := newDeleteEventsRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONReques
 }
 
 func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newSearchEventsRequest(c.Server, params)
+	req, err := newSearchEventsRequest(c.baseURL, params)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams,
 }
 
 func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertEventsRequestWithBody(c.Server, contentType, body)
+	req, err := newUpsertEventsRequestWithBody(c.baseURL, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string,
 }
 
 func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertEventsRequest(c.Server, body)
+	req, err := newUpsertEventsRequest(c.baseURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONReques
 }
 
 func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteExternalEventRequest(c.Server, externalEventId, params)
+	req, err := newDeleteExternalEventRequest(c.baseURL, externalEventId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +115,7 @@ func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId stri
 }
 
 func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetExternalEventRequest(c.Server, externalEventId, params)
+	req, err := newGetExternalEventRequest(c.baseURL, externalEventId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +127,7 @@ func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string,
 }
 
 func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPatchExternalEventRequestWithBody(c.Server, externalEventId, params, contentType, body)
+	req, err := newPatchExternalEventRequestWithBody(c.baseURL, externalEventId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +139,7 @@ func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEvent
 }
 
 func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPatchExternalEventRequest(c.Server, externalEventId, params, body)
+	req, err := newPatchExternalEventRequest(c.baseURL, externalEventId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -154,7 +151,7 @@ func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId strin
 }
 
 func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPutExternalEventRequestWithBody(c.Server, externalEventId, contentType, body)
+	req, err := newPutExternalEventRequestWithBody(c.baseURL, externalEventId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +163,7 @@ func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId
 }
 
 func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPutExternalEventRequest(c.Server, externalEventId, body)
+	req, err := newPutExternalEventRequest(c.baseURL, externalEventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +175,7 @@ func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string,
 }
 
 func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCancelExternalEventRequest(c.Server, externalEventId, params)
+	req, err := newCancelExternalEventRequest(c.baseURL, externalEventId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +187,7 @@ func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId stri
 }
 
 func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEmailUpsertSubscriberStateRequestWithBody(c.Server, externalEventId, subscriberState, params, contentType, body)
+	req, err := newEmailUpsertSubscriberStateRequestWithBody(c.baseURL, externalEventId, subscriberState, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +199,7 @@ func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, exter
 }
 
 func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEmailUpsertSubscriberStateRequest(c.Server, externalEventId, subscriberState, params, body)
+	req, err := newEmailUpsertSubscriberStateRequest(c.baseURL, externalEventId, subscriberState, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +211,7 @@ func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEvent
 }
 
 func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertSubscriberStateRequestWithBody(c.Server, externalEventId, subscriberState, params, contentType, body)
+	req, err := newUpsertSubscriberStateRequestWithBody(c.baseURL, externalEventId, subscriberState, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +223,7 @@ func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEv
 }
 
 func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertSubscriberStateRequest(c.Server, externalEventId, subscriberState, params, body)
+	req, err := newUpsertSubscriberStateRequest(c.baseURL, externalEventId, subscriberState, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +235,7 @@ func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId st
 }
 
 func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppSettingsRequest(c.Server, appId)
+	req, err := newGetAppSettingsRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -250,7 +247,7 @@ func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors .
 }
 
 func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPostAppSettingsRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newPostAppSettingsRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +259,7 @@ func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, con
 }
 
 func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPostAppSettingsRequest(c.Server, appId, body)
+	req, err := newPostAppSettingsRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -274,31 +271,26 @@ func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAp
 }
 
 // newEventsMarketingEventsRequest calls the generic EventsMarketingEvents builder with application/json body.
-func newEventsMarketingEventsRequest(server string, body EventsMarketingEventsJSONRequestBody) (*http.Request, error) {
+func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEventsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newEventsMarketingEventsRequestWithBody(server, "application/json", bodyReader)
+	return newEventsMarketingEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newEventsMarketingEventsRequestWithBody generates requests for EventsMarketingEvents with any type of body
-func newEventsMarketingEventsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -314,31 +306,26 @@ func newEventsMarketingEventsRequestWithBody(server string, contentType string, 
 }
 
 // newDeleteEventsRequest calls the generic DeleteEvents builder with application/json body.
-func newDeleteEventsRequest(server string, body DeleteEventsJSONRequestBody) (*http.Request, error) {
+func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDeleteEventsRequestWithBody(server, "application/json", bodyReader)
+	return newDeleteEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newDeleteEventsRequestWithBody generates requests for DeleteEvents with any type of body
-func newDeleteEventsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/delete")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -354,20 +341,15 @@ func newDeleteEventsRequestWithBody(server string, contentType string, body io.R
 }
 
 // newSearchEventsRequest generates requests for SearchEvents
-func newSearchEventsRequest(server string, params *SearchEventsParams) (*http.Request, error) {
+func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/search")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -397,31 +379,26 @@ func newSearchEventsRequest(server string, params *SearchEventsParams) (*http.Re
 }
 
 // newUpsertEventsRequest calls the generic UpsertEvents builder with application/json body.
-func newUpsertEventsRequest(server string, body UpsertEventsJSONRequestBody) (*http.Request, error) {
+func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpsertEventsRequestWithBody(server, "application/json", bodyReader)
+	return newUpsertEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
 // newUpsertEventsRequestWithBody generates requests for UpsertEvents with any type of body
-func newUpsertEventsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/upsert")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -437,7 +414,7 @@ func newUpsertEventsRequestWithBody(server string, contentType string, body io.R
 }
 
 // newDeleteExternalEventRequest generates requests for DeleteExternalEvent
-func newDeleteExternalEventRequest(server string, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
+func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -447,17 +424,12 @@ func newDeleteExternalEventRequest(server string, externalEventId string, params
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -487,7 +459,7 @@ func newDeleteExternalEventRequest(server string, externalEventId string, params
 }
 
 // newGetExternalEventRequest generates requests for GetExternalEvent
-func newGetExternalEventRequest(server string, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
+func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -497,17 +469,12 @@ func newGetExternalEventRequest(server string, externalEventId string, params *G
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -537,18 +504,18 @@ func newGetExternalEventRequest(server string, externalEventId string, params *G
 }
 
 // newPatchExternalEventRequest calls the generic PatchExternalEvent builder with application/json body.
-func newPatchExternalEventRequest(server string, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody) (*http.Request, error) {
+func newPatchExternalEventRequest(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPatchExternalEventRequestWithBody(server, externalEventId, params, "application/json", bodyReader)
+	return newPatchExternalEventRequestWithBody(baseURL, externalEventId, params, "application/json", bodyReader)
 }
 
 // newPatchExternalEventRequestWithBody generates requests for PatchExternalEvent with any type of body
-func newPatchExternalEventRequestWithBody(server string, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
+func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -558,17 +525,12 @@ func newPatchExternalEventRequestWithBody(server string, externalEventId string,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -600,18 +562,18 @@ func newPatchExternalEventRequestWithBody(server string, externalEventId string,
 }
 
 // newPutExternalEventRequest calls the generic PutExternalEvent builder with application/json body.
-func newPutExternalEventRequest(server string, externalEventId string, body PutExternalEventJSONRequestBody) (*http.Request, error) {
+func newPutExternalEventRequest(baseURL *url.URL, externalEventId string, body PutExternalEventJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPutExternalEventRequestWithBody(server, externalEventId, "application/json", bodyReader)
+	return newPutExternalEventRequestWithBody(baseURL, externalEventId, "application/json", bodyReader)
 }
 
 // newPutExternalEventRequestWithBody generates requests for PutExternalEvent with any type of body
-func newPutExternalEventRequestWithBody(server string, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
+func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -621,17 +583,12 @@ func newPutExternalEventRequestWithBody(server string, externalEventId string, c
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -647,7 +604,7 @@ func newPutExternalEventRequestWithBody(server string, externalEventId string, c
 }
 
 // newCancelExternalEventRequest generates requests for CancelExternalEvent
-func newCancelExternalEventRequest(server string, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
+func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -657,17 +614,12 @@ func newCancelExternalEventRequest(server string, externalEventId string, params
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -697,18 +649,18 @@ func newCancelExternalEventRequest(server string, externalEventId string, params
 }
 
 // newEmailUpsertSubscriberStateRequest calls the generic EmailUpsertSubscriberState builder with application/json body.
-func newEmailUpsertSubscriberStateRequest(server string, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
+func newEmailUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newEmailUpsertSubscriberStateRequestWithBody(server, externalEventId, subscriberState, params, "application/json", bodyReader)
+	return newEmailUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, "application/json", bodyReader)
 }
 
 // newEmailUpsertSubscriberStateRequestWithBody generates requests for EmailUpsertSubscriberState with any type of body
-func newEmailUpsertSubscriberStateRequestWithBody(server string, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
+func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -725,17 +677,12 @@ func newEmailUpsertSubscriberStateRequestWithBody(server string, externalEventId
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -767,18 +714,18 @@ func newEmailUpsertSubscriberStateRequestWithBody(server string, externalEventId
 }
 
 // newUpsertSubscriberStateRequest calls the generic UpsertSubscriberState builder with application/json body.
-func newUpsertSubscriberStateRequest(server string, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
+func newUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpsertSubscriberStateRequestWithBody(server, externalEventId, subscriberState, params, "application/json", bodyReader)
+	return newUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, "application/json", bodyReader)
 }
 
 // newUpsertSubscriberStateRequestWithBody generates requests for UpsertSubscriberState with any type of body
-func newUpsertSubscriberStateRequestWithBody(server string, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
+func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -795,17 +742,12 @@ func newUpsertSubscriberStateRequestWithBody(server string, externalEventId stri
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -837,7 +779,7 @@ func newUpsertSubscriberStateRequestWithBody(server string, externalEventId stri
 }
 
 // newGetAppSettingsRequest generates requests for GetAppSettings
-func newGetAppSettingsRequest(server string, appId int32) (*http.Request, error) {
+func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -847,17 +789,12 @@ func newGetAppSettingsRequest(server string, appId int32) (*http.Request, error)
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -871,18 +808,18 @@ func newGetAppSettingsRequest(server string, appId int32) (*http.Request, error)
 }
 
 // newPostAppSettingsRequest calls the generic PostAppSettings builder with application/json body.
-func newPostAppSettingsRequest(server string, appId int32, body PostAppSettingsJSONRequestBody) (*http.Request, error) {
+func newPostAppSettingsRequest(baseURL *url.URL, appId int32, body PostAppSettingsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newPostAppSettingsRequestWithBody(server, appId, "application/json", bodyReader)
+	return newPostAppSettingsRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newPostAppSettingsRequestWithBody generates requests for PostAppSettings with any type of body
-func newPostAppSettingsRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -892,17 +829,12 @@ func newPostAppSettingsRequestWithBody(server string, appId int32, contentType s
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -940,7 +872,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -961,41 +893,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doGetCardsSampleResponseSampleResponse(ctx context.Context, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetCardsSampleResponseSampleResponseRequest(c.Server)
+	req, err := newGetCardsSampleResponseSampleResponseRequest(c.baseURL)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doGetCardsSampleResponseSampleResponse(ctx context.Context, req
 }
 
 func (c *Client) doGetAllApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllAppRequest(c.Server, appId)
+	req, err := newGetAllAppRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doGetAllApp(ctx context.Context, appId int32, reqEditors ...cli
 }
 
 func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newCreateAppRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentTy
 }
 
 func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequest(c.Server, appId, body)
+	req, err := newCreateAppRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSO
 }
 
 func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveCardRequest(c.Server, appId, cardId)
+	req, err := newArchiveCardRequest(c.baseURL, appId, cardId)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +79,7 @@ func (c *Client) doArchiveCard(ctx context.Context, appId int32, cardId string, 
 }
 
 func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetCardRequest(c.Server, appId, cardId)
+	req, err := newGetCardRequest(c.baseURL, appId, cardId)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +91,7 @@ func (c *Client) doGetCard(ctx context.Context, appId int32, cardId string, reqE
 }
 
 func (c *Client) doUpdateCardWithBody(ctx context.Context, appId int32, cardId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateCardRequestWithBody(c.Server, appId, cardId, contentType, body)
+	req, err := newUpdateCardRequestWithBody(c.baseURL, appId, cardId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +103,7 @@ func (c *Client) doUpdateCardWithBody(ctx context.Context, appId int32, cardId s
 }
 
 func (c *Client) doUpdateCard(ctx context.Context, appId int32, cardId string, body UpdateCardJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateCardRequest(c.Server, appId, cardId, body)
+	req, err := newUpdateCardRequest(c.baseURL, appId, cardId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,20 +115,15 @@ func (c *Client) doUpdateCard(ctx context.Context, appId int32, cardId string, b
 }
 
 // newGetCardsSampleResponseSampleResponseRequest generates requests for GetCardsSampleResponseSampleResponse
-func newGetCardsSampleResponseSampleResponseRequest(server string) (*http.Request, error) {
+func newGetCardsSampleResponseSampleResponseRequest(baseURL *url.URL) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/sample-response")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +137,7 @@ func newGetCardsSampleResponseSampleResponseRequest(server string) (*http.Reques
 }
 
 // newGetAllAppRequest generates requests for GetAllApp
-func newGetAllAppRequest(server string, appId int32) (*http.Request, error) {
+func newGetAllAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -155,17 +147,12 @@ func newGetAllAppRequest(server string, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -179,18 +166,18 @@ func newGetAllAppRequest(server string, appId int32) (*http.Request, error) {
 }
 
 // newCreateAppRequest calls the generic CreateApp builder with application/json body.
-func newCreateAppRequest(server string, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
+func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAppRequestWithBody(server, appId, "application/json", bodyReader)
+	return newCreateAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newCreateAppRequestWithBody generates requests for CreateApp with any type of body
-func newCreateAppRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -200,17 +187,12 @@ func newCreateAppRequestWithBody(server string, appId int32, contentType string,
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +208,7 @@ func newCreateAppRequestWithBody(server string, appId int32, contentType string,
 }
 
 // newArchiveCardRequest generates requests for ArchiveCard
-func newArchiveCardRequest(server string, appId int32, cardId string) (*http.Request, error) {
+func newArchiveCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -243,17 +225,12 @@ func newArchiveCardRequest(server string, appId int32, cardId string) (*http.Req
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -267,7 +244,7 @@ func newArchiveCardRequest(server string, appId int32, cardId string) (*http.Req
 }
 
 // newGetCardRequest generates requests for GetCard
-func newGetCardRequest(server string, appId int32, cardId string) (*http.Request, error) {
+func newGetCardRequest(baseURL *url.URL, appId int32, cardId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -284,17 +261,12 @@ func newGetCardRequest(server string, appId int32, cardId string) (*http.Request
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -308,18 +280,18 @@ func newGetCardRequest(server string, appId int32, cardId string) (*http.Request
 }
 
 // newUpdateCardRequest calls the generic UpdateCard builder with application/json body.
-func newUpdateCardRequest(server string, appId int32, cardId string, body UpdateCardJSONRequestBody) (*http.Request, error) {
+func newUpdateCardRequest(baseURL *url.URL, appId int32, cardId string, body UpdateCardJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateCardRequestWithBody(server, appId, cardId, "application/json", bodyReader)
+	return newUpdateCardRequestWithBody(baseURL, appId, cardId, "application/json", bodyReader)
 }
 
 // newUpdateCardRequestWithBody generates requests for UpdateCard with any type of body
-func newUpdateCardRequestWithBody(server string, appId int32, cardId string, contentType string, body io.Reader) (*http.Request, error) {
+func newUpdateCardRequestWithBody(baseURL *url.URL, appId int32, cardId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -336,17 +308,12 @@ func newUpdateCardRequestWithBody(server string, appId int32, cardId string, con
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/cards/%s/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -384,7 +351,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -405,41 +372,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

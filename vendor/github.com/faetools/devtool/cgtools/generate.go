@@ -11,7 +11,6 @@ import (
 
 	"github.com/deepmap/oapi-codegen/pkg/codegen"
 	"github.com/faetools/devtool/format"
-	"github.com/faetools/devtool/internal/repo"
 	"github.com/faetools/kit/terminal"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/logrusorgru/aurora"
@@ -69,7 +68,7 @@ func (g Generator) WriteBytes(path string, content []byte, mode fs.FileMode) (er
 
 // WriteTemplate writes the template to the given path, creating any directories and overwriting existing files.
 func (g Generator) WriteTemplate(path string,
-	tpl *template.Template, data *repo.Definition) (err error,
+	tpl *template.Template, data interface{}) (err error,
 ) {
 	b := &bytes.Buffer{}
 	if err = tpl.Execute(b, data); err != nil {
@@ -92,3 +91,4 @@ func (g Generator) WriteSwagger(path string,
 
 	return g.WriteBytes(path, []byte(code), 0o644)
 }
+

@@ -18,11 +18,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAppRequest(c.Server, appId)
+	req, err := newArchiveAppRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +31,7 @@ func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...cl
 }
 
 func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppRequest(c.Server, appId)
+	req, err := newGetAppRequest(c.baseURL, appId)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +43,7 @@ func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client
 }
 
 func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequestWithBody(c.Server, appId, contentType, body)
+	req, err := newReplaceAppRequestWithBody(c.baseURL, appId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +55,7 @@ func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentT
 }
 
 func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequest(c.Server, appId, body)
+	req, err := newReplaceAppRequest(c.baseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +67,7 @@ func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJ
 }
 
 // newArchiveAppRequest generates requests for ArchiveApp
-func newArchiveAppRequest(server string, appId int32) (*http.Request, error) {
+func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -80,17 +77,12 @@ func newArchiveAppRequest(server string, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +96,7 @@ func newArchiveAppRequest(server string, appId int32) (*http.Request, error) {
 }
 
 // newGetAppRequest generates requests for GetApp
-func newGetAppRequest(server string, appId int32) (*http.Request, error) {
+func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -114,17 +106,12 @@ func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -138,18 +125,18 @@ func newGetAppRequest(server string, appId int32) (*http.Request, error) {
 }
 
 // newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
-func newReplaceAppRequest(server string, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
+func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(server, appId, "application/json", bodyReader)
+	return newReplaceAppRequestWithBody(baseURL, appId, "application/json", bodyReader)
 }
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
-func newReplaceAppRequestWithBody(server string, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -159,17 +146,12 @@ func newReplaceAppRequestWithBody(server string, appId int32, contentType string
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +189,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -228,41 +210,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.

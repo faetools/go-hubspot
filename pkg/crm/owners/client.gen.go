@@ -16,11 +16,8 @@ import (
 	"github.com/faetools/client"
 )
 
-// ClientOption allows setting custom parameters during construction.
-type ClientOption func(*Client) error
-
 func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListRequest(c.Server, params)
+	req, err := newListRequest(c.baseURL, params)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +29,7 @@ func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...c
 }
 
 func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwnerParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetOwnerRequest(c.Server, ownerId, params)
+	req, err := newGetOwnerRequest(c.baseURL, ownerId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -44,20 +41,15 @@ func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwner
 }
 
 // newListRequest generates requests for List
-func newListRequest(server string, params *ListParams) (*http.Request, error) {
+func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
 	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
 
 	operationPath := fmt.Sprintf("/crm/v3/owners/")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +123,7 @@ func newListRequest(server string, params *ListParams) (*http.Request, error) {
 }
 
 // newGetOwnerRequest generates requests for GetOwner
-func newGetOwnerRequest(server string, ownerId int32, params *GetOwnerParams) (*http.Request, error) {
+func newGetOwnerRequest(baseURL *url.URL, ownerId int32, params *GetOwnerParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -141,17 +133,12 @@ func newGetOwnerRequest(server string, ownerId int32, params *GetOwnerParams) (*
 		return nil, err
 	}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
 	operationPath := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
 
-	queryURL, err := serverURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
 	}
@@ -219,7 +206,7 @@ type Client struct {
 	// https://api.deepmap.com for example. This can contain a path relative
 	// to the server, such as https://api.deepmap.com/dev-test, and all the
 	// paths in the swagger spec will be appended to the server.
-	Server string
+	baseURL *url.URL
 
 	// Doer for performing requests, typically a *http.Client with any
 	// customized settings, such as certificate chains.
@@ -240,41 +227,36 @@ func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
 	c.requestEditors = append(c.requestEditors, fn)
 }
 
+// SetBaseURL overrides the baseURL.
+func (c *Client) SetBaseURL(baseURL *url.URL) {
+	c.baseURL = baseURL
+}
+
 // NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...ClientOption) (*Client, error) {
-	// create a client with default server
-	client := Client{Server: DefaultServer}
+func NewClient(opts ...client.Option) (*Client, error) {
+	// create a client
+	c := Client{}
 
 	// mutate client and add all optional params
 	for _, o := range opts {
-		if err := o(&client); err != nil {
+		if err := o(&c); err != nil {
 			return nil, err
 		}
 	}
 
-	// ensure the server URL always has a trailing slash
-	if !strings.HasSuffix(client.Server, "/") {
-		client.Server += "/"
+	// add default server
+	if c.baseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
+			return nil, err
+		}
 	}
 
 	// create httpClient, if not already present
-	if client.client == nil {
-		client.client = &http.Client{}
+	if c.client == nil {
+		c.client = &http.Client{}
 	}
 
-	return &client, nil
-}
-
-// WithBaseURL overrides the baseURL.
-func WithBaseURL(baseURL string) ClientOption {
-	return func(c *Client) error {
-		newBaseURL, err := url.Parse(baseURL)
-		if err != nil {
-			return err
-		}
-		c.Server = newBaseURL.String()
-		return nil
-	}
+	return &c, nil
 }
 
 // ClientInterface interface specification for the client.
