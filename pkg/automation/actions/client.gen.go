@@ -269,16 +269,13 @@ func newCompleteBatchRequest(baseURL *url.URL, body CompleteBatchJSONRequestBody
 	return newCompleteBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCompleteBatch = "./automation/v4/actions/callbacks/complete"
+
 // newCompleteBatchRequestWithBody generates requests for CompleteBatch with any type of body
 func newCompleteBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/callbacks/complete")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCompleteBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -315,12 +312,12 @@ func newCompleteCallbackRequestWithBody(baseURL *url.URL, callbackId string, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/callbacks/%s/complete", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCompleteCallback := fmt.Sprintf("/automation/v4/actions/callbacks/%s/complete", pathParam0)
+	if opPathCompleteCallback[0] == '/' {
+		opPathCompleteCallback = "." + opPathCompleteCallback
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCompleteCallback)
 	if err != nil {
 		return nil, err
 	}
@@ -346,12 +343,12 @@ func newListAppRequest(baseURL *url.URL, appId int32, params *ListAppParams) (*h
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathListApp := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
+	if opPathListApp[0] == '/' {
+		opPathListApp = "." + opPathListApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListApp)
 	if err != nil {
 		return nil, err
 	}
@@ -432,12 +429,12 @@ func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType stri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateApp := fmt.Sprintf("/automation/v4/actions/%s", pathParam0)
+	if opPathCreateApp[0] == '/' {
+		opPathCreateApp = "." + opPathCreateApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateApp)
 	if err != nil {
 		return nil, err
 	}
@@ -470,12 +467,12 @@ func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveDefinition := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
+	if opPathArchiveDefinition[0] == '/' {
+		opPathArchiveDefinition = "." + opPathArchiveDefinition
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveDefinition)
 	if err != nil {
 		return nil, err
 	}
@@ -506,12 +503,12 @@ func newGetDefinitionRequest(baseURL *url.URL, appId int32, definitionId string,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetDefinition := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
+	if opPathGetDefinition[0] == '/' {
+		opPathGetDefinition = "." + opPathGetDefinition
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetDefinition)
 	if err != nil {
 		return nil, err
 	}
@@ -571,12 +568,12 @@ func newUpdateDefinitionRequestWithBody(baseURL *url.URL, appId int32, definitio
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateDefinition := fmt.Sprintf("/automation/v4/actions/%s/%s", pathParam0, pathParam1)
+	if opPathUpdateDefinition[0] == '/' {
+		opPathUpdateDefinition = "." + opPathUpdateDefinition
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateDefinition)
 	if err != nil {
 		return nil, err
 	}
@@ -609,12 +606,12 @@ func newListFunctionsRequest(baseURL *url.URL, appId int32, definitionId string)
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathListFunctions := fmt.Sprintf("/automation/v4/actions/%s/%s/functions", pathParam0, pathParam1)
+	if opPathListFunctions[0] == '/' {
+		opPathListFunctions = "." + opPathListFunctions
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListFunctions)
 	if err != nil {
 		return nil, err
 	}
@@ -652,12 +649,12 @@ func newArchiveByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveByFunctionType := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
+	if opPathArchiveByFunctionType[0] == '/' {
+		opPathArchiveByFunctionType = "." + opPathArchiveByFunctionType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveByFunctionType)
 	if err != nil {
 		return nil, err
 	}
@@ -695,12 +692,12 @@ func newGetByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetByFunctionType := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
+	if opPathGetByFunctionType[0] == '/' {
+		opPathGetByFunctionType = "." + opPathGetByFunctionType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetByFunctionType)
 	if err != nil {
 		return nil, err
 	}
@@ -738,12 +735,12 @@ func newCreateOrReplaceByFunctionTypeRequestWithBody(baseURL *url.URL, appId int
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateOrReplaceByFunctionType := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s", pathParam0, pathParam1, pathParam2)
+	if opPathCreateOrReplaceByFunctionType[0] == '/' {
+		opPathCreateOrReplaceByFunctionType = "." + opPathCreateOrReplaceByFunctionType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateOrReplaceByFunctionType)
 	if err != nil {
 		return nil, err
 	}
@@ -790,12 +787,12 @@ func newArchiveFunctionRequest(baseURL *url.URL, appId int32, definitionId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveFunction := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathArchiveFunction[0] == '/' {
+		opPathArchiveFunction = "." + opPathArchiveFunction
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveFunction)
 	if err != nil {
 		return nil, err
 	}
@@ -840,12 +837,12 @@ func newGetFunctionRequest(baseURL *url.URL, appId int32, definitionId string, f
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetFunction := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathGetFunction[0] == '/' {
+		opPathGetFunction = "." + opPathGetFunction
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetFunction)
 	if err != nil {
 		return nil, err
 	}
@@ -890,12 +887,12 @@ func newCreateOrReplaceFunctionRequestWithBody(baseURL *url.URL, appId int32, de
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateOrReplaceFunction := fmt.Sprintf("/automation/v4/actions/%s/%s/functions/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathCreateOrReplaceFunction[0] == '/' {
+		opPathCreateOrReplaceFunction = "." + opPathCreateOrReplaceFunction
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateOrReplaceFunction)
 	if err != nil {
 		return nil, err
 	}
@@ -928,12 +925,12 @@ func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathListRevisions := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions", pathParam0, pathParam1)
+	if opPathListRevisions[0] == '/' {
+		opPathListRevisions = "." + opPathListRevisions
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListRevisions)
 	if err != nil {
 		return nil, err
 	}
@@ -1003,12 +1000,12 @@ func newGetRevisionRequest(baseURL *url.URL, appId int32, definitionId string, r
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetRevision := fmt.Sprintf("/automation/v4/actions/%s/%s/revisions/%s", pathParam0, pathParam1, pathParam2)
+	if opPathGetRevision[0] == '/' {
+		opPathGetRevision = "." + opPathGetRevision
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetRevision)
 	if err != nil {
 		return nil, err
 	}

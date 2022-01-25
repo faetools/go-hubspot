@@ -258,16 +258,13 @@ func (c *Client) doCreateAssociationType(ctx context.Context, productId string, 
 	return c.client.Do(req)
 }
 
+const opPathListProducts = "./crm/v3/objects/products"
+
 // newListProductsRequest generates requests for ListProducts
 func newListProductsRequest(baseURL *url.URL, params *ListProductsParams) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListProducts)
 	if err != nil {
 		return nil, err
 	}
@@ -365,16 +362,13 @@ func newCreateProductsRequest(baseURL *url.URL, body CreateProductsJSONRequestBo
 	return newCreateProductsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateProducts = "./crm/v3/objects/products"
+
 // newCreateProductsRequestWithBody generates requests for CreateProducts with any type of body
 func newCreateProductsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateProducts)
 	if err != nil {
 		return nil, err
 	}
@@ -400,16 +394,13 @@ func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) 
 	return newArchiveBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathArchiveBatch = "./crm/v3/objects/products/batch/archive"
+
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/batch/archive")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -435,16 +426,13 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateBatch = "./crm/v3/objects/products/batch/create"
+
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/batch/create")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -470,16 +458,13 @@ func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBat
 	return newReadBatchRequestWithBody(baseURL, params, "application/json", bodyReader)
 }
 
+const opPathReadBatch = "./crm/v3/objects/products/batch/read"
+
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/batch/read")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReadBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -523,16 +508,13 @@ func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*
 	return newUpdateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathUpdateBatch = "./crm/v3/objects/products/batch/update"
+
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/batch/update")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -558,16 +540,13 @@ func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.R
 	return newDoSearchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathDoSearch = "./crm/v3/objects/products/search"
+
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/search")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoSearch)
 	if err != nil {
 		return nil, err
 	}
@@ -593,12 +572,12 @@ func newArchiveProductRequest(baseURL *url.URL, productId string) (*http.Request
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveProduct := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
+	if opPathArchiveProduct[0] == '/' {
+		opPathArchiveProduct = "." + opPathArchiveProduct
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -622,12 +601,12 @@ func newGetProductRequest(baseURL *url.URL, productId string, params *GetProduct
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetProduct := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
+	if opPathGetProduct[0] == '/' {
+		opPathGetProduct = "." + opPathGetProduct
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -722,12 +701,12 @@ func newUpdateProductRequestWithBody(baseURL *url.URL, productId string, params 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateProduct := fmt.Sprintf("/crm/v3/objects/products/%s", pathParam0)
+	if opPathUpdateProduct[0] == '/' {
+		opPathUpdateProduct = "." + opPathUpdateProduct
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -778,12 +757,12 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, productId string, toObjectTy
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s", pathParam0, pathParam1)
+	if opPathGetAllToObjectType[0] == '/' {
+		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -860,12 +839,12 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, productId string, toObje
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveAssociationType := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathArchiveAssociationType[0] == '/' {
+		opPathArchiveAssociationType = "." + opPathArchiveAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveAssociationType)
 	if err != nil {
 		return nil, err
 	}
@@ -910,12 +889,12 @@ func newCreateAssociationTypeRequest(baseURL *url.URL, productId string, toObjec
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateAssociationType := fmt.Sprintf("/crm/v3/objects/products/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathCreateAssociationType[0] == '/' {
+		opPathCreateAssociationType = "." + opPathCreateAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateAssociationType)
 	if err != nil {
 		return nil, err
 	}

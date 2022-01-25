@@ -77,12 +77,12 @@ func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPathArchiveApp[0] == '/' {
+		opPathArchiveApp = "." + opPathArchiveApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveApp)
 	if err != nil {
 		return nil, err
 	}
@@ -106,12 +106,12 @@ func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPathGetApp[0] == '/' {
+		opPathGetApp = "." + opPathGetApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetApp)
 	if err != nil {
 		return nil, err
 	}
@@ -146,12 +146,12 @@ func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathReplaceApp := fmt.Sprintf("/crm/v3/extensions/videoconferencing/settings/%s", pathParam0)
+	if opPathReplaceApp[0] == '/' {
+		opPathReplaceApp = "." + opPathReplaceApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReplaceApp)
 	if err != nil {
 		return nil, err
 	}

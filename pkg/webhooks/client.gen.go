@@ -185,12 +185,12 @@ func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, erro
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathClearSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPathClearSettings[0] == '/' {
+		opPathClearSettings = "." + opPathClearSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathClearSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -214,12 +214,12 @@ func newGetAllSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, err
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPathGetAllSettings[0] == '/' {
+		opPathGetAllSettings = "." + opPathGetAllSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -254,12 +254,12 @@ func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentT
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathConfigureSettings := fmt.Sprintf("/webhooks/v3/%s/settings", pathParam0)
+	if opPathConfigureSettings[0] == '/' {
+		opPathConfigureSettings = "." + opPathConfigureSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathConfigureSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -285,12 +285,12 @@ func newGetAllSubscriptionsRequest(baseURL *url.URL, appId int32) (*http.Request
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllSubscriptions := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
+	if opPathGetAllSubscriptions[0] == '/' {
+		opPathGetAllSubscriptions = "." + opPathGetAllSubscriptions
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllSubscriptions)
 	if err != nil {
 		return nil, err
 	}
@@ -325,12 +325,12 @@ func newCreateSubscriptionsRequestWithBody(baseURL *url.URL, appId int32, conten
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateSubscriptions := fmt.Sprintf("/webhooks/v3/%s/subscriptions", pathParam0)
+	if opPathCreateSubscriptions[0] == '/' {
+		opPathCreateSubscriptions = "." + opPathCreateSubscriptions
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateSubscriptions)
 	if err != nil {
 		return nil, err
 	}
@@ -367,12 +367,12 @@ func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType st
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/batch/update", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateBatch := fmt.Sprintf("/webhooks/v3/%s/subscriptions/batch/update", pathParam0)
+	if opPathUpdateBatch[0] == '/' {
+		opPathUpdateBatch = "." + opPathUpdateBatch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -405,12 +405,12 @@ func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPathArchiveSubscription[0] == '/' {
+		opPathArchiveSubscription = "." + opPathArchiveSubscription
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveSubscription)
 	if err != nil {
 		return nil, err
 	}
@@ -441,12 +441,12 @@ func newGetSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPathGetSubscription[0] == '/' {
+		opPathGetSubscription = "." + opPathGetSubscription
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetSubscription)
 	if err != nil {
 		return nil, err
 	}
@@ -488,12 +488,12 @@ func newUpdateSubscriptionRequestWithBody(baseURL *url.URL, appId int32, subscri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateSubscription := fmt.Sprintf("/webhooks/v3/%s/subscriptions/%s", pathParam0, pathParam1)
+	if opPathUpdateSubscription[0] == '/' {
+		opPathUpdateSubscription = "." + opPathUpdateSubscription
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateSubscription)
 	if err != nil {
 		return nil, err
 	}

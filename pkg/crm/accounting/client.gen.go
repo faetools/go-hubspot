@@ -460,12 +460,12 @@ func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateCustomerRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-create/%s", pathParam0)
+	if opPathCreateCustomerRequest[0] == '/' {
+		opPathCreateCustomerRequest = "." + opPathCreateCustomerRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateCustomerRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -502,12 +502,12 @@ func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDoCustomerSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/customer-search/%s", pathParam0)
+	if opPathDoCustomerSearchRequest[0] == '/' {
+		opPathDoCustomerSearchRequest = "." + opPathDoCustomerSearchRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoCustomerSearchRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -544,12 +544,12 @@ func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateExchangeRateRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/exchange-rate/%s", pathParam0)
+	if opPathCreateExchangeRateRequest[0] == '/' {
+		opPathCreateExchangeRateRequest = "." + opPathCreateExchangeRateRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateExchangeRateRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -586,12 +586,12 @@ func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateInvoiceRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-create/%s", pathParam0)
+	if opPathCreateInvoiceRequest[0] == '/' {
+		opPathCreateInvoiceRequest = "." + opPathCreateInvoiceRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateInvoiceRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -628,12 +628,12 @@ func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathInvoicePdfRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-pdf/%s", pathParam0)
+	if opPathInvoicePdfRequest[0] == '/' {
+		opPathInvoicePdfRequest = "." + opPathInvoicePdfRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathInvoicePdfRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -670,12 +670,12 @@ func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDoInvoiceSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoice-search/%s", pathParam0)
+	if opPathDoInvoiceSearchRequest[0] == '/' {
+		opPathDoInvoiceSearchRequest = "." + opPathDoInvoiceSearchRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoInvoiceSearchRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -712,12 +712,12 @@ func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentTyp
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/invoices/%s", pathParam0)
+	if opPathGetRequest[0] == '/' {
+		opPathGetRequest = "." + opPathGetRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -754,12 +754,12 @@ func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDoProductSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/product-search/%s", pathParam0)
+	if opPathDoProductSearchRequest[0] == '/' {
+		opPathDoProductSearchRequest = "." + opPathDoProductSearchRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoProductSearchRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -796,12 +796,12 @@ func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, co
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDoTaxSearchRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/tax-search/%s", pathParam0)
+	if opPathDoTaxSearchRequest[0] == '/' {
+		opPathDoTaxSearchRequest = "." + opPathDoTaxSearchRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoTaxSearchRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -838,12 +838,12 @@ func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateTermRequest := fmt.Sprintf("/crm/v3/extensions/accounting/callback/terms/%s", pathParam0)
+	if opPathCreateTermRequest[0] == '/' {
+		opPathCreateTermRequest = "." + opPathCreateTermRequest
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateTermRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -869,12 +869,12 @@ func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoice
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetInvoice := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
+	if opPathGetInvoice[0] == '/' {
+		opPathGetInvoice = "." + opPathGetInvoice
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetInvoice)
 	if err != nil {
 		return nil, err
 	}
@@ -925,12 +925,12 @@ func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateInvoice := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s", pathParam0)
+	if opPathUpdateInvoice[0] == '/' {
+		opPathUpdateInvoice = "." + opPathUpdateInvoice
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateInvoice)
 	if err != nil {
 		return nil, err
 	}
@@ -983,12 +983,12 @@ func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreatePayment := fmt.Sprintf("/crm/v3/extensions/accounting/invoice/%s/payment", pathParam0)
+	if opPathCreatePayment[0] == '/' {
+		opPathCreatePayment = "." + opPathCreatePayment
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreatePayment)
 	if err != nil {
 		return nil, err
 	}
@@ -1032,12 +1032,12 @@ func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetApp := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
+	if opPathGetApp[0] == '/' {
+		opPathGetApp = "." + opPathGetApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetApp)
 	if err != nil {
 		return nil, err
 	}
@@ -1072,12 +1072,12 @@ func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType str
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathReplaceApp := fmt.Sprintf("/crm/v3/extensions/accounting/settings/%s", pathParam0)
+	if opPathReplaceApp[0] == '/' {
+		opPathReplaceApp = "." + opPathReplaceApp
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReplaceApp)
 	if err != nil {
 		return nil, err
 	}
@@ -1114,12 +1114,12 @@ func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, cont
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateContactContacts := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/contacts", pathParam0)
+	if opPathCreateContactContacts[0] == '/' {
+		opPathCreateContactContacts = "." + opPathCreateContactContacts
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateContactContacts)
 	if err != nil {
 		return nil, err
 	}
@@ -1156,12 +1156,12 @@ func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, cont
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateProductProducts := fmt.Sprintf("/crm/v3/extensions/accounting/sync/%s/products", pathParam0)
+	if opPathCreateProductProducts[0] == '/' {
+		opPathCreateProductProducts = "." + opPathCreateProductProducts
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateProductProducts)
 	if err != nil {
 		return nil, err
 	}
@@ -1187,16 +1187,13 @@ func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSO
 	return newReplaceUserAccountsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathReplaceUserAccounts = "./crm/v3/extensions/accounting/user-accounts"
+
 // newReplaceUserAccountsRequestWithBody generates requests for ReplaceUserAccounts with any type of body
 func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReplaceUserAccounts)
 	if err != nil {
 		return nil, err
 	}
@@ -1222,12 +1219,12 @@ func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveAccount := fmt.Sprintf("/crm/v3/extensions/accounting/user-accounts/%s", pathParam0)
+	if opPathArchiveAccount[0] == '/' {
+		opPathArchiveAccount = "." + opPathArchiveAccount
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveAccount)
 	if err != nil {
 		return nil, err
 	}

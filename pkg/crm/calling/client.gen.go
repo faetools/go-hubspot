@@ -101,12 +101,12 @@ func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, er
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPathArchiveSettings[0] == '/' {
+		opPathArchiveSettings = "." + opPathArchiveSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -130,12 +130,12 @@ func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error)
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPathGetSettings[0] == '/' {
+		opPathGetSettings = "." + opPathGetSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -170,12 +170,12 @@ func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPathUpdateSettings[0] == '/' {
+		opPathUpdateSettings = "." + opPathUpdateSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -212,12 +212,12 @@ func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateSettings := fmt.Sprintf("/crm/v3/extensions/calling/%s/settings", pathParam0)
+	if opPathCreateSettings[0] == '/' {
+		opPathCreateSettings = "." + opPathCreateSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateSettings)
 	if err != nil {
 		return nil, err
 	}

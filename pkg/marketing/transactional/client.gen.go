@@ -125,16 +125,13 @@ func newSendEmailRequest(baseURL *url.URL, body SendEmailJSONRequestBody) (*http
 	return newSendEmailRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathSendEmail = "./marketing/v3/transactional/single-email/send"
+
 // newSendEmailRequestWithBody generates requests for SendEmail with any type of body
 func newSendEmailRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/single-email/send")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathSendEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -149,16 +146,13 @@ func newSendEmailRequestWithBody(baseURL *url.URL, contentType string, body io.R
 	return req, nil
 }
 
+const opPathGetTokensPageSmtpTokens = "./marketing/v3/transactional/smtp-tokens"
+
 // newGetTokensPageSmtpTokensRequest generates requests for GetTokensPageSmtpTokens
 func newGetTokensPageSmtpTokensRequest(baseURL *url.URL, params *GetTokensPageSmtpTokensParams) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetTokensPageSmtpTokens)
 	if err != nil {
 		return nil, err
 	}
@@ -242,16 +236,13 @@ func newCreateTokenSmtpTokensRequest(baseURL *url.URL, body CreateTokenSmtpToken
 	return newCreateTokenSmtpTokensRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateTokenSmtpTokens = "./marketing/v3/transactional/smtp-tokens"
+
 // newCreateTokenSmtpTokensRequestWithBody generates requests for CreateTokenSmtpTokens with any type of body
 func newCreateTokenSmtpTokensRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateTokenSmtpTokens)
 	if err != nil {
 		return nil, err
 	}
@@ -277,12 +268,12 @@ func newArchiveTokenRequest(baseURL *url.URL, tokenId string) (*http.Request, er
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveToken := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
+	if opPathArchiveToken[0] == '/' {
+		opPathArchiveToken = "." + opPathArchiveToken
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveToken)
 	if err != nil {
 		return nil, err
 	}
@@ -306,12 +297,12 @@ func newGetTokenByIdRequest(baseURL *url.URL, tokenId string) (*http.Request, er
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetTokenById := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s", pathParam0)
+	if opPathGetTokenById[0] == '/' {
+		opPathGetTokenById = "." + opPathGetTokenById
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetTokenById)
 	if err != nil {
 		return nil, err
 	}
@@ -335,12 +326,12 @@ func newResetPasswordPasswordResetRequest(baseURL *url.URL, tokenId string) (*ht
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s/password-reset", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathResetPasswordPasswordReset := fmt.Sprintf("/marketing/v3/transactional/smtp-tokens/%s/password-reset", pathParam0)
+	if opPathResetPasswordPasswordReset[0] == '/' {
+		opPathResetPasswordPasswordReset = "." + opPathResetPasswordPasswordReset
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathResetPasswordPasswordReset)
 	if err != nil {
 		return nil, err
 	}

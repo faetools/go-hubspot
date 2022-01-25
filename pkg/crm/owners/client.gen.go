@@ -40,16 +40,13 @@ func (c *Client) doGetOwner(ctx context.Context, ownerId int32, params *GetOwner
 	return c.client.Do(req)
 }
 
+const opPathList = "./crm/v3/owners/"
+
 // newListRequest generates requests for List
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/owners/")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathList)
 	if err != nil {
 		return nil, err
 	}
@@ -133,12 +130,12 @@ func newGetOwnerRequest(baseURL *url.URL, ownerId int32, params *GetOwnerParams)
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetOwner := fmt.Sprintf("/crm/v3/owners/%s", pathParam0)
+	if opPathGetOwner[0] == '/' {
+		opPathGetOwner = "." + opPathGetOwner
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetOwner)
 	if err != nil {
 		return nil, err
 	}

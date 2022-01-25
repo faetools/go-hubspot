@@ -76,12 +76,12 @@ func newGetAccessTokenRequest(baseURL *url.URL, token string) (*http.Request, er
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth/v1/access-tokens/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAccessToken := fmt.Sprintf("/oauth/v1/access-tokens/%s", pathParam0)
+	if opPathGetAccessToken[0] == '/' {
+		opPathGetAccessToken = "." + opPathGetAccessToken
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAccessToken)
 	if err != nil {
 		return nil, err
 	}
@@ -105,12 +105,12 @@ func newArchiveRefreshTokenRequest(baseURL *url.URL, token string) (*http.Reques
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveRefreshToken := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
+	if opPathArchiveRefreshToken[0] == '/' {
+		opPathArchiveRefreshToken = "." + opPathArchiveRefreshToken
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveRefreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +134,12 @@ func newGetRefreshTokenRequest(baseURL *url.URL, token string) (*http.Request, e
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetRefreshToken := fmt.Sprintf("/oauth/v1/refresh-tokens/%s", pathParam0)
+	if opPathGetRefreshToken[0] == '/' {
+		opPathGetRefreshToken = "." + opPathGetRefreshToken
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetRefreshToken)
 	if err != nil {
 		return nil, err
 	}
@@ -152,16 +152,13 @@ func newGetRefreshTokenRequest(baseURL *url.URL, token string) (*http.Request, e
 	return req, nil
 }
 
+const opPathCreateToken = "./oauth/v1/token"
+
 // newCreateTokenRequestWithBody generates requests for CreateToken with any type of body
 func newCreateTokenRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/oauth/v1/token")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateToken)
 	if err != nil {
 		return nil, err
 	}

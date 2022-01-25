@@ -258,16 +258,13 @@ func (c *Client) doCreateAssociationType(ctx context.Context, ticketId string, t
 	return c.client.Do(req)
 }
 
+const opPathListTickets = "./crm/v3/objects/tickets"
+
 // newListTicketsRequest generates requests for ListTickets
 func newListTicketsRequest(baseURL *url.URL, params *ListTicketsParams) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListTickets)
 	if err != nil {
 		return nil, err
 	}
@@ -365,16 +362,13 @@ func newCreateTicketsRequest(baseURL *url.URL, body CreateTicketsJSONRequestBody
 	return newCreateTicketsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateTickets = "./crm/v3/objects/tickets"
+
 // newCreateTicketsRequestWithBody generates requests for CreateTickets with any type of body
 func newCreateTicketsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateTickets)
 	if err != nil {
 		return nil, err
 	}
@@ -400,16 +394,13 @@ func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) 
 	return newArchiveBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathArchiveBatch = "./crm/v3/objects/tickets/batch/archive"
+
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/batch/archive")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -435,16 +426,13 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateBatch = "./crm/v3/objects/tickets/batch/create"
+
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/batch/create")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -470,16 +458,13 @@ func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBat
 	return newReadBatchRequestWithBody(baseURL, params, "application/json", bodyReader)
 }
 
+const opPathReadBatch = "./crm/v3/objects/tickets/batch/read"
+
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/batch/read")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReadBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -523,16 +508,13 @@ func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*
 	return newUpdateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathUpdateBatch = "./crm/v3/objects/tickets/batch/update"
+
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/batch/update")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -558,16 +540,13 @@ func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.R
 	return newDoSearchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathDoSearch = "./crm/v3/objects/tickets/search"
+
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/search")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoSearch)
 	if err != nil {
 		return nil, err
 	}
@@ -593,12 +572,12 @@ func newArchiveTicketRequest(baseURL *url.URL, ticketId string) (*http.Request, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveTicket := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
+	if opPathArchiveTicket[0] == '/' {
+		opPathArchiveTicket = "." + opPathArchiveTicket
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveTicket)
 	if err != nil {
 		return nil, err
 	}
@@ -622,12 +601,12 @@ func newGetTicketRequest(baseURL *url.URL, ticketId string, params *GetTicketPar
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetTicket := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
+	if opPathGetTicket[0] == '/' {
+		opPathGetTicket = "." + opPathGetTicket
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetTicket)
 	if err != nil {
 		return nil, err
 	}
@@ -722,12 +701,12 @@ func newUpdateTicketRequestWithBody(baseURL *url.URL, ticketId string, params *U
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateTicket := fmt.Sprintf("/crm/v3/objects/tickets/%s", pathParam0)
+	if opPathUpdateTicket[0] == '/' {
+		opPathUpdateTicket = "." + opPathUpdateTicket
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateTicket)
 	if err != nil {
 		return nil, err
 	}
@@ -778,12 +757,12 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, ticketId string, toObjectTyp
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s", pathParam0, pathParam1)
+	if opPathGetAllToObjectType[0] == '/' {
+		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -860,12 +839,12 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, ticketId string, toObjec
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveAssociationType := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathArchiveAssociationType[0] == '/' {
+		opPathArchiveAssociationType = "." + opPathArchiveAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveAssociationType)
 	if err != nil {
 		return nil, err
 	}
@@ -910,12 +889,12 @@ func newCreateAssociationTypeRequest(baseURL *url.URL, ticketId string, toObject
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateAssociationType := fmt.Sprintf("/crm/v3/objects/tickets/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3)
+	if opPathCreateAssociationType[0] == '/' {
+		opPathCreateAssociationType = "." + opPathCreateAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateAssociationType)
 	if err != nil {
 		return nil, err
 	}

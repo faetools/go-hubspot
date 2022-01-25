@@ -293,12 +293,12 @@ func newListObjectTypeRequest(baseURL *url.URL, objectType string, params *ListO
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathListObjectType := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
+	if opPathListObjectType[0] == '/' {
+		opPathListObjectType = "." + opPathListObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathListObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -407,12 +407,12 @@ func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateObjectType := fmt.Sprintf("/crm/v3/objects/%s", pathParam0)
+	if opPathCreateObjectType[0] == '/' {
+		opPathCreateObjectType = "." + opPathCreateObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -449,12 +449,12 @@ func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, content
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/archive", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/archive", pathParam0)
+	if opPathArchiveBatch[0] == '/' {
+		opPathArchiveBatch = "." + opPathArchiveBatch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -491,12 +491,12 @@ func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentT
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/create", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/create", pathParam0)
+	if opPathCreateBatch[0] == '/' {
+		opPathCreateBatch = "." + opPathCreateBatch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -533,12 +533,12 @@ func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, params *Re
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/read", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathReadBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/read", pathParam0)
+	if opPathReadBatch[0] == '/' {
+		opPathReadBatch = "." + opPathReadBatch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReadBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -593,12 +593,12 @@ func newUpdateBatchRequestWithBody(baseURL *url.URL, objectType string, contentT
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/batch/update", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateBatch := fmt.Sprintf("/crm/v3/objects/%s/batch/update", pathParam0)
+	if opPathUpdateBatch[0] == '/' {
+		opPathUpdateBatch = "." + opPathUpdateBatch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -635,12 +635,12 @@ func newGdprDeleteObjectTypeRequestWithBody(baseURL *url.URL, objectType string,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/gdpr-delete", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGdprDeleteObjectType := fmt.Sprintf("/crm/v3/objects/%s/gdpr-delete", pathParam0)
+	if opPathGdprDeleteObjectType[0] == '/' {
+		opPathGdprDeleteObjectType = "." + opPathGdprDeleteObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGdprDeleteObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -677,12 +677,12 @@ func newDoSearchRequestWithBody(baseURL *url.URL, objectType string, contentType
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/search", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDoSearch := fmt.Sprintf("/crm/v3/objects/%s/search", pathParam0)
+	if opPathDoSearch[0] == '/' {
+		opPathDoSearch = "." + opPathDoSearch
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDoSearch)
 	if err != nil {
 		return nil, err
 	}
@@ -715,12 +715,12 @@ func newArchiveObjectRequest(baseURL *url.URL, objectType string, objectId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPathArchiveObject[0] == '/' {
+		opPathArchiveObject = "." + opPathArchiveObject
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveObject)
 	if err != nil {
 		return nil, err
 	}
@@ -751,12 +751,12 @@ func newGetObjectRequest(baseURL *url.URL, objectType string, objectId string, p
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPathGetObject[0] == '/' {
+		opPathGetObject = "." + opPathGetObject
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetObject)
 	if err != nil {
 		return nil, err
 	}
@@ -858,12 +858,12 @@ func newUpdateObjectRequestWithBody(baseURL *url.URL, objectType string, objectI
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateObject := fmt.Sprintf("/crm/v3/objects/%s/%s", pathParam0, pathParam1)
+	if opPathUpdateObject[0] == '/' {
+		opPathUpdateObject = "." + opPathUpdateObject
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateObject)
 	if err != nil {
 		return nil, err
 	}
@@ -921,12 +921,12 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, objectType string, objectId 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllToObjectType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s", pathParam0, pathParam1, pathParam2)
+	if opPathGetAllToObjectType[0] == '/' {
+		opPathGetAllToObjectType = "." + opPathGetAllToObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllToObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -1010,12 +1010,12 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, objectType string, objec
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveAssociationType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
+	if opPathArchiveAssociationType[0] == '/' {
+		opPathArchiveAssociationType = "." + opPathArchiveAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveAssociationType)
 	if err != nil {
 		return nil, err
 	}
@@ -1067,12 +1067,12 @@ func newCreateAssociationTypeRequest(baseURL *url.URL, objectType string, object
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateAssociationType := fmt.Sprintf("/crm/v3/objects/%s/%s/associations/%s/%s/%s", pathParam0, pathParam1, pathParam2, pathParam3, pathParam4)
+	if opPathCreateAssociationType[0] == '/' {
+		opPathCreateAssociationType = "." + opPathCreateAssociationType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateAssociationType)
 	if err != nil {
 		return nil, err
 	}

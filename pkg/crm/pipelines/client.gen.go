@@ -245,12 +245,12 @@ func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *Get
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllObjectType := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
+	if opPathGetAllObjectType[0] == '/' {
+		opPathGetAllObjectType = "." + opPathGetAllObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -303,12 +303,12 @@ func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, con
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateObjectType := fmt.Sprintf("/crm/v3/pipelines/%s", pathParam0)
+	if opPathCreateObjectType[0] == '/' {
+		opPathCreateObjectType = "." + opPathCreateObjectType
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateObjectType)
 	if err != nil {
 		return nil, err
 	}
@@ -341,12 +341,12 @@ func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchivePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPathArchivePipeline[0] == '/' {
+		opPathArchivePipeline = "." + opPathArchivePipeline
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchivePipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -377,12 +377,12 @@ func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId strin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetPipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPathGetPipeline[0] == '/' {
+		opPathGetPipeline = "." + opPathGetPipeline
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetPipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -442,12 +442,12 @@ func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipel
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdatePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPathUpdatePipeline[0] == '/' {
+		opPathUpdatePipeline = "." + opPathUpdatePipeline
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdatePipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -509,12 +509,12 @@ func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipe
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathReplacePipeline := fmt.Sprintf("/crm/v3/pipelines/%s/%s", pathParam0, pathParam1)
+	if opPathReplacePipeline[0] == '/' {
+		opPathReplacePipeline = "." + opPathReplacePipeline
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReplacePipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -547,12 +547,12 @@ func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId stri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllStages := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
+	if opPathGetAllStages[0] == '/' {
+		opPathGetAllStages = "." + opPathGetAllStages
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllStages)
 	if err != nil {
 		return nil, err
 	}
@@ -612,12 +612,12 @@ func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateStages := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages", pathParam0, pathParam1)
+	if opPathCreateStages[0] == '/' {
+		opPathCreateStages = "." + opPathCreateStages
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateStages)
 	if err != nil {
 		return nil, err
 	}
@@ -657,12 +657,12 @@ func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPathArchiveStage[0] == '/' {
+		opPathArchiveStage = "." + opPathArchiveStage
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveStage)
 	if err != nil {
 		return nil, err
 	}
@@ -700,12 +700,12 @@ func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPathGetStage[0] == '/' {
+		opPathGetStage = "." + opPathGetStage
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetStage)
 	if err != nil {
 		return nil, err
 	}
@@ -772,12 +772,12 @@ func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipeline
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPathUpdateStage[0] == '/' {
+		opPathUpdateStage = "." + opPathUpdateStage
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateStage)
 	if err != nil {
 		return nil, err
 	}
@@ -846,12 +846,12 @@ func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelin
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathReplaceStage := fmt.Sprintf("/crm/v3/pipelines/%s/%s/stages/%s", pathParam0, pathParam1, pathParam2)
+	if opPathReplaceStage[0] == '/' {
+		opPathReplaceStage = "." + opPathReplaceStage
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathReplaceStage)
 	if err != nil {
 		return nil, err
 	}

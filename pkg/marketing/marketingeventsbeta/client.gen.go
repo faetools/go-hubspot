@@ -281,16 +281,13 @@ func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEvent
 	return newEventsMarketingEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathEventsMarketingEvents = "./marketing/v3/marketing-events/events"
+
 // newEventsMarketingEventsRequestWithBody generates requests for EventsMarketingEvents with any type of body
 func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathEventsMarketingEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -316,16 +313,13 @@ func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) 
 	return newDeleteEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathDeleteEvents = "./marketing/v3/marketing-events/events/delete"
+
 // newDeleteEventsRequestWithBody generates requests for DeleteEvents with any type of body
 func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/delete")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDeleteEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -340,16 +334,13 @@ func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body i
 	return req, nil
 }
 
+const opPathSearchEvents = "./marketing/v3/marketing-events/events/search"
+
 // newSearchEventsRequest generates requests for SearchEvents
 func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/search")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathSearchEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -389,16 +380,13 @@ func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) 
 	return newUpsertEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathUpsertEvents = "./marketing/v3/marketing-events/events/upsert"
+
 // newUpsertEventsRequestWithBody generates requests for UpsertEvents with any type of body
 func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/upsert")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpsertEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -424,12 +412,12 @@ func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, par
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathDeleteExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPathDeleteExternalEvent[0] == '/' {
+		opPathDeleteExternalEvent = "." + opPathDeleteExternalEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathDeleteExternalEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -469,12 +457,12 @@ func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPathGetExternalEvent[0] == '/' {
+		opPathGetExternalEvent = "." + opPathGetExternalEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetExternalEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -525,12 +513,12 @@ func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId stri
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathPatchExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPathPatchExternalEvent[0] == '/' {
+		opPathPatchExternalEvent = "." + opPathPatchExternalEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathPatchExternalEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -583,12 +571,12 @@ func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathPutExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s", pathParam0)
+	if opPathPutExternalEvent[0] == '/' {
+		opPathPutExternalEvent = "." + opPathPutExternalEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathPutExternalEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -614,12 +602,12 @@ func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, par
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCancelExternalEvent := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/cancel", pathParam0)
+	if opPathCancelExternalEvent[0] == '/' {
+		opPathCancelExternalEvent = "." + opPathCancelExternalEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCancelExternalEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -677,12 +665,12 @@ func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEven
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathEmailUpsertSubscriberState := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/email-upsert", pathParam0, pathParam1)
+	if opPathEmailUpsertSubscriberState[0] == '/' {
+		opPathEmailUpsertSubscriberState = "." + opPathEmailUpsertSubscriberState
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathEmailUpsertSubscriberState)
 	if err != nil {
 		return nil, err
 	}
@@ -742,12 +730,12 @@ func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpsertSubscriberState := fmt.Sprintf("/marketing/v3/marketing-events/events/%s/%s/upsert", pathParam0, pathParam1)
+	if opPathUpsertSubscriberState[0] == '/' {
+		opPathUpsertSubscriberState = "." + opPathUpsertSubscriberState
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpsertSubscriberState)
 	if err != nil {
 		return nil, err
 	}
@@ -789,12 +777,12 @@ func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, err
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAppSettings := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
+	if opPathGetAppSettings[0] == '/' {
+		opPathGetAppSettings = "." + opPathGetAppSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAppSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -829,12 +817,12 @@ func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentTyp
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathPostAppSettings := fmt.Sprintf("/marketing/v3/marketing-events/%s/settings", pathParam0)
+	if opPathPostAppSettings[0] == '/' {
+		opPathPostAppSettings = "." + opPathPostAppSettings
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathPostAppSettings)
 	if err != nil {
 		return nil, err
 	}

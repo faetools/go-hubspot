@@ -257,16 +257,13 @@ func newCreateEventsRequest(baseURL *url.URL, body CreateEventsJSONRequestBody) 
 	return newCreateEventsRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateEvents = "./crm/v3/timeline/events"
+
 // newCreateEventsRequestWithBody generates requests for CreateEvents with any type of body
 func newCreateEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/events")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateEvents)
 	if err != nil {
 		return nil, err
 	}
@@ -292,16 +289,13 @@ func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*
 	return newCreateBatchRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathCreateBatch = "./crm/v3/timeline/events/batch/create"
+
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/events/batch/create")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateBatch)
 	if err != nil {
 		return nil, err
 	}
@@ -334,12 +328,12 @@ func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetEvent := fmt.Sprintf("/crm/v3/timeline/events/%s/%s", pathParam0, pathParam1)
+	if opPathGetEvent[0] == '/' {
+		opPathGetEvent = "." + opPathGetEvent
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetEvent)
 	if err != nil {
 		return nil, err
 	}
@@ -370,12 +364,12 @@ func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/detail", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetDetailById := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/detail", pathParam0, pathParam1)
+	if opPathGetDetailById[0] == '/' {
+		opPathGetDetailById = "." + opPathGetDetailById
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetDetailById)
 	if err != nil {
 		return nil, err
 	}
@@ -406,12 +400,12 @@ func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/render", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetRenderById := fmt.Sprintf("/crm/v3/timeline/events/%s/%s/render", pathParam0, pathParam1)
+	if opPathGetRenderById[0] == '/' {
+		opPathGetRenderById = "." + opPathGetRenderById
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetRenderById)
 	if err != nil {
 		return nil, err
 	}
@@ -453,12 +447,12 @@ func newGetAllEventTemplatesRequest(baseURL *url.URL, appId int32) (*http.Reques
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetAllEventTemplates := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
+	if opPathGetAllEventTemplates[0] == '/' {
+		opPathGetAllEventTemplates = "." + opPathGetAllEventTemplates
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetAllEventTemplates)
 	if err != nil {
 		return nil, err
 	}
@@ -493,12 +487,12 @@ func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, conte
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateEventTemplates := fmt.Sprintf("/crm/v3/timeline/%s/event-templates", pathParam0)
+	if opPathCreateEventTemplates[0] == '/' {
+		opPathCreateEventTemplates = "." + opPathCreateEventTemplates
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateEventTemplates)
 	if err != nil {
 		return nil, err
 	}
@@ -531,12 +525,12 @@ func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplate
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPathArchiveEventTemplate[0] == '/' {
+		opPathArchiveEventTemplate = "." + opPathArchiveEventTemplate
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveEventTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -567,12 +561,12 @@ func newGetEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathGetEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPathGetEventTemplate[0] == '/' {
+		opPathGetEventTemplate = "." + opPathGetEventTemplate
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGetEventTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -614,12 +608,12 @@ func newUpdateEventTemplateRequestWithBody(baseURL *url.URL, appId int32, eventT
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateEventTemplate := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s", pathParam0, pathParam1)
+	if opPathUpdateEventTemplate[0] == '/' {
+		opPathUpdateEventTemplate = "." + opPathUpdateEventTemplate
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateEventTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -663,12 +657,12 @@ func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplate
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathCreateTokens := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens", pathParam0, pathParam1)
+	if opPathCreateTokens[0] == '/' {
+		opPathCreateTokens = "." + opPathCreateTokens
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathCreateTokens)
 	if err != nil {
 		return nil, err
 	}
@@ -708,12 +702,12 @@ func newArchiveTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId s
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathArchiveTokenName := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
+	if opPathArchiveTokenName[0] == '/' {
+		opPathArchiveTokenName = "." + opPathArchiveTokenName
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathArchiveTokenName)
 	if err != nil {
 		return nil, err
 	}
@@ -762,12 +756,12 @@ func newUpdateTokenNameRequestWithBody(baseURL *url.URL, appId int32, eventTempl
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	opPathUpdateTokenName := fmt.Sprintf("/crm/v3/timeline/%s/event-templates/%s/tokens/%s", pathParam0, pathParam1, pathParam2)
+	if opPathUpdateTokenName[0] == '/' {
+		opPathUpdateTokenName = "." + opPathUpdateTokenName
 	}
 
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathUpdateTokenName)
 	if err != nil {
 		return nil, err
 	}

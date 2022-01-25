@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -52,16 +51,13 @@ func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSO
 	return newGenerateTokenCreateRequestWithBody(baseURL, "application/json", bodyReader)
 }
 
+const opPathGenerateTokenCreate = "./conversations/v3/visitor-identification/tokens/create"
+
 // newGenerateTokenCreateRequestWithBody generates requests for GenerateTokenCreate with any type of body
 func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
-	operationPath := fmt.Sprintf("/conversations/v3/visitor-identification/tokens/create")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := baseURL.Parse(operationPath)
+	queryURL, err := baseURL.Parse(opPathGenerateTokenCreate)
 	if err != nil {
 		return nil, err
 	}
