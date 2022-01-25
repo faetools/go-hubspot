@@ -32,7 +32,9 @@ func main() {
 	c, err := contacts.NewClient(contacts.WithRequestEditorFn(addAPIKey))
 	checkErr(err)
 
-	resp, err := c.ListContacts(ctx, &contacts.ListContactsParams{})
+	resp, err := c.ListContacts(ctx, &contacts.ListContactsParams{
+		Properties: &contacts.PropertyKeys,
+	})
 	checkErr(err)
 
 	if resp.StatusCode() != http.StatusOK {
