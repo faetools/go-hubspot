@@ -119,5 +119,13 @@ func AddQueryParam(query url.Values, paramName string, value interface{}) error 
 
 // GetPathParam returns the path parameter value.
 func GetPathParam(paramName string, value interface{}) (string, error) {
-	return runtime.StyleParamWithLocation(simple, false, paramName, runtime.ParamLocationPath, value)
+	p, err := runtime.StyleParamWithLocation(simple, false, paramName, runtime.ParamLocationPath, value)
+	switch {
+	case err != nil:
+		return "", err
+	case p == "":
+		return "", fmt.Errorf("empty path parameter %q", paramName)
+	default:
+		return p, nil
+	}
 }

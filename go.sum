@@ -487,8 +487,8 @@ github.com/esimonov/ifshort v1.0.3/go.mod h1:yZqNJUrNn20K8Q9n2CrjTKYyVEmX209Hgu+
 github.com/ettle/strcase v0.1.1/go.mod h1:hzDLsPC7/lwKyBOywSHEP89nt2pDgdy+No1NBA9o9VY=
 github.com/evanphx/json-patch v4.2.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/evanphx/json-patch v4.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
-github.com/faetools/client v0.0.0-20220125103716-cebb83bb084c h1:M0KNBNtpK+q+5BCP46Doi4ik4i5lR5sxAIdMG2Rp/dM=
-github.com/faetools/client v0.0.0-20220125103716-cebb83bb084c/go.mod h1:nVTKKcxopRAHerCkGCXMne1KSIVlMxNfU5OOBlL+PKA=
+github.com/faetools/client v0.0.0-20220125105205-056bea2b2113 h1:DToFxOSMInxUAw71eVNNSLkc8QMW9kAmX/LRjk6ZBcs=
+github.com/faetools/client v0.0.0-20220125105205-056bea2b2113/go.mod h1:nVTKKcxopRAHerCkGCXMne1KSIVlMxNfU5OOBlL+PKA=
 github.com/faetools/devtool v0.0.0-20220123204838-8ae48c447da6 h1:j1jkKu1UY4F2PlWR1Wc/QV85LRcu2skRogY0Bfw6sEg=
 github.com/faetools/devtool v0.0.0-20220123204838-8ae48c447da6/go.mod h1:Vl4Cet5nBFWDQd+Wh+XlXBYVv8lOTFxoB0jQemwMTuo=
 github.com/faetools/kit v0.0.7 h1:wcNzLBHM51LnOxfoKfWx/hAQEgzf+0rIqGjiU6ikY/g=
