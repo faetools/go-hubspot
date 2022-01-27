@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,778 +16,26 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllObjectTypeRequest(c.baseURL, objectType, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllGroupsRequest(c.baseURL, objectType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateGroupsRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateGroupsRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveGroupNameRequest(c.baseURL, objectType, groupName)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByNameGroupNameRequest(c.baseURL, objectType, groupName)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateGroupNameRequestWithBody(c.baseURL, objectType, groupName, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateGroupNameRequest(c.baseURL, objectType, groupName, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchivePropertyNameRequest(c.baseURL, objectType, propertyName)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByNamePropertyNameRequest(c.baseURL, objectType, propertyName, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePropertyNameRequestWithBody(c.baseURL, objectType, propertyName, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePropertyNameRequest(c.baseURL, objectType, propertyName, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-const opPathGetAllObjectTypeFormat = "./crm/v3/properties/%s"
-
-// newGetAllObjectTypeRequest generates requests for GetAllObjectType
-func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAllObjectTypeFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Archived != nil {
-		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
-func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateObjectTypeFormat = "./crm/v3/properties/%s"
-
-// newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
-func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateObjectTypeFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
-func newArchiveBatchRequest(baseURL *url.URL, objectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathArchiveBatchFormat = "./crm/v3/properties/%s/batch/archive"
-
-// newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
-func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveBatchFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(baseURL *url.URL, objectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateBatchFormat = "./crm/v3/properties/%s/batch/create"
-
-// newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
-func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateBatchFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newReadBatchRequest calls the generic ReadBatch builder with application/json body.
-func newReadBatchRequest(baseURL *url.URL, objectType string, body ReadBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathReadBatchFormat = "./crm/v3/properties/%s/batch/read"
-
-// newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
-func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathReadBatchFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetAllGroupsFormat = "./crm/v3/properties/%s/groups"
-
-// newGetAllGroupsRequest generates requests for GetAllGroups
-func newGetAllGroupsRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAllGroupsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newCreateGroupsRequest calls the generic CreateGroups builder with application/json body.
-func newCreateGroupsRequest(baseURL *url.URL, objectType string, body CreateGroupsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateGroupsRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateGroupsFormat = "./crm/v3/properties/%s/groups"
-
-// newCreateGroupsRequestWithBody generates requests for CreateGroups with any type of body
-func newCreateGroupsRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateGroupsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
-
-// newArchiveGroupNameRequest generates requests for ArchiveGroupName
-func newArchiveGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("groupName", groupName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveGroupNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetByNameGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
-
-// newGetByNameGroupNameRequest generates requests for GetByNameGroupName
-func newGetByNameGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("groupName", groupName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetByNameGroupNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateGroupNameRequest calls the generic UpdateGroupName builder with application/json body.
-func newUpdateGroupNameRequest(baseURL *url.URL, objectType string, groupName string, body UpdateGroupNameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateGroupNameRequestWithBody(baseURL, objectType, groupName, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateGroupNameFormat = "./crm/v3/properties/%s/groups/%s"
-
-// newUpdateGroupNameRequestWithBody generates requests for UpdateGroupName with any type of body
-func newUpdateGroupNameRequestWithBody(baseURL *url.URL, objectType string, groupName string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("groupName", groupName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateGroupNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchivePropertyNameFormat = "./crm/v3/properties/%s/%s"
-
-// newArchivePropertyNameRequest generates requests for ArchivePropertyName
-func newArchivePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("propertyName", propertyName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchivePropertyNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetByNamePropertyNameFormat = "./crm/v3/properties/%s/%s"
-
-// newGetByNamePropertyNameRequest generates requests for GetByNamePropertyName
-func newGetByNamePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string, params *GetByNamePropertyNameParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("propertyName", propertyName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetByNamePropertyNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Archived != nil {
-		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdatePropertyNameRequest calls the generic UpdatePropertyName builder with application/json body.
-func newUpdatePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdatePropertyNameRequestWithBody(baseURL, objectType, propertyName, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdatePropertyNameFormat = "./crm/v3/properties/%s/%s"
-
-// newUpdatePropertyNameRequestWithBody generates requests for UpdatePropertyName with any type of body
-func newUpdatePropertyNameRequestWithBody(baseURL *url.URL, objectType string, propertyName string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("objectType", objectType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("propertyName", propertyName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdatePropertyNameFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
+// operation paths
+
+const (
+	opPathGetAllObjectTypeFormat      = "./crm/v3/properties/%s"
+	opPathCreateObjectTypeFormat      = "./crm/v3/properties/%s"
+	opPathArchiveBatchFormat          = "./crm/v3/properties/%s/batch/archive"
+	opPathCreateBatchFormat           = "./crm/v3/properties/%s/batch/create"
+	opPathReadBatchFormat             = "./crm/v3/properties/%s/batch/read"
+	opPathGetAllGroupsFormat          = "./crm/v3/properties/%s/groups"
+	opPathCreateGroupsFormat          = "./crm/v3/properties/%s/groups"
+	opPathArchiveGroupNameFormat      = "./crm/v3/properties/%s/groups/%s"
+	opPathGetByNameGroupNameFormat    = "./crm/v3/properties/%s/groups/%s"
+	opPathUpdateGroupNameFormat       = "./crm/v3/properties/%s/groups/%s"
+	opPathArchivePropertyNameFormat   = "./crm/v3/properties/%s/%s"
+	opPathGetByNamePropertyNameFormat = "./crm/v3/properties/%s/%s"
+	opPathUpdatePropertyNameFormat    = "./crm/v3/properties/%s/%s"
+)
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// GetAllObjectType request
 	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error)
 
@@ -836,6 +83,48 @@ type ClientInterface interface {
 	UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// GetAllObjectType: GET /crm/v3/properties/{objectType}
+
 type GetAllObjectTypeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -857,6 +146,80 @@ func (r GetAllObjectTypeResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newGetAllObjectTypeRequest generates requests for GetAllObjectType
+func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetAllObjectTypeFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Archived != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAllObjectType request returning *GetAllObjectTypeResponse
+func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error) {
+	req, err := newGetAllObjectTypeRequest(c.BaseURL, objectType, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseProperty
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateObjectType: POST /crm/v3/properties/{objectType}
 
 type CreateObjectTypeResponse struct {
 	Body         []byte
@@ -880,6 +243,113 @@ func (r CreateObjectTypeResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
+func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateObjectTypeFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
+func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
+	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateObjectTypeResponse(rsp)
+}
+
+func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateObjectTypeRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
+	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateObjectTypeResponse(rsp)
+}
+
+// newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
+func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateObjectTypeRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateObjectTypeResponse parses an HTTP response from a CreateObjectType call.
+func parseCreateObjectTypeResponse(rsp *http.Response) (*CreateObjectTypeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Property
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveBatch: POST /crm/v3/properties/{objectType}/batch/archive
+
 type ArchiveBatchResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -900,6 +370,104 @@ func (r ArchiveBatchResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
+func newArchiveBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveBatchFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
+	rsp, err := c.doArchiveBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseArchiveBatchResponse(rsp)
+}
+
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newArchiveBatchRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
+	rsp, err := c.doArchiveBatch(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseArchiveBatchResponse(rsp)
+}
+
+// newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
+func newArchiveBatchRequest(baseURL *url.URL, objectType string, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newArchiveBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newArchiveBatchRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseArchiveBatchResponse parses an HTTP response from a ArchiveBatch call.
+func parseArchiveBatchResponse(rsp *http.Response) (*ArchiveBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateBatch: POST /crm/v3/properties/{objectType}/batch/create
 
 type CreateBatchResponse struct {
 	Body         []byte
@@ -924,244 +492,28 @@ func (r CreateBatchResponse) StatusCode() int {
 	return 0
 }
 
-type ReadBatchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *BatchResponseProperty
-	JSON207      *BatchResponseProperty
-}
-
-// Status returns HTTPResponse.Status
-func (r ReadBatchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ReadBatchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetAllGroupsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponsePropertyGroup
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllGroupsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllGroupsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateGroupsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *PropertyGroup
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateGroupsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateGroupsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveGroupNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveGroupNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveGroupNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetByNameGroupNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PropertyGroup
-}
-
-// Status returns HTTPResponse.Status
-func (r GetByNameGroupNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetByNameGroupNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateGroupNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PropertyGroup
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateGroupNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateGroupNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchivePropertyNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchivePropertyNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchivePropertyNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetByNamePropertyNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Property
-}
-
-// Status returns HTTPResponse.Status
-func (r GetByNamePropertyNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetByNamePropertyNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdatePropertyNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Property
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdatePropertyNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdatePropertyNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// GetAllObjectType request returning *GetAllObjectTypeResponse
-func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error) {
-	rsp, err := c.doGetAllObjectType(ctx, objectType, params, reqEditors...)
+// newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
+func newCreateBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetAllObjectTypeResponse(rsp)
-}
 
-// CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
-func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
-	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
+	opPath := fmt.Sprintf(opPathCreateBatchFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
-	return parseCreateObjectTypeResponse(rsp)
-}
 
-func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
-	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
-	return parseCreateObjectTypeResponse(rsp)
-}
 
-// ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
-	rsp, err := c.doArchiveBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveBatchResponse(rsp)
-}
+	req.Header.Add(client.ContentType, contentType)
 
-func (c *Client) ArchiveBatch(ctx context.Context, objectType string, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
-	rsp, err := c.doArchiveBatch(ctx, objectType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveBatchResponse(rsp)
+	return req, nil
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
@@ -1170,7 +522,21 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, objectType string, con
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateBatchResponse(rsp)
+}
+
+func (c *Client) doCreateBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) CreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
@@ -1178,195 +544,41 @@ func (c *Client) CreateBatch(ctx context.Context, objectType string, body Create
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateBatchResponse(rsp)
 }
 
-// ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
-	rsp, err := c.doReadBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
+// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
+func newCreateBatchRequest(baseURL *url.URL, objectType string, body CreateBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	return parseReadBatchResponse(rsp)
+	bodyReader = bytes.NewReader(buf)
+	return newCreateBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
 
-func (c *Client) ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
-	rsp, err := c.doReadBatch(ctx, objectType, body, reqEditors...)
+func (c *Client) doCreateBatch(ctx context.Context, objectType string, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequest(c.BaseURL, objectType, body)
 	if err != nil {
 		return nil, err
 	}
-	return parseReadBatchResponse(rsp)
-}
-
-// GetAllGroups request returning *GetAllGroupsResponse
-func (c *Client) GetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetAllGroupsResponse, error) {
-	rsp, err := c.doGetAllGroups(ctx, objectType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllGroupsResponse(rsp)
-}
-
-// CreateGroupsWithBody request with arbitrary body returning *CreateGroupsResponse
-func (c *Client) CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
-	rsp, err := c.doCreateGroupsWithBody(ctx, objectType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateGroupsResponse(rsp)
-}
-
-func (c *Client) CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
-	rsp, err := c.doCreateGroups(ctx, objectType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateGroupsResponse(rsp)
-}
-
-// ArchiveGroupName request returning *ArchiveGroupNameResponse
-func (c *Client) ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*ArchiveGroupNameResponse, error) {
-	rsp, err := c.doArchiveGroupName(ctx, objectType, groupName, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveGroupNameResponse(rsp)
-}
-
-// GetByNameGroupName request returning *GetByNameGroupNameResponse
-func (c *Client) GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*GetByNameGroupNameResponse, error) {
-	rsp, err := c.doGetByNameGroupName(ctx, objectType, groupName, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetByNameGroupNameResponse(rsp)
-}
-
-// UpdateGroupNameWithBody request with arbitrary body returning *UpdateGroupNameResponse
-func (c *Client) UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
-	rsp, err := c.doUpdateGroupNameWithBody(ctx, objectType, groupName, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateGroupNameResponse(rsp)
-}
-
-func (c *Client) UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
-	rsp, err := c.doUpdateGroupName(ctx, objectType, groupName, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateGroupNameResponse(rsp)
-}
-
-// ArchivePropertyName request returning *ArchivePropertyNameResponse
-func (c *Client) ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*ArchivePropertyNameResponse, error) {
-	rsp, err := c.doArchivePropertyName(ctx, objectType, propertyName, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchivePropertyNameResponse(rsp)
-}
-
-// GetByNamePropertyName request returning *GetByNamePropertyNameResponse
-func (c *Client) GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*GetByNamePropertyNameResponse, error) {
-	rsp, err := c.doGetByNamePropertyName(ctx, objectType, propertyName, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetByNamePropertyNameResponse(rsp)
-}
-
-// UpdatePropertyNameWithBody request with arbitrary body returning *UpdatePropertyNameResponse
-func (c *Client) UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
-	rsp, err := c.doUpdatePropertyNameWithBody(ctx, objectType, propertyName, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdatePropertyNameResponse(rsp)
-}
-
-func (c *Client) UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
-	rsp, err := c.doUpdatePropertyName(ctx, objectType, propertyName, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdatePropertyNameResponse(rsp)
-}
-
-// parseGetAllObjectTypeResponse parses an HTTP response from a GetAllObjectType call.
-func parseGetAllObjectTypeResponse(rsp *http.Response) (*GetAllObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &GetAllObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseProperty
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateObjectTypeResponse parses an HTTP response from a CreateObjectType call.
-func parseCreateObjectTypeResponse(rsp *http.Response) (*CreateObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Property
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveBatchResponse parses an HTTP response from a ArchiveBatch call.
-func parseArchiveBatchResponse(rsp *http.Response) (*ArchiveBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseCreateBatchResponse parses an HTTP response from a CreateBatch call.
 func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &CreateBatchResponse{
 		Body:         bodyBytes,
@@ -1393,13 +605,118 @@ func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) 
 	return response, nil
 }
 
-// parseReadBatchResponse parses an HTTP response from a ReadBatch call.
-func parseReadBatchResponse(rsp *http.Response) (*ReadBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ReadBatch: POST /crm/v3/properties/{objectType}/batch/read
+
+type ReadBatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *BatchResponseProperty
+	JSON207      *BatchResponseProperty
+}
+
+// Status returns HTTPResponse.Status
+func (r ReadBatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReadBatchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
+func newReadBatchRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	opPath := fmt.Sprintf(opPathReadBatchFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
+func (c *Client) ReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
+	rsp, err := c.doReadBatchWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReadBatchResponse(rsp)
+}
+
+func (c *Client) doReadBatchWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReadBatchRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
+	rsp, err := c.doReadBatch(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReadBatchResponse(rsp)
+}
+
+// newReadBatchRequest calls the generic ReadBatch builder with application/json body.
+func newReadBatchRequest(baseURL *url.URL, objectType string, body ReadBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newReadBatchRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doReadBatch(ctx context.Context, objectType string, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReadBatchRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseReadBatchResponse parses an HTTP response from a ReadBatch call.
+func parseReadBatchResponse(rsp *http.Response) (*ReadBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ReadBatchResponse{
 		Body:         bodyBytes,
@@ -1426,13 +743,74 @@ func parseReadBatchResponse(rsp *http.Response) (*ReadBatchResponse, error) {
 	return response, nil
 }
 
-// parseGetAllGroupsResponse parses an HTTP response from a GetAllGroups call.
-func parseGetAllGroupsResponse(rsp *http.Response) (*GetAllGroupsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetAllGroups: GET /crm/v3/properties/{objectType}/groups
+
+type GetAllGroupsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponsePropertyGroup
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllGroupsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllGroupsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetAllGroupsRequest generates requests for GetAllGroups
+func newGetAllGroupsRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	opPath := fmt.Sprintf(opPathGetAllGroupsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAllGroups request returning *GetAllGroupsResponse
+func (c *Client) GetAllGroups(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetAllGroupsResponse, error) {
+	req, err := newGetAllGroupsRequest(c.BaseURL, objectType)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetAllGroupsResponse{
 		Body:         bodyBytes,
@@ -1451,13 +829,117 @@ func parseGetAllGroupsResponse(rsp *http.Response) (*GetAllGroupsResponse, error
 	return response, nil
 }
 
-// parseCreateGroupsResponse parses an HTTP response from a CreateGroups call.
-func parseCreateGroupsResponse(rsp *http.Response) (*CreateGroupsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// CreateGroups: POST /crm/v3/properties/{objectType}/groups
+
+type CreateGroupsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *PropertyGroup
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateGroupsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateGroupsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newCreateGroupsRequestWithBody generates requests for CreateGroups with any type of body
+func newCreateGroupsRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	opPath := fmt.Sprintf(opPathCreateGroupsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateGroupsWithBody request with arbitrary body returning *CreateGroupsResponse
+func (c *Client) CreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
+	rsp, err := c.doCreateGroupsWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateGroupsResponse(rsp)
+}
+
+func (c *Client) doCreateGroupsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateGroupsRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateGroupsResponse, error) {
+	rsp, err := c.doCreateGroups(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateGroupsResponse(rsp)
+}
+
+// newCreateGroupsRequest calls the generic CreateGroups builder with application/json body.
+func newCreateGroupsRequest(baseURL *url.URL, objectType string, body CreateGroupsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateGroupsRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateGroups(ctx context.Context, objectType string, body CreateGroupsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateGroupsRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateGroupsResponse parses an HTTP response from a CreateGroups call.
+func parseCreateGroupsResponse(rsp *http.Response) (*CreateGroupsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &CreateGroupsResponse{
 		Body:         bodyBytes,
@@ -1476,13 +958,78 @@ func parseCreateGroupsResponse(rsp *http.Response) (*CreateGroupsResponse, error
 	return response, nil
 }
 
-// parseArchiveGroupNameResponse parses an HTTP response from a ArchiveGroupName call.
-func parseArchiveGroupNameResponse(rsp *http.Response) (*ArchiveGroupNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ArchiveGroupName: DELETE /crm/v3/properties/{objectType}/groups/{groupName}
+
+type ArchiveGroupNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveGroupNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveGroupNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newArchiveGroupNameRequest generates requests for ArchiveGroupName
+func newArchiveGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("groupName", groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveGroupNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveGroupName request returning *ArchiveGroupNameResponse
+func (c *Client) ArchiveGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*ArchiveGroupNameResponse, error) {
+	req, err := newArchiveGroupNameRequest(c.BaseURL, objectType, groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ArchiveGroupNameResponse{
 		Body:         bodyBytes,
@@ -1492,13 +1039,79 @@ func parseArchiveGroupNameResponse(rsp *http.Response) (*ArchiveGroupNameRespons
 	return response, nil
 }
 
-// parseGetByNameGroupNameResponse parses an HTTP response from a GetByNameGroupName call.
-func parseGetByNameGroupNameResponse(rsp *http.Response) (*GetByNameGroupNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetByNameGroupName: GET /crm/v3/properties/{objectType}/groups/{groupName}
+
+type GetByNameGroupNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PropertyGroup
+}
+
+// Status returns HTTPResponse.Status
+func (r GetByNameGroupNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetByNameGroupNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetByNameGroupNameRequest generates requests for GetByNameGroupName
+func newGetByNameGroupNameRequest(baseURL *url.URL, objectType string, groupName string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("groupName", groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetByNameGroupNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetByNameGroupName request returning *GetByNameGroupNameResponse
+func (c *Client) GetByNameGroupName(ctx context.Context, objectType string, groupName string, reqEditors ...client.RequestEditorFn) (*GetByNameGroupNameResponse, error) {
+	req, err := newGetByNameGroupNameRequest(c.BaseURL, objectType, groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetByNameGroupNameResponse{
 		Body:         bodyBytes,
@@ -1517,13 +1130,122 @@ func parseGetByNameGroupNameResponse(rsp *http.Response) (*GetByNameGroupNameRes
 	return response, nil
 }
 
-// parseUpdateGroupNameResponse parses an HTTP response from a UpdateGroupName call.
-func parseUpdateGroupNameResponse(rsp *http.Response) (*UpdateGroupNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// UpdateGroupName: PATCH /crm/v3/properties/{objectType}/groups/{groupName}
+
+type UpdateGroupNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PropertyGroup
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateGroupNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateGroupNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newUpdateGroupNameRequestWithBody generates requests for UpdateGroupName with any type of body
+func newUpdateGroupNameRequestWithBody(baseURL *url.URL, objectType string, groupName string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("groupName", groupName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateGroupNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateGroupNameWithBody request with arbitrary body returning *UpdateGroupNameResponse
+func (c *Client) UpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
+	rsp, err := c.doUpdateGroupNameWithBody(ctx, objectType, groupName, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateGroupNameResponse(rsp)
+}
+
+func (c *Client) doUpdateGroupNameWithBody(ctx context.Context, objectType string, groupName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateGroupNameRequestWithBody(c.BaseURL, objectType, groupName, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateGroupNameResponse, error) {
+	rsp, err := c.doUpdateGroupName(ctx, objectType, groupName, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateGroupNameResponse(rsp)
+}
+
+// newUpdateGroupNameRequest calls the generic UpdateGroupName builder with application/json body.
+func newUpdateGroupNameRequest(baseURL *url.URL, objectType string, groupName string, body UpdateGroupNameJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateGroupNameRequestWithBody(baseURL, objectType, groupName, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateGroupName(ctx context.Context, objectType string, groupName string, body UpdateGroupNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateGroupNameRequest(c.BaseURL, objectType, groupName, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateGroupNameResponse parses an HTTP response from a UpdateGroupName call.
+func parseUpdateGroupNameResponse(rsp *http.Response) (*UpdateGroupNameResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &UpdateGroupNameResponse{
 		Body:         bodyBytes,
@@ -1542,13 +1264,78 @@ func parseUpdateGroupNameResponse(rsp *http.Response) (*UpdateGroupNameResponse,
 	return response, nil
 }
 
-// parseArchivePropertyNameResponse parses an HTTP response from a ArchivePropertyName call.
-func parseArchivePropertyNameResponse(rsp *http.Response) (*ArchivePropertyNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ArchivePropertyName: DELETE /crm/v3/properties/{objectType}/{propertyName}
+
+type ArchivePropertyNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchivePropertyNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchivePropertyNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newArchivePropertyNameRequest generates requests for ArchivePropertyName
+func newArchivePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchivePropertyNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchivePropertyName request returning *ArchivePropertyNameResponse
+func (c *Client) ArchivePropertyName(ctx context.Context, objectType string, propertyName string, reqEditors ...client.RequestEditorFn) (*ArchivePropertyNameResponse, error) {
+	req, err := newArchivePropertyNameRequest(c.BaseURL, objectType, propertyName)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ArchivePropertyNameResponse{
 		Body:         bodyBytes,
@@ -1558,13 +1345,89 @@ func parseArchivePropertyNameResponse(rsp *http.Response) (*ArchivePropertyNameR
 	return response, nil
 }
 
-// parseGetByNamePropertyNameResponse parses an HTTP response from a GetByNamePropertyName call.
-func parseGetByNamePropertyNameResponse(rsp *http.Response) (*GetByNamePropertyNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetByNamePropertyName: GET /crm/v3/properties/{objectType}/{propertyName}
+
+type GetByNamePropertyNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Property
+}
+
+// Status returns HTTPResponse.Status
+func (r GetByNamePropertyNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetByNamePropertyNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetByNamePropertyNameRequest generates requests for GetByNamePropertyName
+func newGetByNamePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string, params *GetByNamePropertyNameParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetByNamePropertyNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Archived != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetByNamePropertyName request returning *GetByNamePropertyNameResponse
+func (c *Client) GetByNamePropertyName(ctx context.Context, objectType string, propertyName string, params *GetByNamePropertyNameParams, reqEditors ...client.RequestEditorFn) (*GetByNamePropertyNameResponse, error) {
+	req, err := newGetByNamePropertyNameRequest(c.BaseURL, objectType, propertyName, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetByNamePropertyNameResponse{
 		Body:         bodyBytes,
@@ -1583,13 +1446,122 @@ func parseGetByNamePropertyNameResponse(rsp *http.Response) (*GetByNamePropertyN
 	return response, nil
 }
 
-// parseUpdatePropertyNameResponse parses an HTTP response from a UpdatePropertyName call.
-func parseUpdatePropertyNameResponse(rsp *http.Response) (*UpdatePropertyNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// UpdatePropertyName: PATCH /crm/v3/properties/{objectType}/{propertyName}
+
+type UpdatePropertyNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Property
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdatePropertyNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdatePropertyNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newUpdatePropertyNameRequestWithBody generates requests for UpdatePropertyName with any type of body
+func newUpdatePropertyNameRequestWithBody(baseURL *url.URL, objectType string, propertyName string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("objectType", objectType)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("propertyName", propertyName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdatePropertyNameFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdatePropertyNameWithBody request with arbitrary body returning *UpdatePropertyNameResponse
+func (c *Client) UpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
+	rsp, err := c.doUpdatePropertyNameWithBody(ctx, objectType, propertyName, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdatePropertyNameResponse(rsp)
+}
+
+func (c *Client) doUpdatePropertyNameWithBody(ctx context.Context, objectType string, propertyName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdatePropertyNameRequestWithBody(c.BaseURL, objectType, propertyName, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePropertyNameResponse, error) {
+	rsp, err := c.doUpdatePropertyName(ctx, objectType, propertyName, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdatePropertyNameResponse(rsp)
+}
+
+// newUpdatePropertyNameRequest calls the generic UpdatePropertyName builder with application/json body.
+func newUpdatePropertyNameRequest(baseURL *url.URL, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdatePropertyNameRequestWithBody(baseURL, objectType, propertyName, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdatePropertyName(ctx context.Context, objectType string, propertyName string, body UpdatePropertyNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdatePropertyNameRequest(c.BaseURL, objectType, propertyName, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdatePropertyNameResponse parses an HTTP response from a UpdatePropertyName call.
+func parseUpdatePropertyNameResponse(rsp *http.Response) (*UpdatePropertyNameResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &UpdatePropertyNameResponse{
 		Body:         bodyBytes,

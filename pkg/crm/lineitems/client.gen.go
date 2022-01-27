@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,247 +16,139 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListLineItemsRequest(c.baseURL, params)
+// operation paths
+
+const (
+	opPathArchiveLineItemFormat        = "./crm/v3/objects/line_items/%s"
+	opPathGetLineItemFormat            = "./crm/v3/objects/line_items/%s"
+	opPathUpdateLineItemFormat         = "./crm/v3/objects/line_items/%s"
+	opPathGetAllToObjectTypeFormat     = "./crm/v3/objects/line_items/%s/associations/%s"
+	opPathArchiveAssociationTypeFormat = "./crm/v3/objects/line_items/%s/associations/%s/%s/%s"
+	opPathCreateAssociationTypeFormat  = "./crm/v3/objects/line_items/%s/associations/%s/%s/%s"
+)
+
+var (
+	opPathListLineItems   = client.MustParseURL("./crm/v3/objects/line_items")
+	opPathCreateLineItems = client.MustParseURL("./crm/v3/objects/line_items")
+	opPathArchiveBatch    = client.MustParseURL("./crm/v3/objects/line_items/batch/archive")
+	opPathCreateBatch     = client.MustParseURL("./crm/v3/objects/line_items/batch/create")
+	opPathReadBatch       = client.MustParseURL("./crm/v3/objects/line_items/batch/read")
+	opPathUpdateBatch     = client.MustParseURL("./crm/v3/objects/line_items/batch/update")
+	opPathDoSearch        = client.MustParseURL("./crm/v3/objects/line_items/search")
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// ListLineItems request
+	ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...client.RequestEditorFn) (*ListLineItemsResponse, error)
+
+	// CreateLineItems request with any body
+	CreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error)
+	CreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error)
+
+	// ArchiveBatch request with any body
+	ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+	ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
+
+	// CreateBatch request with any body
+	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
+
+	// ReadBatch request with any body
+	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
+
+	// UpdateBatch request with any body
+	UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
+	UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
+
+	// DoSearch request with any body
+	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
+	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
+
+	// ArchiveLineItem request
+	ArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...client.RequestEditorFn) (*ArchiveLineItemResponse, error)
+
+	// GetLineItem request
+	GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...client.RequestEditorFn) (*GetLineItemResponse, error)
+
+	// UpdateLineItem request with any body
+	UpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error)
+	UpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error)
+
+	// GetAllToObjectType request
+	GetAllToObjectType(ctx context.Context, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error)
+
+	// ArchiveAssociationType request
+	ArchiveAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
+
+	// CreateAssociationType request
+	CreateAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doCreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateLineItemsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doCreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateLineItemsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// ListLineItems: GET /crm/v3/objects/line_items
+
+type ListLineItemsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
 }
 
-func (c *Client) doArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r ListLineItemsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-func (c *Client) doArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveBatchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListLineItemsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return 0
 }
-
-func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequestWithBody(c.baseURL, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReadBatchRequest(c.baseURL, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoSearchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoSearchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveLineItemRequest(c.baseURL, lineItemId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetLineItemRequest(c.baseURL, lineItemId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateLineItemRequestWithBody(c.baseURL, lineItemId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateLineItemRequest(c.baseURL, lineItemId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllToObjectType(ctx context.Context, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllToObjectTypeRequest(c.baseURL, lineItemId, toObjectType, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAssociationTypeRequest(c.baseURL, lineItemId, toObjectType, toObjectId, associationType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationTypeRequest(c.baseURL, lineItemId, toObjectType, toObjectId, associationType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-var opPathListLineItems = client.MustParseURL("./crm/v3/objects/line_items")
 
 // newListLineItemsRequest generates requests for ListLineItems
 func newListLineItemsRequest(baseURL *url.URL, params *ListLineItemsParams) (*http.Request, error) {
@@ -305,18 +196,69 @@ func newListLineItemsRequest(baseURL *url.URL, params *ListLineItemsParams) (*ht
 	return req, nil
 }
 
-// newCreateLineItemsRequest calls the generic CreateLineItems builder with application/json body.
-func newCreateLineItemsRequest(baseURL *url.URL, body CreateLineItemsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// ListLineItems request returning *ListLineItemsResponse
+func (c *Client) ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...client.RequestEditorFn) (*ListLineItemsResponse, error) {
+	req, err := newListLineItemsRequest(c.BaseURL, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateLineItemsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ListLineItemsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-var opPathCreateLineItems = client.MustParseURL("./crm/v3/objects/line_items")
+// CreateLineItems: POST /crm/v3/objects/line_items
+
+type CreateLineItemsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SimplePublicObject
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateLineItemsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateLineItemsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateLineItemsRequestWithBody generates requests for CreateLineItems with any type of body
 func newCreateLineItemsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -332,18 +274,109 @@ func newCreateLineItemsRequestWithBody(baseURL *url.URL, contentType string, bod
 	return req, nil
 }
 
-// newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
-func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
+// CreateLineItemsWithBody request with arbitrary body returning *CreateLineItemsResponse
+func (c *Client) CreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error) {
+	rsp, err := c.doCreateLineItemsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateLineItemsResponse(rsp)
+}
+
+func (c *Client) doCreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateLineItemsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error) {
+	rsp, err := c.doCreateLineItems(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateLineItemsResponse(rsp)
+}
+
+// newCreateLineItemsRequest calls the generic CreateLineItems builder with application/json body.
+func newCreateLineItemsRequest(baseURL *url.URL, body CreateLineItemsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newArchiveBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+	return newCreateLineItemsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
-var opPathArchiveBatch = client.MustParseURL("./crm/v3/objects/line_items/batch/archive")
+func (c *Client) doCreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateLineItemsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateLineItemsResponse parses an HTTP response from a CreateLineItems call.
+func parseCreateLineItemsResponse(rsp *http.Response) (*CreateLineItemsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateLineItemsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SimplePublicObject
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveBatch: POST /crm/v3/objects/line_items/batch/archive
+
+type ArchiveBatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveBatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveBatchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveBatchRequestWithBody generates requests for ArchiveBatch with any type of body
 func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -359,18 +392,102 @@ func newArchiveBatchRequestWithBody(baseURL *url.URL, contentType string, body i
 	return req, nil
 }
 
-// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*http.Request, error) {
+// ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
+func (c *Client) ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
+	rsp, err := c.doArchiveBatchWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseArchiveBatchResponse(rsp)
+}
+
+func (c *Client) doArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newArchiveBatchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
+	rsp, err := c.doArchiveBatch(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseArchiveBatchResponse(rsp)
+}
+
+// newArchiveBatchRequest calls the generic ArchiveBatch builder with application/json body.
+func newArchiveBatchRequest(baseURL *url.URL, body ArchiveBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+	return newArchiveBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
-var opPathCreateBatch = client.MustParseURL("./crm/v3/objects/line_items/batch/create")
+func (c *Client) doArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newArchiveBatchRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseArchiveBatchResponse parses an HTTP response from a ArchiveBatch call.
+func parseArchiveBatchResponse(rsp *http.Response) (*ArchiveBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateBatch: POST /crm/v3/objects/line_items/batch/create
+
+type CreateBatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *BatchResponseSimplePublicObject
+	JSON207      *BatchResponseSimplePublicObjectWithErrors
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateBatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateBatchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
 func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -386,18 +503,119 @@ func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io
 	return req, nil
 }
 
-// newReadBatchRequest calls the generic ReadBatch builder with application/json body.
-func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBatchJSONRequestBody) (*http.Request, error) {
+// CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
+func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
+	rsp, err := c.doCreateBatchWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateBatchResponse(rsp)
+}
+
+func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
+	rsp, err := c.doCreateBatch(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateBatchResponse(rsp)
+}
+
+// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
+func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReadBatchRequestWithBody(baseURL, params, client.MIMEApplicationJSON, bodyReader)
+	return newCreateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
-var opPathReadBatch = client.MustParseURL("./crm/v3/objects/line_items/batch/read")
+func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateBatchResponse parses an HTTP response from a CreateBatch call.
+func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest BatchResponseSimplePublicObject
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
+		var dest BatchResponseSimplePublicObjectWithErrors
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON207 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ReadBatch: POST /crm/v3/objects/line_items/batch/read
+
+type ReadBatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *BatchResponseSimplePublicObject
+	JSON207      *BatchResponseSimplePublicObjectWithErrors
+}
+
+// Status returns HTTPResponse.Status
+func (r ReadBatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReadBatchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newReadBatchRequestWithBody generates requests for ReadBatch with any type of body
 func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, contentType string, body io.Reader) (*http.Request, error) {
@@ -423,18 +641,119 @@ func newReadBatchRequestWithBody(baseURL *url.URL, params *ReadBatchParams, cont
 	return req, nil
 }
 
-// newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
-func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*http.Request, error) {
+// ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
+func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
+	rsp, err := c.doReadBatchWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReadBatchResponse(rsp)
+}
+
+func (c *Client) doReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReadBatchRequestWithBody(c.BaseURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
+	rsp, err := c.doReadBatch(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReadBatchResponse(rsp)
+}
+
+// newReadBatchRequest calls the generic ReadBatch builder with application/json body.
+func newReadBatchRequest(baseURL *url.URL, params *ReadBatchParams, body ReadBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newUpdateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+	return newReadBatchRequestWithBody(baseURL, params, client.MIMEApplicationJSON, bodyReader)
 }
 
-var opPathUpdateBatch = client.MustParseURL("./crm/v3/objects/line_items/batch/update")
+func (c *Client) doReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReadBatchRequest(c.BaseURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseReadBatchResponse parses an HTTP response from a ReadBatch call.
+func parseReadBatchResponse(rsp *http.Response) (*ReadBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ReadBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BatchResponseSimplePublicObject
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
+		var dest BatchResponseSimplePublicObjectWithErrors
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON207 = &dest
+
+	}
+
+	return response, nil
+}
+
+// UpdateBatch: POST /crm/v3/objects/line_items/batch/update
+
+type UpdateBatchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *BatchResponseSimplePublicObject
+	JSON207      *BatchResponseSimplePublicObjectWithErrors
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateBatchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateBatchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
 func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -450,18 +769,118 @@ func newUpdateBatchRequestWithBody(baseURL *url.URL, contentType string, body io
 	return req, nil
 }
 
-// newDoSearchRequest calls the generic DoSearch builder with application/json body.
-func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.Request, error) {
+// UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
+func (c *Client) UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
+	rsp, err := c.doUpdateBatchWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateBatchResponse(rsp)
+}
+
+func (c *Client) doUpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateBatchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
+	rsp, err := c.doUpdateBatch(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateBatchResponse(rsp)
+}
+
+// newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
+func newUpdateBatchRequest(baseURL *url.URL, body UpdateBatchJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newDoSearchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+	return newUpdateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
-var opPathDoSearch = client.MustParseURL("./crm/v3/objects/line_items/search")
+func (c *Client) doUpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateBatchRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateBatchResponse parses an HTTP response from a UpdateBatch call.
+func parseUpdateBatchResponse(rsp *http.Response) (*UpdateBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BatchResponseSimplePublicObject
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
+		var dest BatchResponseSimplePublicObjectWithErrors
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON207 = &dest
+
+	}
+
+	return response, nil
+}
+
+// DoSearch: POST /crm/v3/objects/line_items/search
+
+type DoSearchResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponseWithTotalSimplePublicObjectForwardPaging
+}
+
+// Status returns HTTPResponse.Status
+func (r DoSearchResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DoSearchResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newDoSearchRequestWithBody generates requests for DoSearch with any type of body
 func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -477,7 +896,109 @@ func newDoSearchRequestWithBody(baseURL *url.URL, contentType string, body io.Re
 	return req, nil
 }
 
-const opPathArchiveLineItemFormat = "./crm/v3/objects/line_items/%s"
+// DoSearchWithBody request with arbitrary body returning *DoSearchResponse
+func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
+	rsp, err := c.doDoSearchWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoSearchResponse(rsp)
+}
+
+func (c *Client) doDoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoSearchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
+	rsp, err := c.doDoSearch(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoSearchResponse(rsp)
+}
+
+// newDoSearchRequest calls the generic DoSearch builder with application/json body.
+func newDoSearchRequest(baseURL *url.URL, body DoSearchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDoSearchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoSearchRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDoSearchResponse parses an HTTP response from a DoSearch call.
+func parseDoSearchResponse(rsp *http.Response) (*DoSearchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DoSearchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseWithTotalSimplePublicObjectForwardPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveLineItem: DELETE /crm/v3/objects/line_items/{lineItemId}
+
+type ArchiveLineItemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveLineItemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveLineItemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveLineItemRequest generates requests for ArchiveLineItem
 func newArchiveLineItemRequest(baseURL *url.URL, lineItemId string) (*http.Request, error) {
@@ -501,7 +1022,60 @@ func newArchiveLineItemRequest(baseURL *url.URL, lineItemId string) (*http.Reque
 	return req, nil
 }
 
-const opPathGetLineItemFormat = "./crm/v3/objects/line_items/%s"
+// ArchiveLineItem request returning *ArchiveLineItemResponse
+func (c *Client) ArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...client.RequestEditorFn) (*ArchiveLineItemResponse, error) {
+	req, err := newArchiveLineItemRequest(c.BaseURL, lineItemId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveLineItemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetLineItem: GET /crm/v3/objects/line_items/{lineItemId}
+
+type GetLineItemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SimplePublicObjectWithAssociations
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLineItemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLineItemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetLineItemRequest generates requests for GetLineItem
 func newGetLineItemRequest(baseURL *url.URL, lineItemId string, params *GetLineItemParams) (*http.Request, error) {
@@ -553,18 +1127,69 @@ func newGetLineItemRequest(baseURL *url.URL, lineItemId string, params *GetLineI
 	return req, nil
 }
 
-// newUpdateLineItemRequest calls the generic UpdateLineItem builder with application/json body.
-func newUpdateLineItemRequest(baseURL *url.URL, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetLineItem request returning *GetLineItemResponse
+func (c *Client) GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...client.RequestEditorFn) (*GetLineItemResponse, error) {
+	req, err := newGetLineItemRequest(c.BaseURL, lineItemId, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateLineItemRequestWithBody(baseURL, lineItemId, params, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetLineItemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SimplePublicObjectWithAssociations
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathUpdateLineItemFormat = "./crm/v3/objects/line_items/%s"
+// UpdateLineItem: PATCH /crm/v3/objects/line_items/{lineItemId}
+
+type UpdateLineItemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SimplePublicObject
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateLineItemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateLineItemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdateLineItemRequestWithBody generates requests for UpdateLineItem with any type of body
 func newUpdateLineItemRequestWithBody(baseURL *url.URL, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader) (*http.Request, error) {
@@ -600,7 +1225,110 @@ func newUpdateLineItemRequestWithBody(baseURL *url.URL, lineItemId string, param
 	return req, nil
 }
 
-const opPathGetAllToObjectTypeFormat = "./crm/v3/objects/line_items/%s/associations/%s"
+// UpdateLineItemWithBody request with arbitrary body returning *UpdateLineItemResponse
+func (c *Client) UpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error) {
+	rsp, err := c.doUpdateLineItemWithBody(ctx, lineItemId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateLineItemResponse(rsp)
+}
+
+func (c *Client) doUpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateLineItemRequestWithBody(c.BaseURL, lineItemId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error) {
+	rsp, err := c.doUpdateLineItem(ctx, lineItemId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateLineItemResponse(rsp)
+}
+
+// newUpdateLineItemRequest calls the generic UpdateLineItem builder with application/json body.
+func newUpdateLineItemRequest(baseURL *url.URL, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateLineItemRequestWithBody(baseURL, lineItemId, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateLineItemRequest(c.BaseURL, lineItemId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateLineItemResponse parses an HTTP response from a UpdateLineItem call.
+func parseUpdateLineItemResponse(rsp *http.Response) (*UpdateLineItemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateLineItemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SimplePublicObject
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetAllToObjectType: GET /crm/v3/objects/line_items/{lineItemId}/associations/{toObjectType}
+
+type GetAllToObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponseAssociatedIdForwardPaging
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllToObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllToObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetAllToObjectTypeRequest generates requests for GetAllToObjectType
 func newGetAllToObjectTypeRequest(baseURL *url.URL, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams) (*http.Request, error) {
@@ -645,7 +1373,68 @@ func newGetAllToObjectTypeRequest(baseURL *url.URL, lineItemId string, toObjectT
 	return req, nil
 }
 
-const opPathArchiveAssociationTypeFormat = "./crm/v3/objects/line_items/%s/associations/%s/%s/%s"
+// GetAllToObjectType request returning *GetAllToObjectTypeResponse
+func (c *Client) GetAllToObjectType(ctx context.Context, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
+	req, err := newGetAllToObjectTypeRequest(c.BaseURL, lineItemId, toObjectType, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllToObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseAssociatedIdForwardPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveAssociationType: DELETE /crm/v3/objects/line_items/{lineItemId}/associations/{toObjectType}/{toObjectId}/{associationType}
+
+type ArchiveAssociationTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveAssociationTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveAssociationTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveAssociationTypeRequest generates requests for ArchiveAssociationType
 func newArchiveAssociationTypeRequest(baseURL *url.URL, lineItemId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
@@ -684,7 +1473,60 @@ func newArchiveAssociationTypeRequest(baseURL *url.URL, lineItemId string, toObj
 	return req, nil
 }
 
-const opPathCreateAssociationTypeFormat = "./crm/v3/objects/line_items/%s/associations/%s/%s/%s"
+// ArchiveAssociationType request returning *ArchiveAssociationTypeResponse
+func (c *Client) ArchiveAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
+	req, err := newArchiveAssociationTypeRequest(c.BaseURL, lineItemId, toObjectType, toObjectId, associationType)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveAssociationTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateAssociationType: PUT /crm/v3/objects/line_items/{lineItemId}/associations/{toObjectType}/{toObjectId}/{associationType}
+
+type CreateAssociationTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SimplePublicObjectWithAssociations
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAssociationTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAssociationTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateAssociationTypeRequest generates requests for CreateAssociationType
 func newCreateAssociationTypeRequest(baseURL *url.URL, lineItemId string, toObjectType string, toObjectId string, associationType string) (*http.Request, error) {
@@ -723,895 +1565,28 @@ func newCreateAssociationTypeRequest(baseURL *url.URL, lineItemId string, toObje
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// ListLineItems request
-	ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...client.RequestEditorFn) (*ListLineItemsResponse, error)
-
-	// CreateLineItems request with any body
-	CreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error)
-	CreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error)
-
-	// ArchiveBatch request with any body
-	ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
-	ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error)
-
-	// CreateBatch request with any body
-	CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
-	CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error)
-
-	// ReadBatch request with any body
-	ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
-	ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error)
-
-	// UpdateBatch request with any body
-	UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
-	UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error)
-
-	// DoSearch request with any body
-	DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
-	DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error)
-
-	// ArchiveLineItem request
-	ArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...client.RequestEditorFn) (*ArchiveLineItemResponse, error)
-
-	// GetLineItem request
-	GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...client.RequestEditorFn) (*GetLineItemResponse, error)
-
-	// UpdateLineItem request with any body
-	UpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error)
-	UpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error)
-
-	// GetAllToObjectType request
-	GetAllToObjectType(ctx context.Context, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error)
-
-	// ArchiveAssociationType request
-	ArchiveAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error)
-
-	// CreateAssociationType request
-	CreateAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error)
-}
-
-type ListLineItemsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r ListLineItemsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListLineItemsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateLineItemsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *SimplePublicObject
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateLineItemsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateLineItemsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveBatchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveBatchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveBatchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateBatchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *BatchResponseSimplePublicObject
-	JSON207      *BatchResponseSimplePublicObjectWithErrors
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateBatchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateBatchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ReadBatchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *BatchResponseSimplePublicObject
-	JSON207      *BatchResponseSimplePublicObjectWithErrors
-}
-
-// Status returns HTTPResponse.Status
-func (r ReadBatchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ReadBatchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateBatchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *BatchResponseSimplePublicObject
-	JSON207      *BatchResponseSimplePublicObjectWithErrors
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateBatchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateBatchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DoSearchResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponseWithTotalSimplePublicObjectForwardPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r DoSearchResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DoSearchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveLineItemResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveLineItemResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveLineItemResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetLineItemResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SimplePublicObjectWithAssociations
-}
-
-// Status returns HTTPResponse.Status
-func (r GetLineItemResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetLineItemResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateLineItemResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SimplePublicObject
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateLineItemResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateLineItemResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetAllToObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponseAssociatedIdForwardPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllToObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllToObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveAssociationTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveAssociationTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveAssociationTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateAssociationTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SimplePublicObjectWithAssociations
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateAssociationTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateAssociationTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ListLineItems request returning *ListLineItemsResponse
-func (c *Client) ListLineItems(ctx context.Context, params *ListLineItemsParams, reqEditors ...client.RequestEditorFn) (*ListLineItemsResponse, error) {
-	rsp, err := c.doListLineItems(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseListLineItemsResponse(rsp)
-}
-
-// CreateLineItemsWithBody request with arbitrary body returning *CreateLineItemsResponse
-func (c *Client) CreateLineItemsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error) {
-	rsp, err := c.doCreateLineItemsWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateLineItemsResponse(rsp)
-}
-
-func (c *Client) CreateLineItems(ctx context.Context, body CreateLineItemsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateLineItemsResponse, error) {
-	rsp, err := c.doCreateLineItems(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateLineItemsResponse(rsp)
-}
-
-// ArchiveBatchWithBody request with arbitrary body returning *ArchiveBatchResponse
-func (c *Client) ArchiveBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
-	rsp, err := c.doArchiveBatchWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveBatchResponse(rsp)
-}
-
-func (c *Client) ArchiveBatch(ctx context.Context, body ArchiveBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ArchiveBatchResponse, error) {
-	rsp, err := c.doArchiveBatch(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveBatchResponse(rsp)
-}
-
-// CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
-func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
-	rsp, err := c.doCreateBatchWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateBatchResponse(rsp)
-}
-
-func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
-	rsp, err := c.doCreateBatch(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateBatchResponse(rsp)
-}
-
-// ReadBatchWithBody request with arbitrary body returning *ReadBatchResponse
-func (c *Client) ReadBatchWithBody(ctx context.Context, params *ReadBatchParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
-	rsp, err := c.doReadBatchWithBody(ctx, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReadBatchResponse(rsp)
-}
-
-func (c *Client) ReadBatch(ctx context.Context, params *ReadBatchParams, body ReadBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReadBatchResponse, error) {
-	rsp, err := c.doReadBatch(ctx, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReadBatchResponse(rsp)
-}
-
-// UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
-func (c *Client) UpdateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
-	rsp, err := c.doUpdateBatchWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateBatchResponse(rsp)
-}
-
-func (c *Client) UpdateBatch(ctx context.Context, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
-	rsp, err := c.doUpdateBatch(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateBatchResponse(rsp)
-}
-
-// DoSearchWithBody request with arbitrary body returning *DoSearchResponse
-func (c *Client) DoSearchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
-	rsp, err := c.doDoSearchWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoSearchResponse(rsp)
-}
-
-func (c *Client) DoSearch(ctx context.Context, body DoSearchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoSearchResponse, error) {
-	rsp, err := c.doDoSearch(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoSearchResponse(rsp)
-}
-
-// ArchiveLineItem request returning *ArchiveLineItemResponse
-func (c *Client) ArchiveLineItem(ctx context.Context, lineItemId string, reqEditors ...client.RequestEditorFn) (*ArchiveLineItemResponse, error) {
-	rsp, err := c.doArchiveLineItem(ctx, lineItemId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveLineItemResponse(rsp)
-}
-
-// GetLineItem request returning *GetLineItemResponse
-func (c *Client) GetLineItem(ctx context.Context, lineItemId string, params *GetLineItemParams, reqEditors ...client.RequestEditorFn) (*GetLineItemResponse, error) {
-	rsp, err := c.doGetLineItem(ctx, lineItemId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetLineItemResponse(rsp)
-}
-
-// UpdateLineItemWithBody request with arbitrary body returning *UpdateLineItemResponse
-func (c *Client) UpdateLineItemWithBody(ctx context.Context, lineItemId string, params *UpdateLineItemParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error) {
-	rsp, err := c.doUpdateLineItemWithBody(ctx, lineItemId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateLineItemResponse(rsp)
-}
-
-func (c *Client) UpdateLineItem(ctx context.Context, lineItemId string, params *UpdateLineItemParams, body UpdateLineItemJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateLineItemResponse, error) {
-	rsp, err := c.doUpdateLineItem(ctx, lineItemId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateLineItemResponse(rsp)
-}
-
-// GetAllToObjectType request returning *GetAllToObjectTypeResponse
-func (c *Client) GetAllToObjectType(ctx context.Context, lineItemId string, toObjectType string, params *GetAllToObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllToObjectTypeResponse, error) {
-	rsp, err := c.doGetAllToObjectType(ctx, lineItemId, toObjectType, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllToObjectTypeResponse(rsp)
-}
-
-// ArchiveAssociationType request returning *ArchiveAssociationTypeResponse
-func (c *Client) ArchiveAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationTypeResponse, error) {
-	rsp, err := c.doArchiveAssociationType(ctx, lineItemId, toObjectType, toObjectId, associationType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveAssociationTypeResponse(rsp)
-}
-
 // CreateAssociationType request returning *CreateAssociationTypeResponse
 func (c *Client) CreateAssociationType(ctx context.Context, lineItemId string, toObjectType string, toObjectId string, associationType string, reqEditors ...client.RequestEditorFn) (*CreateAssociationTypeResponse, error) {
-	rsp, err := c.doCreateAssociationType(ctx, lineItemId, toObjectType, toObjectId, associationType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateAssociationTypeResponse(rsp)
-}
-
-// parseListLineItemsResponse parses an HTTP response from a ListLineItems call.
-func parseListLineItemsResponse(rsp *http.Response) (*ListLineItemsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	req, err := newCreateAssociationTypeRequest(c.BaseURL, lineItemId, toObjectType, toObjectId, associationType)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListLineItemsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseSimplePublicObjectWithAssociationsForwardPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateLineItemsResponse parses an HTTP response from a CreateLineItems call.
-func parseCreateLineItemsResponse(rsp *http.Response) (*CreateLineItemsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateLineItemsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest SimplePublicObject
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveBatchResponse parses an HTTP response from a ArchiveBatch call.
-func parseArchiveBatchResponse(rsp *http.Response) (*ArchiveBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &ArchiveBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateBatchResponse parses an HTTP response from a CreateBatch call.
-func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest BatchResponseSimplePublicObject
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
-		var dest BatchResponseSimplePublicObjectWithErrors
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON207 = &dest
-
-	}
-
-	return response, nil
-}
-
-// parseReadBatchResponse parses an HTTP response from a ReadBatch call.
-func parseReadBatchResponse(rsp *http.Response) (*ReadBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ReadBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest BatchResponseSimplePublicObject
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
-		var dest BatchResponseSimplePublicObjectWithErrors
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON207 = &dest
-
-	}
-
-	return response, nil
-}
-
-// parseUpdateBatchResponse parses an HTTP response from a UpdateBatch call.
-func parseUpdateBatchResponse(rsp *http.Response) (*UpdateBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest BatchResponseSimplePublicObject
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 207:
-		var dest BatchResponseSimplePublicObjectWithErrors
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON207 = &dest
-
-	}
-
-	return response, nil
-}
-
-// parseDoSearchResponse parses an HTTP response from a DoSearch call.
-func parseDoSearchResponse(rsp *http.Response) (*DoSearchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DoSearchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseWithTotalSimplePublicObjectForwardPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveLineItemResponse parses an HTTP response from a ArchiveLineItem call.
-func parseArchiveLineItemResponse(rsp *http.Response) (*ArchiveLineItemResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveLineItemResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetLineItemResponse parses an HTTP response from a GetLineItem call.
-func parseGetLineItemResponse(rsp *http.Response) (*GetLineItemResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetLineItemResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SimplePublicObjectWithAssociations
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateLineItemResponse parses an HTTP response from a UpdateLineItem call.
-func parseUpdateLineItemResponse(rsp *http.Response) (*UpdateLineItemResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateLineItemResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SimplePublicObject
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetAllToObjectTypeResponse parses an HTTP response from a GetAllToObjectType call.
-func parseGetAllToObjectTypeResponse(rsp *http.Response) (*GetAllToObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAllToObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseAssociatedIdForwardPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveAssociationTypeResponse parses an HTTP response from a ArchiveAssociationType call.
-func parseArchiveAssociationTypeResponse(rsp *http.Response) (*ArchiveAssociationTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveAssociationTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateAssociationTypeResponse parses an HTTP response from a CreateAssociationType call.
-func parseCreateAssociationTypeResponse(rsp *http.Response) (*CreateAssociationTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
+	defer rsp.Body.Close()
 
 	response := &CreateAssociationTypeResponse{
 		Body:         bodyBytes,

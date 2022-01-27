@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,139 +16,115 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doGetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSchemasRequest(c.baseURL, params)
+// operation paths
+
+const (
+	opPathArchiveObjectTypeFormat                       = "./crm/v3/schemas/%s"
+	opPathGetObjectTypeFormat                           = "./crm/v3/schemas/%s"
+	opPathUpdateObjectTypeFormat                        = "./crm/v3/schemas/%s"
+	opPathCreateAssociationAssociationsFormat           = "./crm/v3/schemas/%s/associations"
+	opPathArchiveAssociationAssociationIdentifierFormat = "./crm/v3/schemas/%s/associations/%s"
+	opPathPurgeObjectTypeFormat                         = "./crm/v3/schemas/%s/purge"
+)
+
+var (
+	opPathGetAllSchemas = client.MustParseURL("./crm/v3/schemas")
+	opPathCreateSchemas = client.MustParseURL("./crm/v3/schemas")
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// GetAllSchemas request
+	GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error)
+
+	// CreateSchemas request with any body
+	CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
+	CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
+
+	// ArchiveObjectType request
+	ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error)
+
+	// GetObjectType request
+	GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error)
+
+	// UpdateObjectType request with any body
+	UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
+	UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
+
+	// CreateAssociationAssociations request with any body
+	CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
+	CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
+
+	// ArchiveAssociationAssociationIdentifier request
+	ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error)
+
+	// PurgeObjectType request
+	PurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*PurgeObjectTypeResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSchemasRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSchemasRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// GetAllSchemas: GET /crm/v3/schemas
+
+type GetAllSchemasResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponseObjectSchemaNoPaging
 }
 
-func (c *Client) doArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveObjectTypeRequest(c.baseURL, objectType, params)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r GetAllSchemasResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-func (c *Client) doGetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetObjectTypeRequest(c.baseURL, objectType)
-	if err != nil {
-		return nil, err
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllSchemasResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return 0
 }
-
-func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateObjectTypeRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationAssociationsRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAssociationAssociationsRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAssociationAssociationIdentifierRequest(c.baseURL, objectType, associationIdentifier)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPurgeObjectTypeRequest(c.baseURL, objectType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-var opPathGetAllSchemas = client.MustParseURL("./crm/v3/schemas")
 
 // newGetAllSchemasRequest generates requests for GetAllSchemas
 func newGetAllSchemasRequest(baseURL *url.URL, params *GetAllSchemasParams) (*http.Request, error) {
@@ -173,18 +148,69 @@ func newGetAllSchemasRequest(baseURL *url.URL, params *GetAllSchemasParams) (*ht
 	return req, nil
 }
 
-// newCreateSchemasRequest calls the generic CreateSchemas builder with application/json body.
-func newCreateSchemasRequest(baseURL *url.URL, body CreateSchemasJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetAllSchemas request returning *GetAllSchemasResponse
+func (c *Client) GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error) {
+	req, err := newGetAllSchemasRequest(c.BaseURL, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateSchemasRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllSchemasResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseObjectSchemaNoPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-var opPathCreateSchemas = client.MustParseURL("./crm/v3/schemas")
+// CreateSchemas: POST /crm/v3/schemas
+
+type CreateSchemasResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *ObjectSchema
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSchemasResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSchemasResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateSchemasRequestWithBody generates requests for CreateSchemas with any type of body
 func newCreateSchemasRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -200,7 +226,109 @@ func newCreateSchemasRequestWithBody(baseURL *url.URL, contentType string, body 
 	return req, nil
 }
 
-const opPathArchiveObjectTypeFormat = "./crm/v3/schemas/%s"
+// CreateSchemasWithBody request with arbitrary body returning *CreateSchemasResponse
+func (c *Client) CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
+	rsp, err := c.doCreateSchemasWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateSchemasResponse(rsp)
+}
+
+func (c *Client) doCreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSchemasRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
+	rsp, err := c.doCreateSchemas(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateSchemasResponse(rsp)
+}
+
+// newCreateSchemasRequest calls the generic CreateSchemas builder with application/json body.
+func newCreateSchemasRequest(baseURL *url.URL, body CreateSchemasJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateSchemasRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSchemasRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateSchemasResponse parses an HTTP response from a CreateSchemas call.
+func parseCreateSchemasResponse(rsp *http.Response) (*CreateSchemasResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateSchemasResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest ObjectSchema
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveObjectType: DELETE /crm/v3/schemas/{objectType}
+
+type ArchiveObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveObjectTypeRequest generates requests for ArchiveObjectType
 func newArchiveObjectTypeRequest(baseURL *url.URL, objectType string, params *ArchiveObjectTypeParams) (*http.Request, error) {
@@ -234,7 +362,60 @@ func newArchiveObjectTypeRequest(baseURL *url.URL, objectType string, params *Ar
 	return req, nil
 }
 
-const opPathGetObjectTypeFormat = "./crm/v3/schemas/%s"
+// ArchiveObjectType request returning *ArchiveObjectTypeResponse
+func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error) {
+	req, err := newArchiveObjectTypeRequest(c.BaseURL, objectType, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetObjectType: GET /crm/v3/schemas/{objectType}
+
+type GetObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ObjectSchema
+}
+
+// Status returns HTTPResponse.Status
+func (r GetObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetObjectTypeRequest generates requests for GetObjectType
 func newGetObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
@@ -258,18 +439,69 @@ func newGetObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Request
 	return req, nil
 }
 
-// newUpdateObjectTypeRequest calls the generic UpdateObjectType builder with application/json body.
-func newUpdateObjectTypeRequest(baseURL *url.URL, objectType string, body UpdateObjectTypeJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetObjectType request returning *GetObjectTypeResponse
+func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error) {
+	req, err := newGetObjectTypeRequest(c.BaseURL, objectType)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ObjectSchema
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathUpdateObjectTypeFormat = "./crm/v3/schemas/%s"
+// UpdateObjectType: PATCH /crm/v3/schemas/{objectType}
+
+type UpdateObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ObjectTypeDefinition
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdateObjectTypeRequestWithBody generates requests for UpdateObjectType with any type of body
 func newUpdateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
@@ -295,18 +527,110 @@ func newUpdateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, con
 	return req, nil
 }
 
-// newCreateAssociationAssociationsRequest calls the generic CreateAssociationAssociations builder with application/json body.
-func newCreateAssociationAssociationsRequest(baseURL *url.URL, objectType string, body CreateAssociationAssociationsJSONRequestBody) (*http.Request, error) {
+// UpdateObjectTypeWithBody request with arbitrary body returning *UpdateObjectTypeResponse
+func (c *Client) UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
+	rsp, err := c.doUpdateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateObjectTypeResponse(rsp)
+}
+
+func (c *Client) doUpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateObjectTypeRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
+	rsp, err := c.doUpdateObjectType(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateObjectTypeResponse(rsp)
+}
+
+// newUpdateObjectTypeRequest calls the generic UpdateObjectType builder with application/json body.
+func newUpdateObjectTypeRequest(baseURL *url.URL, objectType string, body UpdateObjectTypeJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateAssociationAssociationsRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+	return newUpdateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
 }
 
-const opPathCreateAssociationAssociationsFormat = "./crm/v3/schemas/%s/associations"
+func (c *Client) doUpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateObjectTypeRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateObjectTypeResponse parses an HTTP response from a UpdateObjectType call.
+func parseUpdateObjectTypeResponse(rsp *http.Response) (*UpdateObjectTypeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ObjectTypeDefinition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateAssociationAssociations: POST /crm/v3/schemas/{objectType}/associations
+
+type CreateAssociationAssociationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *AssociationDefinition
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAssociationAssociationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAssociationAssociationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateAssociationAssociationsRequestWithBody generates requests for CreateAssociationAssociations with any type of body
 func newCreateAssociationAssociationsRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
@@ -332,7 +656,109 @@ func newCreateAssociationAssociationsRequestWithBody(baseURL *url.URL, objectTyp
 	return req, nil
 }
 
-const opPathArchiveAssociationAssociationIdentifierFormat = "./crm/v3/schemas/%s/associations/%s"
+// CreateAssociationAssociationsWithBody request with arbitrary body returning *CreateAssociationAssociationsResponse
+func (c *Client) CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
+	rsp, err := c.doCreateAssociationAssociationsWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateAssociationAssociationsResponse(rsp)
+}
+
+func (c *Client) doCreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateAssociationAssociationsRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
+	rsp, err := c.doCreateAssociationAssociations(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateAssociationAssociationsResponse(rsp)
+}
+
+// newCreateAssociationAssociationsRequest calls the generic CreateAssociationAssociations builder with application/json body.
+func newCreateAssociationAssociationsRequest(baseURL *url.URL, objectType string, body CreateAssociationAssociationsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateAssociationAssociationsRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateAssociationAssociationsRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateAssociationAssociationsResponse parses an HTTP response from a CreateAssociationAssociations call.
+func parseCreateAssociationAssociationsResponse(rsp *http.Response) (*CreateAssociationAssociationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateAssociationAssociationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest AssociationDefinition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveAssociationAssociationIdentifier: DELETE /crm/v3/schemas/{objectType}/associations/{associationIdentifier}
+
+type ArchiveAssociationAssociationIdentifierResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveAssociationAssociationIdentifierResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveAssociationAssociationIdentifierResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveAssociationAssociationIdentifierRequest generates requests for ArchiveAssociationAssociationIdentifier
 func newArchiveAssociationAssociationIdentifierRequest(baseURL *url.URL, objectType string, associationIdentifier string) (*http.Request, error) {
@@ -361,7 +787,59 @@ func newArchiveAssociationAssociationIdentifierRequest(baseURL *url.URL, objectT
 	return req, nil
 }
 
-const opPathPurgeObjectTypeFormat = "./crm/v3/schemas/%s/purge"
+// ArchiveAssociationAssociationIdentifier request returning *ArchiveAssociationAssociationIdentifierResponse
+func (c *Client) ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error) {
+	req, err := newArchiveAssociationAssociationIdentifierRequest(c.BaseURL, objectType, associationIdentifier)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveAssociationAssociationIdentifierResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// PurgeObjectType: DELETE /crm/v3/schemas/{objectType}/purge
+
+type PurgeObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r PurgeObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PurgeObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newPurgeObjectTypeRequest generates requests for PurgeObjectType
 func newPurgeObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Request, error) {
@@ -385,546 +863,28 @@ func newPurgeObjectTypeRequest(baseURL *url.URL, objectType string) (*http.Reque
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// GetAllSchemas request
-	GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error)
-
-	// CreateSchemas request with any body
-	CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
-	CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error)
-
-	// ArchiveObjectType request
-	ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error)
-
-	// GetObjectType request
-	GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error)
-
-	// UpdateObjectType request with any body
-	UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
-	UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error)
-
-	// CreateAssociationAssociations request with any body
-	CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
-	CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error)
-
-	// ArchiveAssociationAssociationIdentifier request
-	ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error)
-
-	// PurgeObjectType request
-	PurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*PurgeObjectTypeResponse, error)
-}
-
-type GetAllSchemasResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponseObjectSchemaNoPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllSchemasResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllSchemasResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateSchemasResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *ObjectSchema
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateSchemasResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateSchemasResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ObjectSchema
-}
-
-// Status returns HTTPResponse.Status
-func (r GetObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ObjectTypeDefinition
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateAssociationAssociationsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *AssociationDefinition
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateAssociationAssociationsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateAssociationAssociationsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveAssociationAssociationIdentifierResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveAssociationAssociationIdentifierResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveAssociationAssociationIdentifierResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type PurgeObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r PurgeObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PurgeObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// GetAllSchemas request returning *GetAllSchemasResponse
-func (c *Client) GetAllSchemas(ctx context.Context, params *GetAllSchemasParams, reqEditors ...client.RequestEditorFn) (*GetAllSchemasResponse, error) {
-	rsp, err := c.doGetAllSchemas(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllSchemasResponse(rsp)
-}
-
-// CreateSchemasWithBody request with arbitrary body returning *CreateSchemasResponse
-func (c *Client) CreateSchemasWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
-	rsp, err := c.doCreateSchemasWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateSchemasResponse(rsp)
-}
-
-func (c *Client) CreateSchemas(ctx context.Context, body CreateSchemasJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSchemasResponse, error) {
-	rsp, err := c.doCreateSchemas(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateSchemasResponse(rsp)
-}
-
-// ArchiveObjectType request returning *ArchiveObjectTypeResponse
-func (c *Client) ArchiveObjectType(ctx context.Context, objectType string, params *ArchiveObjectTypeParams, reqEditors ...client.RequestEditorFn) (*ArchiveObjectTypeResponse, error) {
-	rsp, err := c.doArchiveObjectType(ctx, objectType, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveObjectTypeResponse(rsp)
-}
-
-// GetObjectType request returning *GetObjectTypeResponse
-func (c *Client) GetObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*GetObjectTypeResponse, error) {
-	rsp, err := c.doGetObjectType(ctx, objectType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetObjectTypeResponse(rsp)
-}
-
-// UpdateObjectTypeWithBody request with arbitrary body returning *UpdateObjectTypeResponse
-func (c *Client) UpdateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
-	rsp, err := c.doUpdateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateObjectTypeResponse(rsp)
-}
-
-func (c *Client) UpdateObjectType(ctx context.Context, objectType string, body UpdateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateObjectTypeResponse, error) {
-	rsp, err := c.doUpdateObjectType(ctx, objectType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateObjectTypeResponse(rsp)
-}
-
-// CreateAssociationAssociationsWithBody request with arbitrary body returning *CreateAssociationAssociationsResponse
-func (c *Client) CreateAssociationAssociationsWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
-	rsp, err := c.doCreateAssociationAssociationsWithBody(ctx, objectType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateAssociationAssociationsResponse(rsp)
-}
-
-func (c *Client) CreateAssociationAssociations(ctx context.Context, objectType string, body CreateAssociationAssociationsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAssociationAssociationsResponse, error) {
-	rsp, err := c.doCreateAssociationAssociations(ctx, objectType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateAssociationAssociationsResponse(rsp)
-}
-
-// ArchiveAssociationAssociationIdentifier request returning *ArchiveAssociationAssociationIdentifierResponse
-func (c *Client) ArchiveAssociationAssociationIdentifier(ctx context.Context, objectType string, associationIdentifier string, reqEditors ...client.RequestEditorFn) (*ArchiveAssociationAssociationIdentifierResponse, error) {
-	rsp, err := c.doArchiveAssociationAssociationIdentifier(ctx, objectType, associationIdentifier, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveAssociationAssociationIdentifierResponse(rsp)
-}
-
 // PurgeObjectType request returning *PurgeObjectTypeResponse
 func (c *Client) PurgeObjectType(ctx context.Context, objectType string, reqEditors ...client.RequestEditorFn) (*PurgeObjectTypeResponse, error) {
-	rsp, err := c.doPurgeObjectType(ctx, objectType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parsePurgeObjectTypeResponse(rsp)
-}
-
-// parseGetAllSchemasResponse parses an HTTP response from a GetAllSchemas call.
-func parseGetAllSchemasResponse(rsp *http.Response) (*GetAllSchemasResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	req, err := newPurgeObjectTypeRequest(c.BaseURL, objectType)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetAllSchemasResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseObjectSchemaNoPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateSchemasResponse parses an HTTP response from a CreateSchemas call.
-func parseCreateSchemasResponse(rsp *http.Response) (*CreateSchemasResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateSchemasResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ObjectSchema
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveObjectTypeResponse parses an HTTP response from a ArchiveObjectType call.
-func parseArchiveObjectTypeResponse(rsp *http.Response) (*ArchiveObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &ArchiveObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetObjectTypeResponse parses an HTTP response from a GetObjectType call.
-func parseGetObjectTypeResponse(rsp *http.Response) (*GetObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ObjectSchema
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateObjectTypeResponse parses an HTTP response from a UpdateObjectType call.
-func parseUpdateObjectTypeResponse(rsp *http.Response) (*UpdateObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ObjectTypeDefinition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateAssociationAssociationsResponse parses an HTTP response from a CreateAssociationAssociations call.
-func parseCreateAssociationAssociationsResponse(rsp *http.Response) (*CreateAssociationAssociationsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateAssociationAssociationsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest AssociationDefinition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveAssociationAssociationIdentifierResponse parses an HTTP response from a ArchiveAssociationAssociationIdentifier call.
-func parseArchiveAssociationAssociationIdentifierResponse(rsp *http.Response) (*ArchiveAssociationAssociationIdentifierResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveAssociationAssociationIdentifierResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parsePurgeObjectTypeResponse parses an HTTP response from a PurgeObjectType call.
-func parsePurgeObjectTypeResponse(rsp *http.Response) (*PurgeObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
+	defer rsp.Body.Close()
 
 	response := &PurgeObjectTypeResponse{
 		Body:         bodyBytes,

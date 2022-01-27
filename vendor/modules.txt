@@ -6,7 +6,7 @@ github.com/containerd/typeurl
 github.com/deepmap/oapi-codegen/pkg/codegen
 github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
-# github.com/faetools/client v0.0.0-20220125105205-056bea2b2113
+# github.com/faetools/client v0.0.0-20220127180657-223442d25e45
 ## explicit; go 1.17
 github.com/faetools/client
 # github.com/faetools/devtool v0.0.0-20220123204838-8ae48c447da6

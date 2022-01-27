@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,748 +16,29 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateBatchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetEventRequest(c.baseURL, eventTemplateId, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetDetailByIdRequest(c.baseURL, eventTemplateId, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRenderByIdRequest(c.baseURL, eventTemplateId, eventId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllEventTemplatesRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventTemplatesRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateEventTemplatesRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveEventTemplateRequest(c.baseURL, appId, eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetEventTemplateRequest(c.baseURL, appId, eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateEventTemplateRequestWithBody(c.baseURL, appId, eventTemplateId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateEventTemplateRequest(c.baseURL, appId, eventTemplateId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokensRequestWithBody(c.baseURL, appId, eventTemplateId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTokensRequest(c.baseURL, appId, eventTemplateId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveTokenNameRequest(c.baseURL, appId, eventTemplateId, tokenName)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateTokenNameRequestWithBody(c.baseURL, appId, eventTemplateId, tokenName, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateTokenNameRequest(c.baseURL, appId, eventTemplateId, tokenName, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-// newCreateEventsRequest calls the generic CreateEvents builder with application/json body.
-func newCreateEventsRequest(baseURL *url.URL, body CreateEventsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
-
-var opPathCreateEvents = client.MustParseURL("./crm/v3/timeline/events")
-
-// newCreateEventsRequestWithBody generates requests for CreateEvents with any type of body
-func newCreateEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathCreateEvents)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
-func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
-
-var opPathCreateBatch = client.MustParseURL("./crm/v3/timeline/events/batch/create")
-
-// newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
-func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathCreateBatch)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetEventFormat = "./crm/v3/timeline/events/%s/%s"
-
-// newGetEventRequest generates requests for GetEvent
-func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventId", eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetEventFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetDetailByIdFormat = "./crm/v3/timeline/events/%s/%s/detail"
-
-// newGetDetailByIdRequest generates requests for GetDetailById
-func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventId", eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetDetailByIdFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetRenderByIdFormat = "./crm/v3/timeline/events/%s/%s/render"
-
-// newGetRenderByIdRequest generates requests for GetRenderById
-func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string, params *GetRenderByIdParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventId", eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetRenderByIdFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Detail != nil {
-		if err := client.AddQueryParam(q, "detail", *params.Detail); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetAllEventTemplatesFormat = "./crm/v3/timeline/%s/event-templates"
-
-// newGetAllEventTemplatesRequest generates requests for GetAllEventTemplates
-func newGetAllEventTemplatesRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAllEventTemplatesFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newCreateEventTemplatesRequest calls the generic CreateEventTemplates builder with application/json body.
-func newCreateEventTemplatesRequest(baseURL *url.URL, appId int32, body CreateEventTemplatesJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateEventTemplatesRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateEventTemplatesFormat = "./crm/v3/timeline/%s/event-templates"
-
-// newCreateEventTemplatesRequestWithBody generates requests for CreateEventTemplates with any type of body
-func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateEventTemplatesFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveEventTemplateFormat = "./crm/v3/timeline/%s/event-templates/%s"
-
-// newArchiveEventTemplateRequest generates requests for ArchiveEventTemplate
-func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveEventTemplateFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetEventTemplateFormat = "./crm/v3/timeline/%s/event-templates/%s"
-
-// newGetEventTemplateRequest generates requests for GetEventTemplate
-func newGetEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetEventTemplateFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateEventTemplateRequest calls the generic UpdateEventTemplate builder with application/json body.
-func newUpdateEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateEventTemplateRequestWithBody(baseURL, appId, eventTemplateId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateEventTemplateFormat = "./crm/v3/timeline/%s/event-templates/%s"
-
-// newUpdateEventTemplateRequestWithBody generates requests for UpdateEventTemplate with any type of body
-func newUpdateEventTemplateRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateEventTemplateFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateTokensRequest calls the generic CreateTokens builder with application/json body.
-func newCreateTokensRequest(baseURL *url.URL, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateTokensRequestWithBody(baseURL, appId, eventTemplateId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateTokensFormat = "./crm/v3/timeline/%s/event-templates/%s/tokens"
-
-// newCreateTokensRequestWithBody generates requests for CreateTokens with any type of body
-func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateTokensFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveTokenNameFormat = "./crm/v3/timeline/%s/event-templates/%s/tokens/%s"
-
-// newArchiveTokenNameRequest generates requests for ArchiveTokenName
-func newArchiveTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("tokenName", tokenName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveTokenNameFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateTokenNameRequest calls the generic UpdateTokenName builder with application/json body.
-func newUpdateTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateTokenNameRequestWithBody(baseURL, appId, eventTemplateId, tokenName, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateTokenNameFormat = "./crm/v3/timeline/%s/event-templates/%s/tokens/%s"
-
-// newUpdateTokenNameRequestWithBody generates requests for UpdateTokenName with any type of body
-func newUpdateTokenNameRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("tokenName", tokenName)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateTokenNameFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
+// operation paths
+
+const (
+	opPathGetEventFormat             = "./crm/v3/timeline/events/%s/%s"
+	opPathGetDetailByIdFormat        = "./crm/v3/timeline/events/%s/%s/detail"
+	opPathGetRenderByIdFormat        = "./crm/v3/timeline/events/%s/%s/render"
+	opPathGetAllEventTemplatesFormat = "./crm/v3/timeline/%s/event-templates"
+	opPathCreateEventTemplatesFormat = "./crm/v3/timeline/%s/event-templates"
+	opPathArchiveEventTemplateFormat = "./crm/v3/timeline/%s/event-templates/%s"
+	opPathGetEventTemplateFormat     = "./crm/v3/timeline/%s/event-templates/%s"
+	opPathUpdateEventTemplateFormat  = "./crm/v3/timeline/%s/event-templates/%s"
+	opPathCreateTokensFormat         = "./crm/v3/timeline/%s/event-templates/%s/tokens"
+	opPathArchiveTokenNameFormat     = "./crm/v3/timeline/%s/event-templates/%s/tokens/%s"
+	opPathUpdateTokenNameFormat      = "./crm/v3/timeline/%s/event-templates/%s/tokens/%s"
+)
+
+var (
+	opPathCreateEvents = client.MustParseURL("./crm/v3/timeline/events")
+	opPathCreateBatch  = client.MustParseURL("./crm/v3/timeline/events/batch/create")
+)
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// CreateEvents request with any body
 	CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error)
 	CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error)
@@ -805,6 +85,48 @@ type ClientInterface interface {
 	UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CreateEvents: POST /crm/v3/timeline/events
+
 type CreateEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -826,6 +148,103 @@ func (r CreateEventsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateEventsRequestWithBody generates requests for CreateEvents with any type of body
+func newCreateEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathCreateEvents)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateEventsWithBody request with arbitrary body returning *CreateEventsResponse
+func (c *Client) CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
+	rsp, err := c.doCreateEventsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateEventsResponse(rsp)
+}
+
+func (c *Client) doCreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateEventsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
+	rsp, err := c.doCreateEvents(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateEventsResponse(rsp)
+}
+
+// newCreateEventsRequest calls the generic CreateEvents builder with application/json body.
+func newCreateEventsRequest(baseURL *url.URL, body CreateEventsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateEventsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateEventsResponse parses an HTTP response from a CreateEvents call.
+func parseCreateEventsResponse(rsp *http.Response) (*CreateEventsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest TimelineEventResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateBatch: POST /crm/v3/timeline/events/batch/create
 
 type CreateBatchResponse struct {
 	Body         []byte
@@ -850,260 +269,18 @@ func (r CreateBatchResponse) StatusCode() int {
 	return 0
 }
 
-type GetEventResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TimelineEventResponse
-}
+// newCreateBatchRequestWithBody generates requests for CreateBatch with any type of body
+func newCreateBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathCreateBatch)
 
-// Status returns HTTPResponse.Status
-func (r GetEventResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetDetailByIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *EventDetail
-}
-
-// Status returns HTTPResponse.Status
-func (r GetDetailByIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetDetailByIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetRenderByIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r GetRenderByIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetRenderByIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetAllEventTemplatesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponseTimelineEventTemplateNoPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllEventTemplatesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllEventTemplatesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateEventTemplatesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *TimelineEventTemplate
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateEventTemplatesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateEventTemplatesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveEventTemplateResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveEventTemplateResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveEventTemplateResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetEventTemplateResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TimelineEventTemplate
-}
-
-// Status returns HTTPResponse.Status
-func (r GetEventTemplateResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetEventTemplateResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateEventTemplateResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TimelineEventTemplate
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateEventTemplateResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateEventTemplateResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateTokensResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TimelineEventTemplateToken
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateTokensResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateTokensResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveTokenNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveTokenNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveTokenNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateTokenNameResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *TimelineEventTemplateToken
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateTokenNameResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateTokenNameResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// CreateEventsWithBody request with arbitrary body returning *CreateEventsResponse
-func (c *Client) CreateEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
-	rsp, err := c.doCreateEventsWithBody(ctx, contentType, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
-	return parseCreateEventsResponse(rsp)
-}
 
-func (c *Client) CreateEvents(ctx context.Context, body CreateEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventsResponse, error) {
-	rsp, err := c.doCreateEvents(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateEventsResponse(rsp)
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
 }
 
 // CreateBatchWithBody request with arbitrary body returning *CreateBatchResponse
@@ -1112,7 +289,21 @@ func (c *Client) CreateBatchWithBody(ctx context.Context, contentType string, bo
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateBatchResponse(rsp)
+}
+
+func (c *Client) doCreateBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateBatchResponse, error) {
@@ -1120,172 +311,41 @@ func (c *Client) CreateBatch(ctx context.Context, body CreateBatchJSONRequestBod
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateBatchResponse(rsp)
 }
 
-// GetEvent request returning *GetEventResponse
-func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetEventResponse, error) {
-	rsp, err := c.doGetEvent(ctx, eventTemplateId, eventId, reqEditors...)
+// newCreateBatchRequest calls the generic CreateBatch builder with application/json body.
+func newCreateBatchRequest(baseURL *url.URL, body CreateBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetEventResponse(rsp)
+	bodyReader = bytes.NewReader(buf)
+	return newCreateBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
 }
 
-// GetDetailById request returning *GetDetailByIdResponse
-func (c *Client) GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetDetailByIdResponse, error) {
-	rsp, err := c.doGetDetailById(ctx, eventTemplateId, eventId, reqEditors...)
+func (c *Client) doCreateBatch(ctx context.Context, body CreateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateBatchRequest(c.BaseURL, body)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetDetailByIdResponse(rsp)
-}
-
-// GetRenderById request returning *GetRenderByIdResponse
-func (c *Client) GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*GetRenderByIdResponse, error) {
-	rsp, err := c.doGetRenderById(ctx, eventTemplateId, eventId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetRenderByIdResponse(rsp)
-}
-
-// GetAllEventTemplates request returning *GetAllEventTemplatesResponse
-func (c *Client) GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllEventTemplatesResponse, error) {
-	rsp, err := c.doGetAllEventTemplates(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllEventTemplatesResponse(rsp)
-}
-
-// CreateEventTemplatesWithBody request with arbitrary body returning *CreateEventTemplatesResponse
-func (c *Client) CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
-	rsp, err := c.doCreateEventTemplatesWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateEventTemplatesResponse(rsp)
-}
-
-func (c *Client) CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
-	rsp, err := c.doCreateEventTemplates(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateEventTemplatesResponse(rsp)
-}
-
-// ArchiveEventTemplate request returning *ArchiveEventTemplateResponse
-func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*ArchiveEventTemplateResponse, error) {
-	rsp, err := c.doArchiveEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveEventTemplateResponse(rsp)
-}
-
-// GetEventTemplate request returning *GetEventTemplateResponse
-func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*GetEventTemplateResponse, error) {
-	rsp, err := c.doGetEventTemplate(ctx, appId, eventTemplateId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetEventTemplateResponse(rsp)
-}
-
-// UpdateEventTemplateWithBody request with arbitrary body returning *UpdateEventTemplateResponse
-func (c *Client) UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
-	rsp, err := c.doUpdateEventTemplateWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateEventTemplateResponse(rsp)
-}
-
-func (c *Client) UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
-	rsp, err := c.doUpdateEventTemplate(ctx, appId, eventTemplateId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateEventTemplateResponse(rsp)
-}
-
-// CreateTokensWithBody request with arbitrary body returning *CreateTokensResponse
-func (c *Client) CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
-	rsp, err := c.doCreateTokensWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateTokensResponse(rsp)
-}
-
-func (c *Client) CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
-	rsp, err := c.doCreateTokens(ctx, appId, eventTemplateId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateTokensResponse(rsp)
-}
-
-// ArchiveTokenName request returning *ArchiveTokenNameResponse
-func (c *Client) ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenNameResponse, error) {
-	rsp, err := c.doArchiveTokenName(ctx, appId, eventTemplateId, tokenName, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveTokenNameResponse(rsp)
-}
-
-// UpdateTokenNameWithBody request with arbitrary body returning *UpdateTokenNameResponse
-func (c *Client) UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
-	rsp, err := c.doUpdateTokenNameWithBody(ctx, appId, eventTemplateId, tokenName, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateTokenNameResponse(rsp)
-}
-
-func (c *Client) UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
-	rsp, err := c.doUpdateTokenName(ctx, appId, eventTemplateId, tokenName, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateTokenNameResponse(rsp)
-}
-
-// parseCreateEventsResponse parses an HTTP response from a CreateEvents call.
-func parseCreateEventsResponse(rsp *http.Response) (*CreateEventsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &CreateEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest TimelineEventResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseCreateBatchResponse parses an HTTP response from a CreateBatch call.
 func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &CreateBatchResponse{
 		Body:         bodyBytes,
@@ -1312,13 +372,79 @@ func parseCreateBatchResponse(rsp *http.Response) (*CreateBatchResponse, error) 
 	return response, nil
 }
 
-// parseGetEventResponse parses an HTTP response from a GetEvent call.
-func parseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetEvent: GET /crm/v3/timeline/events/{eventTemplateId}/{eventId}
+
+type GetEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimelineEventResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetEventRequest generates requests for GetEvent
+func newGetEventRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventId", eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetEventFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetEvent request returning *GetEventResponse
+func (c *Client) GetEvent(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetEventResponse, error) {
+	req, err := newGetEventRequest(c.BaseURL, eventTemplateId, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetEventResponse{
 		Body:         bodyBytes,
@@ -1337,13 +463,79 @@ func parseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
 	return response, nil
 }
 
-// parseGetDetailByIdResponse parses an HTTP response from a GetDetailById call.
-func parseGetDetailByIdResponse(rsp *http.Response) (*GetDetailByIdResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetDetailById: GET /crm/v3/timeline/events/{eventTemplateId}/{eventId}/detail
+
+type GetDetailByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *EventDetail
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDetailByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDetailByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetDetailByIdRequest generates requests for GetDetailById
+func newGetDetailByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventId", eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetDetailByIdFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetDetailById request returning *GetDetailByIdResponse
+func (c *Client) GetDetailById(ctx context.Context, eventTemplateId string, eventId string, reqEditors ...client.RequestEditorFn) (*GetDetailByIdResponse, error) {
+	req, err := newGetDetailByIdRequest(c.BaseURL, eventTemplateId, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetDetailByIdResponse{
 		Body:         bodyBytes,
@@ -1362,13 +554,88 @@ func parseGetDetailByIdResponse(rsp *http.Response) (*GetDetailByIdResponse, err
 	return response, nil
 }
 
-// parseGetRenderByIdResponse parses an HTTP response from a GetRenderById call.
-func parseGetRenderByIdResponse(rsp *http.Response) (*GetRenderByIdResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetRenderById: GET /crm/v3/timeline/events/{eventTemplateId}/{eventId}/render
+
+type GetRenderByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r GetRenderByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetRenderByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetRenderByIdRequest generates requests for GetRenderById
+func newGetRenderByIdRequest(baseURL *url.URL, eventTemplateId string, eventId string, params *GetRenderByIdParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("eventTemplateId", eventTemplateId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventId", eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetRenderByIdFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Detail != nil {
+		if err := client.AddQueryParam(q, "detail", *params.Detail); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetRenderById request returning *GetRenderByIdResponse
+func (c *Client) GetRenderById(ctx context.Context, eventTemplateId string, eventId string, params *GetRenderByIdParams, reqEditors ...client.RequestEditorFn) (*GetRenderByIdResponse, error) {
+	req, err := newGetRenderByIdRequest(c.BaseURL, eventTemplateId, eventId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetRenderByIdResponse{
 		Body:         bodyBytes,
@@ -1378,13 +645,74 @@ func parseGetRenderByIdResponse(rsp *http.Response) (*GetRenderByIdResponse, err
 	return response, nil
 }
 
-// parseGetAllEventTemplatesResponse parses an HTTP response from a GetAllEventTemplates call.
-func parseGetAllEventTemplatesResponse(rsp *http.Response) (*GetAllEventTemplatesResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetAllEventTemplates: GET /crm/v3/timeline/{appId}/event-templates
+
+type GetAllEventTemplatesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponseTimelineEventTemplateNoPaging
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllEventTemplatesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllEventTemplatesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetAllEventTemplatesRequest generates requests for GetAllEventTemplates
+func newGetAllEventTemplatesRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	opPath := fmt.Sprintf(opPathGetAllEventTemplatesFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAllEventTemplates request returning *GetAllEventTemplatesResponse
+func (c *Client) GetAllEventTemplates(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllEventTemplatesResponse, error) {
+	req, err := newGetAllEventTemplatesRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetAllEventTemplatesResponse{
 		Body:         bodyBytes,
@@ -1403,13 +731,117 @@ func parseGetAllEventTemplatesResponse(rsp *http.Response) (*GetAllEventTemplate
 	return response, nil
 }
 
-// parseCreateEventTemplatesResponse parses an HTTP response from a CreateEventTemplates call.
-func parseCreateEventTemplatesResponse(rsp *http.Response) (*CreateEventTemplatesResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// CreateEventTemplates: POST /crm/v3/timeline/{appId}/event-templates
+
+type CreateEventTemplatesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *TimelineEventTemplate
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateEventTemplatesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateEventTemplatesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newCreateEventTemplatesRequestWithBody generates requests for CreateEventTemplates with any type of body
+func newCreateEventTemplatesRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	opPath := fmt.Sprintf(opPathCreateEventTemplatesFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateEventTemplatesWithBody request with arbitrary body returning *CreateEventTemplatesResponse
+func (c *Client) CreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
+	rsp, err := c.doCreateEventTemplatesWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateEventTemplatesResponse(rsp)
+}
+
+func (c *Client) doCreateEventTemplatesWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateEventTemplatesRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateEventTemplatesResponse, error) {
+	rsp, err := c.doCreateEventTemplates(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateEventTemplatesResponse(rsp)
+}
+
+// newCreateEventTemplatesRequest calls the generic CreateEventTemplates builder with application/json body.
+func newCreateEventTemplatesRequest(baseURL *url.URL, appId int32, body CreateEventTemplatesJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateEventTemplatesRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateEventTemplates(ctx context.Context, appId int32, body CreateEventTemplatesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateEventTemplatesRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateEventTemplatesResponse parses an HTTP response from a CreateEventTemplates call.
+func parseCreateEventTemplatesResponse(rsp *http.Response) (*CreateEventTemplatesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &CreateEventTemplatesResponse{
 		Body:         bodyBytes,
@@ -1428,13 +860,78 @@ func parseCreateEventTemplatesResponse(rsp *http.Response) (*CreateEventTemplate
 	return response, nil
 }
 
-// parseArchiveEventTemplateResponse parses an HTTP response from a ArchiveEventTemplate call.
-func parseArchiveEventTemplateResponse(rsp *http.Response) (*ArchiveEventTemplateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ArchiveEventTemplate: DELETE /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}
+
+type ArchiveEventTemplateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveEventTemplateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveEventTemplateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newArchiveEventTemplateRequest generates requests for ArchiveEventTemplate
+func newArchiveEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveEventTemplateFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveEventTemplate request returning *ArchiveEventTemplateResponse
+func (c *Client) ArchiveEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*ArchiveEventTemplateResponse, error) {
+	req, err := newArchiveEventTemplateRequest(c.BaseURL, appId, eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ArchiveEventTemplateResponse{
 		Body:         bodyBytes,
@@ -1444,13 +941,79 @@ func parseArchiveEventTemplateResponse(rsp *http.Response) (*ArchiveEventTemplat
 	return response, nil
 }
 
-// parseGetEventTemplateResponse parses an HTTP response from a GetEventTemplate call.
-func parseGetEventTemplateResponse(rsp *http.Response) (*GetEventTemplateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetEventTemplate: GET /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}
+
+type GetEventTemplateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimelineEventTemplate
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEventTemplateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEventTemplateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetEventTemplateRequest generates requests for GetEventTemplate
+func newGetEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetEventTemplateFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetEventTemplate request returning *GetEventTemplateResponse
+func (c *Client) GetEventTemplate(ctx context.Context, appId int32, eventTemplateId string, reqEditors ...client.RequestEditorFn) (*GetEventTemplateResponse, error) {
+	req, err := newGetEventTemplateRequest(c.BaseURL, appId, eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetEventTemplateResponse{
 		Body:         bodyBytes,
@@ -1469,13 +1032,122 @@ func parseGetEventTemplateResponse(rsp *http.Response) (*GetEventTemplateRespons
 	return response, nil
 }
 
-// parseUpdateEventTemplateResponse parses an HTTP response from a UpdateEventTemplate call.
-func parseUpdateEventTemplateResponse(rsp *http.Response) (*UpdateEventTemplateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// UpdateEventTemplate: PUT /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}
+
+type UpdateEventTemplateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimelineEventTemplate
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateEventTemplateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateEventTemplateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newUpdateEventTemplateRequestWithBody generates requests for UpdateEventTemplate with any type of body
+func newUpdateEventTemplateRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateEventTemplateFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateEventTemplateWithBody request with arbitrary body returning *UpdateEventTemplateResponse
+func (c *Client) UpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
+	rsp, err := c.doUpdateEventTemplateWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateEventTemplateResponse(rsp)
+}
+
+func (c *Client) doUpdateEventTemplateWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateEventTemplateRequestWithBody(c.BaseURL, appId, eventTemplateId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateEventTemplateResponse, error) {
+	rsp, err := c.doUpdateEventTemplate(ctx, appId, eventTemplateId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateEventTemplateResponse(rsp)
+}
+
+// newUpdateEventTemplateRequest calls the generic UpdateEventTemplate builder with application/json body.
+func newUpdateEventTemplateRequest(baseURL *url.URL, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateEventTemplateRequestWithBody(baseURL, appId, eventTemplateId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateEventTemplate(ctx context.Context, appId int32, eventTemplateId string, body UpdateEventTemplateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateEventTemplateRequest(c.BaseURL, appId, eventTemplateId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateEventTemplateResponse parses an HTTP response from a UpdateEventTemplate call.
+func parseUpdateEventTemplateResponse(rsp *http.Response) (*UpdateEventTemplateResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &UpdateEventTemplateResponse{
 		Body:         bodyBytes,
@@ -1494,13 +1166,122 @@ func parseUpdateEventTemplateResponse(rsp *http.Response) (*UpdateEventTemplateR
 	return response, nil
 }
 
-// parseCreateTokensResponse parses an HTTP response from a CreateTokens call.
-func parseCreateTokensResponse(rsp *http.Response) (*CreateTokensResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// CreateTokens: POST /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}/tokens
+
+type CreateTokensResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimelineEventTemplateToken
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTokensResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTokensResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newCreateTokensRequestWithBody generates requests for CreateTokens with any type of body
+func newCreateTokensRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateTokensFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateTokensWithBody request with arbitrary body returning *CreateTokensResponse
+func (c *Client) CreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
+	rsp, err := c.doCreateTokensWithBody(ctx, appId, eventTemplateId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateTokensResponse(rsp)
+}
+
+func (c *Client) doCreateTokensWithBody(ctx context.Context, appId int32, eventTemplateId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateTokensRequestWithBody(c.BaseURL, appId, eventTemplateId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTokensResponse, error) {
+	rsp, err := c.doCreateTokens(ctx, appId, eventTemplateId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateTokensResponse(rsp)
+}
+
+// newCreateTokensRequest calls the generic CreateTokens builder with application/json body.
+func newCreateTokensRequest(baseURL *url.URL, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateTokensRequestWithBody(baseURL, appId, eventTemplateId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateTokens(ctx context.Context, appId int32, eventTemplateId string, body CreateTokensJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateTokensRequest(c.BaseURL, appId, eventTemplateId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateTokensResponse parses an HTTP response from a CreateTokens call.
+func parseCreateTokensResponse(rsp *http.Response) (*CreateTokensResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &CreateTokensResponse{
 		Body:         bodyBytes,
@@ -1519,13 +1300,83 @@ func parseCreateTokensResponse(rsp *http.Response) (*CreateTokensResponse, error
 	return response, nil
 }
 
-// parseArchiveTokenNameResponse parses an HTTP response from a ArchiveTokenName call.
-func parseArchiveTokenNameResponse(rsp *http.Response) (*ArchiveTokenNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ArchiveTokenName: DELETE /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}/tokens/{tokenName}
+
+type ArchiveTokenNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveTokenNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveTokenNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newArchiveTokenNameRequest generates requests for ArchiveTokenName
+func newArchiveTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("tokenName", tokenName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveTokenNameFormat, pathParam0, pathParam1, pathParam2)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveTokenName request returning *ArchiveTokenNameResponse
+func (c *Client) ArchiveTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, reqEditors ...client.RequestEditorFn) (*ArchiveTokenNameResponse, error) {
+	req, err := newArchiveTokenNameRequest(c.BaseURL, appId, eventTemplateId, tokenName)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ArchiveTokenNameResponse{
 		Body:         bodyBytes,
@@ -1535,13 +1386,127 @@ func parseArchiveTokenNameResponse(rsp *http.Response) (*ArchiveTokenNameRespons
 	return response, nil
 }
 
-// parseUpdateTokenNameResponse parses an HTTP response from a UpdateTokenName call.
-func parseUpdateTokenNameResponse(rsp *http.Response) (*UpdateTokenNameResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// UpdateTokenName: PUT /crm/v3/timeline/{appId}/event-templates/{eventTemplateId}/tokens/{tokenName}
+
+type UpdateTokenNameResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TimelineEventTemplateToken
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateTokenNameResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateTokenNameResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newUpdateTokenNameRequestWithBody generates requests for UpdateTokenName with any type of body
+func newUpdateTokenNameRequestWithBody(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("eventTemplateId", eventTemplateId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("tokenName", tokenName)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateTokenNameFormat, pathParam0, pathParam1, pathParam2)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateTokenNameWithBody request with arbitrary body returning *UpdateTokenNameResponse
+func (c *Client) UpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
+	rsp, err := c.doUpdateTokenNameWithBody(ctx, appId, eventTemplateId, tokenName, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateTokenNameResponse(rsp)
+}
+
+func (c *Client) doUpdateTokenNameWithBody(ctx context.Context, appId int32, eventTemplateId string, tokenName string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateTokenNameRequestWithBody(c.BaseURL, appId, eventTemplateId, tokenName, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateTokenNameResponse, error) {
+	rsp, err := c.doUpdateTokenName(ctx, appId, eventTemplateId, tokenName, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateTokenNameResponse(rsp)
+}
+
+// newUpdateTokenNameRequest calls the generic UpdateTokenName builder with application/json body.
+func newUpdateTokenNameRequest(baseURL *url.URL, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateTokenNameRequestWithBody(baseURL, appId, eventTemplateId, tokenName, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateTokenName(ctx context.Context, appId int32, eventTemplateId string, tokenName string, body UpdateTokenNameJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateTokenNameRequest(c.BaseURL, appId, eventTemplateId, tokenName, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateTokenNameResponse parses an HTTP response from a UpdateTokenName call.
+func parseUpdateTokenNameResponse(rsp *http.Response) (*UpdateTokenNameResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &UpdateTokenNameResponse{
 		Body:         bodyBytes,

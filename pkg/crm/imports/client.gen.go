@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,67 +15,100 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doList(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListRequest(c.baseURL, params)
+// operation paths
+
+const (
+	opPathGetImportFormat    = "./crm/v3/imports/%s"
+	opPathCancelImportFormat = "./crm/v3/imports/%s/cancel"
+	opPathGetErrorsFormat    = "./crm/v3/imports/%s/errors"
+)
+
+var (
+	opPathList   = client.MustParseURL("./crm/v3/imports/")
+	opPathCreate = client.MustParseURL("./crm/v3/imports/")
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// List request
+	List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error)
+
+	// Create request with any body
+	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error)
+
+	// GetImport request
+	GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error)
+
+	// CancelImport request
+	CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error)
+
+	// GetErrors request
+	GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*GetErrorsResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doGetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetImportRequest(c.baseURL, importId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// List: GET /crm/v3/imports/
+
+type ListResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponsePublicImportResponse
 }
 
-func (c *Client) doCancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCancelImportRequest(c.baseURL, importId)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r ListResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-func (c *Client) doGetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetErrorsRequest(c.baseURL, importId, params)
-	if err != nil {
-		return nil, err
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return 0
 }
-
-var opPathList = client.MustParseURL("./crm/v3/imports/")
 
 // newListRequest generates requests for List
 func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error) {
@@ -112,7 +144,69 @@ func newListRequest(baseURL *url.URL, params *ListParams) (*http.Request, error)
 	return req, nil
 }
 
-var opPathCreate = client.MustParseURL("./crm/v3/imports/")
+// List request returning *ListResponse
+func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error) {
+	req, err := newListRequest(c.BaseURL, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ListResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponsePublicImportResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// Create: POST /crm/v3/imports/
+
+type CreateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PublicImportResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateRequestWithBody generates requests for Create with any type of body
 func newCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
@@ -128,7 +222,69 @@ func newCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Read
 	return req, nil
 }
 
-const opPathGetImportFormat = "./crm/v3/imports/%s"
+// CreateWithBody request with arbitrary body returning *CreateResponse
+func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error) {
+	req, err := newCreateRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PublicImportResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetImport: GET /crm/v3/imports/{importId}
+
+type GetImportResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PublicImportResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetImportResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetImportResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetImportRequest generates requests for GetImport
 func newGetImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
@@ -152,7 +308,69 @@ func newGetImportRequest(baseURL *url.URL, importId int64) (*http.Request, error
 	return req, nil
 }
 
-const opPathCancelImportFormat = "./crm/v3/imports/%s/cancel"
+// GetImport request returning *GetImportResponse
+func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error) {
+	req, err := newGetImportRequest(c.BaseURL, importId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetImportResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PublicImportResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CancelImport: POST /crm/v3/imports/{importId}/cancel
+
+type CancelImportResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ActionResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CancelImportResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CancelImportResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCancelImportRequest generates requests for CancelImport
 func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, error) {
@@ -176,7 +394,69 @@ func newCancelImportRequest(baseURL *url.URL, importId int64) (*http.Request, er
 	return req, nil
 }
 
-const opPathGetErrorsFormat = "./crm/v3/imports/%s/errors"
+// CancelImport request returning *CancelImportResponse
+func (c *Client) CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error) {
+	req, err := newCancelImportRequest(c.BaseURL, importId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CancelImportResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetErrors: GET /crm/v3/imports/{importId}/errors
+
+type GetErrorsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponsePublicImportErrorForwardPaging
+}
+
+// Status returns HTTPResponse.Status
+func (r GetErrorsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetErrorsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetErrorsRequest generates requests for GetErrors
 func newGetErrorsRequest(baseURL *url.URL, importId int64, params *GetErrorsParams) (*http.Request, error) {
@@ -216,363 +496,28 @@ func newGetErrorsRequest(baseURL *url.URL, importId int64, params *GetErrorsPara
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// List request
-	List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error)
-
-	// Create request with any body
-	CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error)
-
-	// GetImport request
-	GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error)
-
-	// CancelImport request
-	CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error)
-
-	// GetErrors request
-	GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*GetErrorsResponse, error)
-}
-
-type ListResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponsePublicImportResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r ListResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PublicImportResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetImportResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PublicImportResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r GetImportResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetImportResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CancelImportResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ActionResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r CancelImportResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CancelImportResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetErrorsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponsePublicImportErrorForwardPaging
-}
-
-// Status returns HTTPResponse.Status
-func (r GetErrorsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetErrorsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// List request returning *ListResponse
-func (c *Client) List(ctx context.Context, params *ListParams, reqEditors ...client.RequestEditorFn) (*ListResponse, error) {
-	rsp, err := c.doList(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseListResponse(rsp)
-}
-
-// CreateWithBody request with arbitrary body returning *CreateResponse
-func (c *Client) CreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateResponse, error) {
-	rsp, err := c.doCreateWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateResponse(rsp)
-}
-
-// GetImport request returning *GetImportResponse
-func (c *Client) GetImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*GetImportResponse, error) {
-	rsp, err := c.doGetImport(ctx, importId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetImportResponse(rsp)
-}
-
-// CancelImport request returning *CancelImportResponse
-func (c *Client) CancelImport(ctx context.Context, importId int64, reqEditors ...client.RequestEditorFn) (*CancelImportResponse, error) {
-	rsp, err := c.doCancelImport(ctx, importId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCancelImportResponse(rsp)
-}
-
 // GetErrors request returning *GetErrorsResponse
 func (c *Client) GetErrors(ctx context.Context, importId int64, params *GetErrorsParams, reqEditors ...client.RequestEditorFn) (*GetErrorsResponse, error) {
-	rsp, err := c.doGetErrors(ctx, importId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetErrorsResponse(rsp)
-}
-
-// parseListResponse parses an HTTP response from a List call.
-func parseListResponse(rsp *http.Response) (*ListResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	req, err := newGetErrorsRequest(c.BaseURL, importId, params)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponsePublicImportResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateResponse parses an HTTP response from a Create call.
-func parseCreateResponse(rsp *http.Response) (*CreateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest PublicImportResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetImportResponse parses an HTTP response from a GetImport call.
-func parseGetImportResponse(rsp *http.Response) (*GetImportResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &GetImportResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest PublicImportResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCancelImportResponse parses an HTTP response from a CancelImport call.
-func parseCancelImportResponse(rsp *http.Response) (*CancelImportResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CancelImportResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetErrorsResponse parses an HTTP response from a GetErrors call.
-func parseGetErrorsResponse(rsp *http.Response) (*GetErrorsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
+	defer rsp.Body.Close()
 
 	response := &GetErrorsResponse{
 		Body:         bodyBytes,

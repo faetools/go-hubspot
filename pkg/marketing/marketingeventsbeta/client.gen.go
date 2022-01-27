@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,779 +16,29 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEventsMarketingEventsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEventsMarketingEventsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteEventsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteEventsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doSearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newSearchEventsRequest(c.baseURL, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertEventsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertEventsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDeleteExternalEventRequest(c.baseURL, externalEventId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetExternalEventRequest(c.baseURL, externalEventId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPatchExternalEventRequestWithBody(c.baseURL, externalEventId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPatchExternalEventRequest(c.baseURL, externalEventId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPutExternalEventRequestWithBody(c.baseURL, externalEventId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPutExternalEventRequest(c.baseURL, externalEventId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCancelExternalEventRequest(c.baseURL, externalEventId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEmailUpsertSubscriberStateRequestWithBody(c.baseURL, externalEventId, subscriberState, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newEmailUpsertSubscriberStateRequest(c.baseURL, externalEventId, subscriberState, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertSubscriberStateRequestWithBody(c.baseURL, externalEventId, subscriberState, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpsertSubscriberStateRequest(c.baseURL, externalEventId, subscriberState, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppSettingsRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPostAppSettingsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newPostAppSettingsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-// newEventsMarketingEventsRequest calls the generic EventsMarketingEvents builder with application/json body.
-func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEventsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newEventsMarketingEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
-
-var opPathEventsMarketingEvents = client.MustParseURL("./marketing/v3/marketing-events/events")
-
-// newEventsMarketingEventsRequestWithBody generates requests for EventsMarketingEvents with any type of body
-func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathEventsMarketingEvents)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newDeleteEventsRequest calls the generic DeleteEvents builder with application/json body.
-func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newDeleteEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
-
-var opPathDeleteEvents = client.MustParseURL("./marketing/v3/marketing-events/events/delete")
-
-// newDeleteEventsRequestWithBody generates requests for DeleteEvents with any type of body
-func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathDeleteEvents)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-var opPathSearchEvents = client.MustParseURL("./marketing/v3/marketing-events/events/search")
-
-// newSearchEventsRequest generates requests for SearchEvents
-func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathSearchEvents)
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "q", params.Q); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpsertEventsRequest calls the generic UpsertEvents builder with application/json body.
-func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpsertEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
-
-var opPathUpsertEvents = client.MustParseURL("./marketing/v3/marketing-events/events/upsert")
-
-// newUpsertEventsRequestWithBody generates requests for UpsertEvents with any type of body
-func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathUpsertEvents)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathDeleteExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
-
-// newDeleteExternalEventRequest generates requests for DeleteExternalEvent
-func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathDeleteExternalEventFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
-
-// newGetExternalEventRequest generates requests for GetExternalEvent
-func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetExternalEventFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newPatchExternalEventRequest calls the generic PatchExternalEvent builder with application/json body.
-func newPatchExternalEventRequest(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newPatchExternalEventRequestWithBody(baseURL, externalEventId, params, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathPatchExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
-
-// newPatchExternalEventRequestWithBody generates requests for PatchExternalEvent with any type of body
-func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathPatchExternalEventFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newPutExternalEventRequest calls the generic PutExternalEvent builder with application/json body.
-func newPutExternalEventRequest(baseURL *url.URL, externalEventId string, body PutExternalEventJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newPutExternalEventRequestWithBody(baseURL, externalEventId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathPutExternalEventFormat = "./marketing/v3/marketing-events/events/%s"
-
-// newPutExternalEventRequestWithBody generates requests for PutExternalEvent with any type of body
-func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathPutExternalEventFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathCancelExternalEventFormat = "./marketing/v3/marketing-events/events/%s/cancel"
-
-// newCancelExternalEventRequest generates requests for CancelExternalEvent
-func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCancelExternalEventFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newEmailUpsertSubscriberStateRequest calls the generic EmailUpsertSubscriberState builder with application/json body.
-func newEmailUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newEmailUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathEmailUpsertSubscriberStateFormat = "./marketing/v3/marketing-events/events/%s/%s/email-upsert"
-
-// newEmailUpsertSubscriberStateRequestWithBody generates requests for EmailUpsertSubscriberState with any type of body
-func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathEmailUpsertSubscriberStateFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newUpsertSubscriberStateRequest calls the generic UpsertSubscriberState builder with application/json body.
-func newUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpsertSubscriberStateFormat = "./marketing/v3/marketing-events/events/%s/%s/upsert"
-
-// newUpsertSubscriberStateRequestWithBody generates requests for UpsertSubscriberState with any type of body
-func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpsertSubscriberStateFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetAppSettingsFormat = "./marketing/v3/marketing-events/%s/settings"
-
-// newGetAppSettingsRequest generates requests for GetAppSettings
-func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAppSettingsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newPostAppSettingsRequest calls the generic PostAppSettings builder with application/json body.
-func newPostAppSettingsRequest(baseURL *url.URL, appId int32, body PostAppSettingsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newPostAppSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathPostAppSettingsFormat = "./marketing/v3/marketing-events/%s/settings"
-
-// newPostAppSettingsRequestWithBody generates requests for PostAppSettings with any type of body
-func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathPostAppSettingsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
+// operation paths
+
+const (
+	opPathDeleteExternalEventFormat        = "./marketing/v3/marketing-events/events/%s"
+	opPathGetExternalEventFormat           = "./marketing/v3/marketing-events/events/%s"
+	opPathPatchExternalEventFormat         = "./marketing/v3/marketing-events/events/%s"
+	opPathPutExternalEventFormat           = "./marketing/v3/marketing-events/events/%s"
+	opPathCancelExternalEventFormat        = "./marketing/v3/marketing-events/events/%s/cancel"
+	opPathEmailUpsertSubscriberStateFormat = "./marketing/v3/marketing-events/events/%s/%s/email-upsert"
+	opPathUpsertSubscriberStateFormat      = "./marketing/v3/marketing-events/events/%s/%s/upsert"
+	opPathGetAppSettingsFormat             = "./marketing/v3/marketing-events/%s/settings"
+	opPathPostAppSettingsFormat            = "./marketing/v3/marketing-events/%s/settings"
+)
+
+var (
+	opPathEventsMarketingEvents = client.MustParseURL("./marketing/v3/marketing-events/events")
+	opPathDeleteEvents          = client.MustParseURL("./marketing/v3/marketing-events/events/delete")
+	opPathSearchEvents          = client.MustParseURL("./marketing/v3/marketing-events/events/search")
+	opPathUpsertEvents          = client.MustParseURL("./marketing/v3/marketing-events/events/upsert")
+)
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// EventsMarketingEvents request with any body
 	EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)
 	EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error)
@@ -838,6 +87,48 @@ type ClientInterface interface {
 	PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// EventsMarketingEvents: POST /marketing/v3/marketing-events/events
+
 type EventsMarketingEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -860,6 +151,103 @@ func (r EventsMarketingEventsResponse) StatusCode() int {
 	return 0
 }
 
+// newEventsMarketingEventsRequestWithBody generates requests for EventsMarketingEvents with any type of body
+func newEventsMarketingEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathEventsMarketingEvents)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// EventsMarketingEventsWithBody request with arbitrary body returning *EventsMarketingEventsResponse
+func (c *Client) EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
+	rsp, err := c.doEventsMarketingEventsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseEventsMarketingEventsResponse(rsp)
+}
+
+func (c *Client) doEventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newEventsMarketingEventsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
+	rsp, err := c.doEventsMarketingEvents(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseEventsMarketingEventsResponse(rsp)
+}
+
+// newEventsMarketingEventsRequest calls the generic EventsMarketingEvents builder with application/json body.
+func newEventsMarketingEventsRequest(baseURL *url.URL, body EventsMarketingEventsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newEventsMarketingEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doEventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newEventsMarketingEventsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseEventsMarketingEventsResponse parses an HTTP response from a EventsMarketingEvents call.
+func parseEventsMarketingEventsResponse(rsp *http.Response) (*EventsMarketingEventsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &EventsMarketingEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MarketingEventDefaultResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// DeleteEvents: POST /marketing/v3/marketing-events/events/delete
+
 type DeleteEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -880,6 +268,94 @@ func (r DeleteEventsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newDeleteEventsRequestWithBody generates requests for DeleteEvents with any type of body
+func newDeleteEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathDeleteEvents)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// DeleteEventsWithBody request with arbitrary body returning *DeleteEventsResponse
+func (c *Client) DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
+	rsp, err := c.doDeleteEventsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDeleteEventsResponse(rsp)
+}
+
+func (c *Client) doDeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDeleteEventsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
+	rsp, err := c.doDeleteEvents(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDeleteEventsResponse(rsp)
+}
+
+// newDeleteEventsRequest calls the generic DeleteEvents builder with application/json body.
+func newDeleteEventsRequest(baseURL *url.URL, body DeleteEventsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDeleteEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDeleteEventsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDeleteEventsResponse parses an HTTP response from a DeleteEvents call.
+func parseDeleteEventsResponse(rsp *http.Response) (*DeleteEventsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DeleteEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// SearchEvents: GET /marketing/v3/marketing-events/events/search
 
 type SearchEventsResponse struct {
 	Body         []byte
@@ -903,6 +379,68 @@ func (r SearchEventsResponse) StatusCode() int {
 	return 0
 }
 
+// newSearchEventsRequest generates requests for SearchEvents
+func newSearchEventsRequest(baseURL *url.URL, params *SearchEventsParams) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathSearchEvents)
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "q", params.Q); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// SearchEvents request returning *SearchEventsResponse
+func (c *Client) SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*SearchEventsResponse, error) {
+	req, err := newSearchEventsRequest(c.BaseURL, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &SearchEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseMarketingEventExternalUniqueIdentifierNoPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// UpsertEvents: POST /marketing/v3/marketing-events/events/upsert
+
 type UpsertEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -925,6 +463,103 @@ func (r UpsertEventsResponse) StatusCode() int {
 	return 0
 }
 
+// newUpsertEventsRequestWithBody generates requests for UpsertEvents with any type of body
+func newUpsertEventsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathUpsertEvents)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpsertEventsWithBody request with arbitrary body returning *UpsertEventsResponse
+func (c *Client) UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
+	rsp, err := c.doUpsertEventsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpsertEventsResponse(rsp)
+}
+
+func (c *Client) doUpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpsertEventsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
+	rsp, err := c.doUpsertEvents(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpsertEventsResponse(rsp)
+}
+
+// newUpsertEventsRequest calls the generic UpsertEvents builder with application/json body.
+func newUpsertEventsRequest(baseURL *url.URL, body UpsertEventsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpsertEventsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpsertEventsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpsertEventsResponse parses an HTTP response from a UpsertEvents call.
+func parseUpsertEventsResponse(rsp *http.Response) (*UpsertEventsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpsertEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest BatchResponseMarketingEventPublicDefaultResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// DeleteExternalEvent: DELETE /marketing/v3/marketing-events/events/{externalEventId}
+
 type DeleteExternalEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -945,6 +580,69 @@ func (r DeleteExternalEventResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newDeleteExternalEventRequest generates requests for DeleteExternalEvent
+func newDeleteExternalEventRequest(baseURL *url.URL, externalEventId string, params *DeleteExternalEventParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathDeleteExternalEventFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// DeleteExternalEvent request returning *DeleteExternalEventResponse
+func (c *Client) DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*DeleteExternalEventResponse, error) {
+	req, err := newDeleteExternalEventRequest(c.BaseURL, externalEventId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DeleteExternalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetExternalEvent: GET /marketing/v3/marketing-events/events/{externalEventId}
 
 type GetExternalEventResponse struct {
 	Body         []byte
@@ -968,6 +666,78 @@ func (r GetExternalEventResponse) StatusCode() int {
 	return 0
 }
 
+// newGetExternalEventRequest generates requests for GetExternalEvent
+func newGetExternalEventRequest(baseURL *url.URL, externalEventId string, params *GetExternalEventParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetExternalEventFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetExternalEvent request returning *GetExternalEventResponse
+func (c *Client) GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*GetExternalEventResponse, error) {
+	req, err := newGetExternalEventRequest(c.BaseURL, externalEventId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetExternalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MarketingEventPublicReadResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// PatchExternalEvent: PATCH /marketing/v3/marketing-events/events/{externalEventId}
+
 type PatchExternalEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -989,6 +759,121 @@ func (r PatchExternalEventResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newPatchExternalEventRequestWithBody generates requests for PatchExternalEvent with any type of body
+func newPatchExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathPatchExternalEventFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// PatchExternalEventWithBody request with arbitrary body returning *PatchExternalEventResponse
+func (c *Client) PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
+	rsp, err := c.doPatchExternalEventWithBody(ctx, externalEventId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePatchExternalEventResponse(rsp)
+}
+
+func (c *Client) doPatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPatchExternalEventRequestWithBody(c.BaseURL, externalEventId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
+	rsp, err := c.doPatchExternalEvent(ctx, externalEventId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePatchExternalEventResponse(rsp)
+}
+
+// newPatchExternalEventRequest calls the generic PatchExternalEvent builder with application/json body.
+func newPatchExternalEventRequest(baseURL *url.URL, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newPatchExternalEventRequestWithBody(baseURL, externalEventId, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doPatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPatchExternalEventRequest(c.BaseURL, externalEventId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parsePatchExternalEventResponse parses an HTTP response from a PatchExternalEvent call.
+func parsePatchExternalEventResponse(rsp *http.Response) (*PatchExternalEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &PatchExternalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MarketingEventPublicDefaultResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// PutExternalEvent: PUT /marketing/v3/marketing-events/events/{externalEventId}
 
 type PutExternalEventResponse struct {
 	Body         []byte
@@ -1012,6 +897,113 @@ func (r PutExternalEventResponse) StatusCode() int {
 	return 0
 }
 
+// newPutExternalEventRequestWithBody generates requests for PutExternalEvent with any type of body
+func newPutExternalEventRequestWithBody(baseURL *url.URL, externalEventId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathPutExternalEventFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// PutExternalEventWithBody request with arbitrary body returning *PutExternalEventResponse
+func (c *Client) PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
+	rsp, err := c.doPutExternalEventWithBody(ctx, externalEventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePutExternalEventResponse(rsp)
+}
+
+func (c *Client) doPutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPutExternalEventRequestWithBody(c.BaseURL, externalEventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
+	rsp, err := c.doPutExternalEvent(ctx, externalEventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePutExternalEventResponse(rsp)
+}
+
+// newPutExternalEventRequest calls the generic PutExternalEvent builder with application/json body.
+func newPutExternalEventRequest(baseURL *url.URL, externalEventId string, body PutExternalEventJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newPutExternalEventRequestWithBody(baseURL, externalEventId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doPutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPutExternalEventRequest(c.BaseURL, externalEventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parsePutExternalEventResponse parses an HTTP response from a PutExternalEvent call.
+func parsePutExternalEventResponse(rsp *http.Response) (*PutExternalEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &PutExternalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MarketingEventPublicDefaultResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CancelExternalEvent: POST /marketing/v3/marketing-events/events/{externalEventId}/cancel
+
 type CancelExternalEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1034,6 +1026,78 @@ func (r CancelExternalEventResponse) StatusCode() int {
 	return 0
 }
 
+// newCancelExternalEventRequest generates requests for CancelExternalEvent
+func newCancelExternalEventRequest(baseURL *url.URL, externalEventId string, params *CancelExternalEventParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCancelExternalEventFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// CancelExternalEvent request returning *CancelExternalEventResponse
+func (c *Client) CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*CancelExternalEventResponse, error) {
+	req, err := newCancelExternalEventRequest(c.BaseURL, externalEventId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CancelExternalEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MarketingEventDefaultResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// EmailUpsertSubscriberState: POST /marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert
+
 type EmailUpsertSubscriberStateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1055,6 +1119,117 @@ func (r EmailUpsertSubscriberStateResponse) StatusCode() int {
 	return 0
 }
 
+// newEmailUpsertSubscriberStateRequestWithBody generates requests for EmailUpsertSubscriberState with any type of body
+func newEmailUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathEmailUpsertSubscriberStateFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// EmailUpsertSubscriberStateWithBody request with arbitrary body returning *EmailUpsertSubscriberStateResponse
+func (c *Client) EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
+	rsp, err := c.doEmailUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseEmailUpsertSubscriberStateResponse(rsp)
+}
+
+func (c *Client) doEmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newEmailUpsertSubscriberStateRequestWithBody(c.BaseURL, externalEventId, subscriberState, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
+	rsp, err := c.doEmailUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseEmailUpsertSubscriberStateResponse(rsp)
+}
+
+// newEmailUpsertSubscriberStateRequest calls the generic EmailUpsertSubscriberState builder with application/json body.
+func newEmailUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newEmailUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doEmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newEmailUpsertSubscriberStateRequest(c.BaseURL, externalEventId, subscriberState, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseEmailUpsertSubscriberStateResponse parses an HTTP response from a EmailUpsertSubscriberState call.
+func parseEmailUpsertSubscriberStateResponse(rsp *http.Response) (*EmailUpsertSubscriberStateResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &EmailUpsertSubscriberStateResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// UpsertSubscriberState: POST /marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/upsert
+
 type UpsertSubscriberStateResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1075,6 +1250,117 @@ func (r UpsertSubscriberStateResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newUpsertSubscriberStateRequestWithBody generates requests for UpsertSubscriberState with any type of body
+func newUpsertSubscriberStateRequestWithBody(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("externalEventId", externalEventId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("subscriberState", subscriberState)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpsertSubscriberStateFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "externalAccountId", params.ExternalAccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpsertSubscriberStateWithBody request with arbitrary body returning *UpsertSubscriberStateResponse
+func (c *Client) UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
+	rsp, err := c.doUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpsertSubscriberStateResponse(rsp)
+}
+
+func (c *Client) doUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpsertSubscriberStateRequestWithBody(c.BaseURL, externalEventId, subscriberState, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
+	rsp, err := c.doUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpsertSubscriberStateResponse(rsp)
+}
+
+// newUpsertSubscriberStateRequest calls the generic UpsertSubscriberState builder with application/json body.
+func newUpsertSubscriberStateRequest(baseURL *url.URL, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpsertSubscriberStateRequestWithBody(baseURL, externalEventId, subscriberState, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpsertSubscriberStateRequest(c.BaseURL, externalEventId, subscriberState, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpsertSubscriberStateResponse parses an HTTP response from a UpsertSubscriberState call.
+func parseUpsertSubscriberStateResponse(rsp *http.Response) (*UpsertSubscriberStateResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpsertSubscriberStateResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetAppSettings: GET /marketing/v3/marketing-events/{appId}/settings
 
 type GetAppSettingsResponse struct {
 	Body         []byte
@@ -1098,6 +1384,70 @@ func (r GetAppSettingsResponse) StatusCode() int {
 	return 0
 }
 
+// newGetAppSettingsRequest generates requests for GetAppSettings
+func newGetAppSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetAppSettingsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAppSettings request returning *GetAppSettingsResponse
+func (c *Client) GetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppSettingsResponse, error) {
+	req, err := newGetAppSettingsRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAppSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest EventDetailSettings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// PostAppSettings: POST /marketing/v3/marketing-events/{appId}/settings
+
 type PostAppSettingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1120,168 +1470,28 @@ func (r PostAppSettingsResponse) StatusCode() int {
 	return 0
 }
 
-// EventsMarketingEventsWithBody request with arbitrary body returning *EventsMarketingEventsResponse
-func (c *Client) EventsMarketingEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
-	rsp, err := c.doEventsMarketingEventsWithBody(ctx, contentType, body, reqEditors...)
+// newPostAppSettingsRequestWithBody generates requests for PostAppSettings with any type of body
+func newPostAppSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
-	return parseEventsMarketingEventsResponse(rsp)
-}
 
-func (c *Client) EventsMarketingEvents(ctx context.Context, body EventsMarketingEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EventsMarketingEventsResponse, error) {
-	rsp, err := c.doEventsMarketingEvents(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseEventsMarketingEventsResponse(rsp)
-}
+	opPath := fmt.Sprintf(opPathPostAppSettingsFormat, pathParam0)
 
-// DeleteEventsWithBody request with arbitrary body returning *DeleteEventsResponse
-func (c *Client) DeleteEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
-	rsp, err := c.doDeleteEventsWithBody(ctx, contentType, body, reqEditors...)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
-	return parseDeleteEventsResponse(rsp)
-}
 
-func (c *Client) DeleteEvents(ctx context.Context, body DeleteEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DeleteEventsResponse, error) {
-	rsp, err := c.doDeleteEvents(ctx, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
-	return parseDeleteEventsResponse(rsp)
-}
 
-// SearchEvents request returning *SearchEventsResponse
-func (c *Client) SearchEvents(ctx context.Context, params *SearchEventsParams, reqEditors ...client.RequestEditorFn) (*SearchEventsResponse, error) {
-	rsp, err := c.doSearchEvents(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseSearchEventsResponse(rsp)
-}
+	req.Header.Add(client.ContentType, contentType)
 
-// UpsertEventsWithBody request with arbitrary body returning *UpsertEventsResponse
-func (c *Client) UpsertEventsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
-	rsp, err := c.doUpsertEventsWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpsertEventsResponse(rsp)
-}
-
-func (c *Client) UpsertEvents(ctx context.Context, body UpsertEventsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertEventsResponse, error) {
-	rsp, err := c.doUpsertEvents(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpsertEventsResponse(rsp)
-}
-
-// DeleteExternalEvent request returning *DeleteExternalEventResponse
-func (c *Client) DeleteExternalEvent(ctx context.Context, externalEventId string, params *DeleteExternalEventParams, reqEditors ...client.RequestEditorFn) (*DeleteExternalEventResponse, error) {
-	rsp, err := c.doDeleteExternalEvent(ctx, externalEventId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDeleteExternalEventResponse(rsp)
-}
-
-// GetExternalEvent request returning *GetExternalEventResponse
-func (c *Client) GetExternalEvent(ctx context.Context, externalEventId string, params *GetExternalEventParams, reqEditors ...client.RequestEditorFn) (*GetExternalEventResponse, error) {
-	rsp, err := c.doGetExternalEvent(ctx, externalEventId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetExternalEventResponse(rsp)
-}
-
-// PatchExternalEventWithBody request with arbitrary body returning *PatchExternalEventResponse
-func (c *Client) PatchExternalEventWithBody(ctx context.Context, externalEventId string, params *PatchExternalEventParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
-	rsp, err := c.doPatchExternalEventWithBody(ctx, externalEventId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parsePatchExternalEventResponse(rsp)
-}
-
-func (c *Client) PatchExternalEvent(ctx context.Context, externalEventId string, params *PatchExternalEventParams, body PatchExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PatchExternalEventResponse, error) {
-	rsp, err := c.doPatchExternalEvent(ctx, externalEventId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parsePatchExternalEventResponse(rsp)
-}
-
-// PutExternalEventWithBody request with arbitrary body returning *PutExternalEventResponse
-func (c *Client) PutExternalEventWithBody(ctx context.Context, externalEventId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
-	rsp, err := c.doPutExternalEventWithBody(ctx, externalEventId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parsePutExternalEventResponse(rsp)
-}
-
-func (c *Client) PutExternalEvent(ctx context.Context, externalEventId string, body PutExternalEventJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PutExternalEventResponse, error) {
-	rsp, err := c.doPutExternalEvent(ctx, externalEventId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parsePutExternalEventResponse(rsp)
-}
-
-// CancelExternalEvent request returning *CancelExternalEventResponse
-func (c *Client) CancelExternalEvent(ctx context.Context, externalEventId string, params *CancelExternalEventParams, reqEditors ...client.RequestEditorFn) (*CancelExternalEventResponse, error) {
-	rsp, err := c.doCancelExternalEvent(ctx, externalEventId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCancelExternalEventResponse(rsp)
-}
-
-// EmailUpsertSubscriberStateWithBody request with arbitrary body returning *EmailUpsertSubscriberStateResponse
-func (c *Client) EmailUpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
-	rsp, err := c.doEmailUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseEmailUpsertSubscriberStateResponse(rsp)
-}
-
-func (c *Client) EmailUpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *EmailUpsertSubscriberStateParams, body EmailUpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*EmailUpsertSubscriberStateResponse, error) {
-	rsp, err := c.doEmailUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseEmailUpsertSubscriberStateResponse(rsp)
-}
-
-// UpsertSubscriberStateWithBody request with arbitrary body returning *UpsertSubscriberStateResponse
-func (c *Client) UpsertSubscriberStateWithBody(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
-	rsp, err := c.doUpsertSubscriberStateWithBody(ctx, externalEventId, subscriberState, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpsertSubscriberStateResponse(rsp)
-}
-
-func (c *Client) UpsertSubscriberState(ctx context.Context, externalEventId string, subscriberState string, params *UpsertSubscriberStateParams, body UpsertSubscriberStateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpsertSubscriberStateResponse, error) {
-	rsp, err := c.doUpsertSubscriberState(ctx, externalEventId, subscriberState, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpsertSubscriberStateResponse(rsp)
-}
-
-// GetAppSettings request returning *GetAppSettingsResponse
-func (c *Client) GetAppSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppSettingsResponse, error) {
-	rsp, err := c.doGetAppSettings(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAppSettingsResponse(rsp)
+	return req, nil
 }
 
 // PostAppSettingsWithBody request with arbitrary body returning *PostAppSettingsResponse
@@ -1290,7 +1500,21 @@ func (c *Client) PostAppSettingsWithBody(ctx context.Context, appId int32, conte
 	if err != nil {
 		return nil, err
 	}
+
 	return parsePostAppSettingsResponse(rsp)
+}
+
+func (c *Client) doPostAppSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPostAppSettingsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) PostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*PostAppSettingsResponse, error) {
@@ -1298,280 +1522,41 @@ func (c *Client) PostAppSettings(ctx context.Context, appId int32, body PostAppS
 	if err != nil {
 		return nil, err
 	}
+
 	return parsePostAppSettingsResponse(rsp)
 }
 
-// parseEventsMarketingEventsResponse parses an HTTP response from a EventsMarketingEvents call.
-func parseEventsMarketingEventsResponse(rsp *http.Response) (*EventsMarketingEventsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// newPostAppSettingsRequest calls the generic PostAppSettings builder with application/json body.
+func newPostAppSettingsRequest(baseURL *url.URL, appId int32, body PostAppSettingsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &EventsMarketingEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest MarketingEventDefaultResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	bodyReader = bytes.NewReader(buf)
+	return newPostAppSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
 
-// parseDeleteEventsResponse parses an HTTP response from a DeleteEvents call.
-func parseDeleteEventsResponse(rsp *http.Response) (*DeleteEventsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+func (c *Client) doPostAppSettings(ctx context.Context, appId int32, body PostAppSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newPostAppSettingsRequest(c.BaseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &DeleteEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseSearchEventsResponse parses an HTTP response from a SearchEvents call.
-func parseSearchEventsResponse(rsp *http.Response) (*SearchEventsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &SearchEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseMarketingEventExternalUniqueIdentifierNoPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpsertEventsResponse parses an HTTP response from a UpsertEvents call.
-func parseUpsertEventsResponse(rsp *http.Response) (*UpsertEventsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpsertEventsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest BatchResponseMarketingEventPublicDefaultResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseDeleteExternalEventResponse parses an HTTP response from a DeleteExternalEvent call.
-func parseDeleteExternalEventResponse(rsp *http.Response) (*DeleteExternalEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteExternalEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetExternalEventResponse parses an HTTP response from a GetExternalEvent call.
-func parseGetExternalEventResponse(rsp *http.Response) (*GetExternalEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetExternalEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest MarketingEventPublicReadResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parsePatchExternalEventResponse parses an HTTP response from a PatchExternalEvent call.
-func parsePatchExternalEventResponse(rsp *http.Response) (*PatchExternalEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PatchExternalEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest MarketingEventPublicDefaultResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parsePutExternalEventResponse parses an HTTP response from a PutExternalEvent call.
-func parsePutExternalEventResponse(rsp *http.Response) (*PutExternalEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PutExternalEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest MarketingEventPublicDefaultResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCancelExternalEventResponse parses an HTTP response from a CancelExternalEvent call.
-func parseCancelExternalEventResponse(rsp *http.Response) (*CancelExternalEventResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CancelExternalEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest MarketingEventDefaultResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseEmailUpsertSubscriberStateResponse parses an HTTP response from a EmailUpsertSubscriberState call.
-func parseEmailUpsertSubscriberStateResponse(rsp *http.Response) (*EmailUpsertSubscriberStateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &EmailUpsertSubscriberStateResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseUpsertSubscriberStateResponse parses an HTTP response from a UpsertSubscriberState call.
-func parseUpsertSubscriberStateResponse(rsp *http.Response) (*UpsertSubscriberStateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpsertSubscriberStateResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetAppSettingsResponse parses an HTTP response from a GetAppSettings call.
-func parseGetAppSettingsResponse(rsp *http.Response) (*GetAppSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAppSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest EventDetailSettings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parsePostAppSettingsResponse parses an HTTP response from a PostAppSettings call.
 func parsePostAppSettingsResponse(rsp *http.Response) (*PostAppSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &PostAppSettingsResponse{
 		Body:         bodyBytes,

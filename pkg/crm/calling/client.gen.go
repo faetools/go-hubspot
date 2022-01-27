@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,79 +16,94 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveSettingsRequest(c.baseURL, appId)
+// operation paths
+
+const (
+	opPathArchiveSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+	opPathGetSettingsFormat     = "./crm/v3/extensions/calling/%s/settings"
+	opPathUpdateSettingsFormat  = "./crm/v3/extensions/calling/%s/settings"
+	opPathCreateSettingsFormat  = "./crm/v3/extensions/calling/%s/settings"
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// ArchiveSettings request
+	ArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSettingsResponse, error)
+
+	// GetSettings request
+	GetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetSettingsResponse, error)
+
+	// UpdateSettings request with any body
+	UpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error)
+	UpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error)
+
+	// CreateSettings request with any body
+	CreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error)
+	CreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doGetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetSettingsRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doUpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSettingsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// ArchiveSettings: DELETE /crm/v3/extensions/calling/{appId}/settings
+
+type ArchiveSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
 }
 
-func (c *Client) doUpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSettingsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r ArchiveSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-func (c *Client) doCreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSettingsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return 0
 }
-
-func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSettingsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-const opPathArchiveSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
 
 // newArchiveSettingsRequest generates requests for ArchiveSettings
 func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
@@ -113,7 +127,60 @@ func newArchiveSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, er
 	return req, nil
 }
 
-const opPathGetSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+// ArchiveSettings request returning *ArchiveSettingsResponse
+func (c *Client) ArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSettingsResponse, error) {
+	req, err := newArchiveSettingsRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetSettings: GET /crm/v3/extensions/calling/{appId}/settings
+
+type GetSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SettingsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetSettingsRequest generates requests for GetSettings
 func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
@@ -137,18 +204,69 @@ func newGetSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error)
 	return req, nil
 }
 
-// newUpdateSettingsRequest calls the generic UpdateSettings builder with application/json body.
-func newUpdateSettingsRequest(baseURL *url.URL, appId int32, body UpdateSettingsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetSettings request returning *GetSettingsResponse
+func (c *Client) GetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetSettingsResponse, error) {
+	req, err := newGetSettingsRequest(c.BaseURL, appId)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SettingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathUpdateSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+// UpdateSettings: PATCH /crm/v3/extensions/calling/{appId}/settings
+
+type UpdateSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SettingsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdateSettingsRequestWithBody generates requests for UpdateSettings with any type of body
 func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
@@ -174,18 +292,110 @@ func newUpdateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType
 	return req, nil
 }
 
-// newCreateSettingsRequest calls the generic CreateSettings builder with application/json body.
-func newCreateSettingsRequest(baseURL *url.URL, appId int32, body CreateSettingsJSONRequestBody) (*http.Request, error) {
+// UpdateSettingsWithBody request with arbitrary body returning *UpdateSettingsResponse
+func (c *Client) UpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error) {
+	rsp, err := c.doUpdateSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateSettingsResponse(rsp)
+}
+
+func (c *Client) doUpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateSettingsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error) {
+	rsp, err := c.doUpdateSettings(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateSettingsResponse(rsp)
+}
+
+// newUpdateSettingsRequest calls the generic UpdateSettings builder with application/json body.
+func newUpdateSettingsRequest(baseURL *url.URL, appId int32, body UpdateSettingsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newCreateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+	return newUpdateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
 
-const opPathCreateSettingsFormat = "./crm/v3/extensions/calling/%s/settings"
+func (c *Client) doUpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateSettingsRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateSettingsResponse parses an HTTP response from a UpdateSettings call.
+func parseUpdateSettingsResponse(rsp *http.Response) (*UpdateSettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SettingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateSettings: POST /crm/v3/extensions/calling/{appId}/settings
+
+type CreateSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SettingsResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateSettingsRequestWithBody generates requests for CreateSettings with any type of body
 func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
@@ -211,229 +421,27 @@ func newCreateSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// ArchiveSettings request
-	ArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSettingsResponse, error)
-
-	// GetSettings request
-	GetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetSettingsResponse, error)
-
-	// UpdateSettings request with any body
-	UpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error)
-	UpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error)
-
-	// CreateSettings request with any body
-	CreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error)
-	CreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error)
-}
-
-type ArchiveSettingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveSettingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveSettingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetSettingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SettingsResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r GetSettingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetSettingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateSettingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SettingsResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateSettingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateSettingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateSettingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SettingsResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateSettingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateSettingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ArchiveSettings request returning *ArchiveSettingsResponse
-func (c *Client) ArchiveSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSettingsResponse, error) {
-	rsp, err := c.doArchiveSettings(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveSettingsResponse(rsp)
-}
-
-// GetSettings request returning *GetSettingsResponse
-func (c *Client) GetSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetSettingsResponse, error) {
-	rsp, err := c.doGetSettings(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetSettingsResponse(rsp)
-}
-
-// UpdateSettingsWithBody request with arbitrary body returning *UpdateSettingsResponse
-func (c *Client) UpdateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error) {
-	rsp, err := c.doUpdateSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateSettingsResponse(rsp)
-}
-
-func (c *Client) UpdateSettings(ctx context.Context, appId int32, body UpdateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSettingsResponse, error) {
-	rsp, err := c.doUpdateSettings(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateSettingsResponse(rsp)
-}
-
 // CreateSettingsWithBody request with arbitrary body returning *CreateSettingsResponse
 func (c *Client) CreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error) {
 	rsp, err := c.doCreateSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateSettingsResponse(rsp)
+}
+
+func (c *Client) doCreateSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSettingsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) CreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSettingsResponse, error) {
@@ -441,82 +449,41 @@ func (c *Client) CreateSettings(ctx context.Context, appId int32, body CreateSet
 	if err != nil {
 		return nil, err
 	}
+
 	return parseCreateSettingsResponse(rsp)
 }
 
-// parseArchiveSettingsResponse parses an HTTP response from a ArchiveSettings call.
-func parseArchiveSettingsResponse(rsp *http.Response) (*ArchiveSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// newCreateSettingsRequest calls the generic CreateSettings builder with application/json body.
+func newCreateSettingsRequest(baseURL *url.URL, appId int32, body CreateSettingsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &ArchiveSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
+	bodyReader = bytes.NewReader(buf)
+	return newCreateSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
 
-// parseGetSettingsResponse parses an HTTP response from a GetSettings call.
-func parseGetSettingsResponse(rsp *http.Response) (*GetSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+func (c *Client) doCreateSettings(ctx context.Context, appId int32, body CreateSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSettingsRequest(c.BaseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &GetSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SettingsResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateSettingsResponse parses an HTTP response from a UpdateSettings call.
-func parseUpdateSettingsResponse(rsp *http.Response) (*UpdateSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &UpdateSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SettingsResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseCreateSettingsResponse parses an HTTP response from a CreateSettings call.
 func parseCreateSettingsResponse(rsp *http.Response) (*CreateSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &CreateSettingsResponse{
 		Body:         bodyBytes,

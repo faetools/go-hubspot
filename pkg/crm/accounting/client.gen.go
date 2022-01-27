@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,1185 +16,33 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateCustomerRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateCustomerRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoCustomerSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoCustomerSearchRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateExchangeRateRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateExchangeRateRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateInvoiceRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateInvoiceRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newInvoicePdfRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newInvoicePdfRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoInvoiceSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoInvoiceSearchRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoProductSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoProductSearchRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoTaxSearchRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newDoTaxSearchRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTermRequestRequestWithBody(c.baseURL, requestId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateTermRequestRequest(c.baseURL, requestId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetInvoiceRequest(c.baseURL, invoiceId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateInvoiceRequestWithBody(c.baseURL, invoiceId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateInvoiceRequest(c.baseURL, invoiceId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreatePaymentRequestWithBody(c.baseURL, invoiceId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreatePaymentRequest(c.baseURL, invoiceId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateContactContactsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateContactContactsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateProductProductsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateProductProductsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceUserAccountsRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceUserAccountsRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAccountRequest(c.baseURL, accountId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-// newCreateCustomerRequestRequest calls the generic CreateCustomerRequest builder with application/json body.
-func newCreateCustomerRequestRequest(baseURL *url.URL, requestId string, body CreateCustomerRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateCustomerRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateCustomerRequestFormat = "./crm/v3/extensions/accounting/callback/customer-create/%s"
-
-// newCreateCustomerRequestRequestWithBody generates requests for CreateCustomerRequest with any type of body
-func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateCustomerRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newDoCustomerSearchRequestRequest calls the generic DoCustomerSearchRequest builder with application/json body.
-func newDoCustomerSearchRequestRequest(baseURL *url.URL, requestId string, body DoCustomerSearchRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newDoCustomerSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathDoCustomerSearchRequestFormat = "./crm/v3/extensions/accounting/callback/customer-search/%s"
-
-// newDoCustomerSearchRequestRequestWithBody generates requests for DoCustomerSearchRequest with any type of body
-func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathDoCustomerSearchRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateExchangeRateRequestRequest calls the generic CreateExchangeRateRequest builder with application/json body.
-func newCreateExchangeRateRequestRequest(baseURL *url.URL, requestId string, body CreateExchangeRateRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateExchangeRateRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateExchangeRateRequestFormat = "./crm/v3/extensions/accounting/callback/exchange-rate/%s"
-
-// newCreateExchangeRateRequestRequestWithBody generates requests for CreateExchangeRateRequest with any type of body
-func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateExchangeRateRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateInvoiceRequestRequest calls the generic CreateInvoiceRequest builder with application/json body.
-func newCreateInvoiceRequestRequest(baseURL *url.URL, requestId string, body CreateInvoiceRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateInvoiceRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateInvoiceRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-create/%s"
-
-// newCreateInvoiceRequestRequestWithBody generates requests for CreateInvoiceRequest with any type of body
-func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateInvoiceRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newInvoicePdfRequestRequest calls the generic InvoicePdfRequest builder with application/json body.
-func newInvoicePdfRequestRequest(baseURL *url.URL, requestId string, body InvoicePdfRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newInvoicePdfRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathInvoicePdfRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-pdf/%s"
-
-// newInvoicePdfRequestRequestWithBody generates requests for InvoicePdfRequest with any type of body
-func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathInvoicePdfRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newDoInvoiceSearchRequestRequest calls the generic DoInvoiceSearchRequest builder with application/json body.
-func newDoInvoiceSearchRequestRequest(baseURL *url.URL, requestId string, body DoInvoiceSearchRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newDoInvoiceSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathDoInvoiceSearchRequestFormat = "./crm/v3/extensions/accounting/callback/invoice-search/%s"
-
-// newDoInvoiceSearchRequestRequestWithBody generates requests for DoInvoiceSearchRequest with any type of body
-func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathDoInvoiceSearchRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newGetRequestRequest calls the generic GetRequest builder with application/json body.
-func newGetRequestRequest(baseURL *url.URL, requestId string, body GetRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newGetRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathGetRequestFormat = "./crm/v3/extensions/accounting/callback/invoices/%s"
-
-// newGetRequestRequestWithBody generates requests for GetRequest with any type of body
-func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newDoProductSearchRequestRequest calls the generic DoProductSearchRequest builder with application/json body.
-func newDoProductSearchRequestRequest(baseURL *url.URL, requestId string, body DoProductSearchRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newDoProductSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathDoProductSearchRequestFormat = "./crm/v3/extensions/accounting/callback/product-search/%s"
-
-// newDoProductSearchRequestRequestWithBody generates requests for DoProductSearchRequest with any type of body
-func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathDoProductSearchRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newDoTaxSearchRequestRequest calls the generic DoTaxSearchRequest builder with application/json body.
-func newDoTaxSearchRequestRequest(baseURL *url.URL, requestId string, body DoTaxSearchRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newDoTaxSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathDoTaxSearchRequestFormat = "./crm/v3/extensions/accounting/callback/tax-search/%s"
-
-// newDoTaxSearchRequestRequestWithBody generates requests for DoTaxSearchRequest with any type of body
-func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathDoTaxSearchRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateTermRequestRequest calls the generic CreateTermRequest builder with application/json body.
-func newCreateTermRequestRequest(baseURL *url.URL, requestId string, body CreateTermRequestJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateTermRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateTermRequestFormat = "./crm/v3/extensions/accounting/callback/terms/%s"
-
-// newCreateTermRequestRequestWithBody generates requests for CreateTermRequest with any type of body
-func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("requestId", requestId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateTermRequestFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetInvoiceFormat = "./crm/v3/extensions/accounting/invoice/%s"
-
-// newGetInvoiceRequest generates requests for GetInvoice
-func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetInvoiceFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateInvoiceRequest calls the generic UpdateInvoice builder with application/json body.
-func newUpdateInvoiceRequest(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateInvoiceRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateInvoiceFormat = "./crm/v3/extensions/accounting/invoice/%s"
-
-// newUpdateInvoiceRequestWithBody generates requests for UpdateInvoice with any type of body
-func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateInvoiceFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
-		return nil, err
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreatePaymentRequest calls the generic CreatePayment builder with application/json body.
-func newCreatePaymentRequest(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreatePaymentRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreatePaymentFormat = "./crm/v3/extensions/accounting/invoice/%s/payment"
-
-// newCreatePaymentRequestWithBody generates requests for CreatePayment with any type of body
-func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreatePaymentFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.AccountId != nil {
-		if err := client.AddQueryParam(q, "accountId", *params.AccountId); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetAppFormat = "./crm/v3/extensions/accounting/settings/%s"
-
-// newGetAppRequest generates requests for GetApp
-func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAppFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
-func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathReplaceAppFormat = "./crm/v3/extensions/accounting/settings/%s"
-
-// newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
-func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathReplaceAppFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateContactContactsRequest calls the generic CreateContactContacts builder with application/json body.
-func newCreateContactContactsRequest(baseURL *url.URL, appId int32, body CreateContactContactsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateContactContactsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateContactContactsFormat = "./crm/v3/extensions/accounting/sync/%s/contacts"
-
-// newCreateContactContactsRequestWithBody generates requests for CreateContactContacts with any type of body
-func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateContactContactsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCreateProductProductsRequest calls the generic CreateProductProducts builder with application/json body.
-func newCreateProductProductsRequest(baseURL *url.URL, appId int32, body CreateProductProductsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateProductProductsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateProductProductsFormat = "./crm/v3/extensions/accounting/sync/%s/products"
-
-// newCreateProductProductsRequestWithBody generates requests for CreateProductProducts with any type of body
-func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateProductProductsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newReplaceUserAccountsRequest calls the generic ReplaceUserAccounts builder with application/json body.
-func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newReplaceUserAccountsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
+// operation paths
+
+const (
+	opPathCreateCustomerRequestFormat     = "./crm/v3/extensions/accounting/callback/customer-create/%s"
+	opPathDoCustomerSearchRequestFormat   = "./crm/v3/extensions/accounting/callback/customer-search/%s"
+	opPathCreateExchangeRateRequestFormat = "./crm/v3/extensions/accounting/callback/exchange-rate/%s"
+	opPathCreateInvoiceRequestFormat      = "./crm/v3/extensions/accounting/callback/invoice-create/%s"
+	opPathInvoicePdfRequestFormat         = "./crm/v3/extensions/accounting/callback/invoice-pdf/%s"
+	opPathDoInvoiceSearchRequestFormat    = "./crm/v3/extensions/accounting/callback/invoice-search/%s"
+	opPathGetRequestFormat                = "./crm/v3/extensions/accounting/callback/invoices/%s"
+	opPathDoProductSearchRequestFormat    = "./crm/v3/extensions/accounting/callback/product-search/%s"
+	opPathDoTaxSearchRequestFormat        = "./crm/v3/extensions/accounting/callback/tax-search/%s"
+	opPathCreateTermRequestFormat         = "./crm/v3/extensions/accounting/callback/terms/%s"
+	opPathGetInvoiceFormat                = "./crm/v3/extensions/accounting/invoice/%s"
+	opPathUpdateInvoiceFormat             = "./crm/v3/extensions/accounting/invoice/%s"
+	opPathCreatePaymentFormat             = "./crm/v3/extensions/accounting/invoice/%s/payment"
+	opPathGetAppFormat                    = "./crm/v3/extensions/accounting/settings/%s"
+	opPathReplaceAppFormat                = "./crm/v3/extensions/accounting/settings/%s"
+	opPathCreateContactContactsFormat     = "./crm/v3/extensions/accounting/sync/%s/contacts"
+	opPathCreateProductProductsFormat     = "./crm/v3/extensions/accounting/sync/%s/products"
+	opPathArchiveAccountFormat            = "./crm/v3/extensions/accounting/user-accounts/%s"
+)
 
 var opPathReplaceUserAccounts = client.MustParseURL("./crm/v3/extensions/accounting/user-accounts")
 
-// newReplaceUserAccountsRequestWithBody generates requests for ReplaceUserAccounts with any type of body
-func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathReplaceUserAccounts)
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveAccountFormat = "./crm/v3/extensions/accounting/user-accounts/%s"
-
-// newArchiveAccountRequest generates requests for ArchiveAccount
-func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("accountId", accountId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveAccountFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// CreateCustomerRequest request with any body
 	CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error)
 	CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error)
@@ -1270,6 +117,48 @@ type ClientInterface interface {
 	ArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*ArchiveAccountResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CreateCustomerRequest: POST /crm/v3/extensions/accounting/callback/customer-create/{requestId}
+
 type CreateCustomerRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1290,6 +179,104 @@ func (r CreateCustomerRequestResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateCustomerRequestRequestWithBody generates requests for CreateCustomerRequest with any type of body
+func newCreateCustomerRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateCustomerRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateCustomerRequestWithBody request with arbitrary body returning *CreateCustomerRequestResponse
+func (c *Client) CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
+	rsp, err := c.doCreateCustomerRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateCustomerRequestResponse(rsp)
+}
+
+func (c *Client) doCreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateCustomerRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
+	rsp, err := c.doCreateCustomerRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateCustomerRequestResponse(rsp)
+}
+
+// newCreateCustomerRequestRequest calls the generic CreateCustomerRequest builder with application/json body.
+func newCreateCustomerRequestRequest(baseURL *url.URL, requestId string, body CreateCustomerRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateCustomerRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateCustomerRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateCustomerRequestResponse parses an HTTP response from a CreateCustomerRequest call.
+func parseCreateCustomerRequestResponse(rsp *http.Response) (*CreateCustomerRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateCustomerRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// DoCustomerSearchRequest: POST /crm/v3/extensions/accounting/callback/customer-search/{requestId}
 
 type DoCustomerSearchRequestResponse struct {
 	Body         []byte
@@ -1312,6 +299,104 @@ func (r DoCustomerSearchRequestResponse) StatusCode() int {
 	return 0
 }
 
+// newDoCustomerSearchRequestRequestWithBody generates requests for DoCustomerSearchRequest with any type of body
+func newDoCustomerSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathDoCustomerSearchRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// DoCustomerSearchRequestWithBody request with arbitrary body returning *DoCustomerSearchRequestResponse
+func (c *Client) DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
+	rsp, err := c.doDoCustomerSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoCustomerSearchRequestResponse(rsp)
+}
+
+func (c *Client) doDoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoCustomerSearchRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
+	rsp, err := c.doDoCustomerSearchRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoCustomerSearchRequestResponse(rsp)
+}
+
+// newDoCustomerSearchRequestRequest calls the generic DoCustomerSearchRequest builder with application/json body.
+func newDoCustomerSearchRequestRequest(baseURL *url.URL, requestId string, body DoCustomerSearchRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDoCustomerSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoCustomerSearchRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDoCustomerSearchRequestResponse parses an HTTP response from a DoCustomerSearchRequest call.
+func parseDoCustomerSearchRequestResponse(rsp *http.Response) (*DoCustomerSearchRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DoCustomerSearchRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateExchangeRateRequest: POST /crm/v3/extensions/accounting/callback/exchange-rate/{requestId}
+
 type CreateExchangeRateRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1332,6 +417,104 @@ func (r CreateExchangeRateRequestResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateExchangeRateRequestRequestWithBody generates requests for CreateExchangeRateRequest with any type of body
+func newCreateExchangeRateRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateExchangeRateRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateExchangeRateRequestWithBody request with arbitrary body returning *CreateExchangeRateRequestResponse
+func (c *Client) CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
+	rsp, err := c.doCreateExchangeRateRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateExchangeRateRequestResponse(rsp)
+}
+
+func (c *Client) doCreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateExchangeRateRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
+	rsp, err := c.doCreateExchangeRateRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateExchangeRateRequestResponse(rsp)
+}
+
+// newCreateExchangeRateRequestRequest calls the generic CreateExchangeRateRequest builder with application/json body.
+func newCreateExchangeRateRequestRequest(baseURL *url.URL, requestId string, body CreateExchangeRateRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateExchangeRateRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateExchangeRateRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateExchangeRateRequestResponse parses an HTTP response from a CreateExchangeRateRequest call.
+func parseCreateExchangeRateRequestResponse(rsp *http.Response) (*CreateExchangeRateRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateExchangeRateRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateInvoiceRequest: POST /crm/v3/extensions/accounting/callback/invoice-create/{requestId}
 
 type CreateInvoiceRequestResponse struct {
 	Body         []byte
@@ -1354,6 +537,104 @@ func (r CreateInvoiceRequestResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateInvoiceRequestRequestWithBody generates requests for CreateInvoiceRequest with any type of body
+func newCreateInvoiceRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateInvoiceRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateInvoiceRequestWithBody request with arbitrary body returning *CreateInvoiceRequestResponse
+func (c *Client) CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
+	rsp, err := c.doCreateInvoiceRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateInvoiceRequestResponse(rsp)
+}
+
+func (c *Client) doCreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateInvoiceRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
+	rsp, err := c.doCreateInvoiceRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateInvoiceRequestResponse(rsp)
+}
+
+// newCreateInvoiceRequestRequest calls the generic CreateInvoiceRequest builder with application/json body.
+func newCreateInvoiceRequestRequest(baseURL *url.URL, requestId string, body CreateInvoiceRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateInvoiceRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateInvoiceRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateInvoiceRequestResponse parses an HTTP response from a CreateInvoiceRequest call.
+func parseCreateInvoiceRequestResponse(rsp *http.Response) (*CreateInvoiceRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateInvoiceRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// InvoicePdfRequest: POST /crm/v3/extensions/accounting/callback/invoice-pdf/{requestId}
+
 type InvoicePdfRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1374,6 +655,104 @@ func (r InvoicePdfRequestResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newInvoicePdfRequestRequestWithBody generates requests for InvoicePdfRequest with any type of body
+func newInvoicePdfRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathInvoicePdfRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// InvoicePdfRequestWithBody request with arbitrary body returning *InvoicePdfRequestResponse
+func (c *Client) InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
+	rsp, err := c.doInvoicePdfRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseInvoicePdfRequestResponse(rsp)
+}
+
+func (c *Client) doInvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newInvoicePdfRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
+	rsp, err := c.doInvoicePdfRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseInvoicePdfRequestResponse(rsp)
+}
+
+// newInvoicePdfRequestRequest calls the generic InvoicePdfRequest builder with application/json body.
+func newInvoicePdfRequestRequest(baseURL *url.URL, requestId string, body InvoicePdfRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newInvoicePdfRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doInvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newInvoicePdfRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseInvoicePdfRequestResponse parses an HTTP response from a InvoicePdfRequest call.
+func parseInvoicePdfRequestResponse(rsp *http.Response) (*InvoicePdfRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &InvoicePdfRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// DoInvoiceSearchRequest: POST /crm/v3/extensions/accounting/callback/invoice-search/{requestId}
 
 type DoInvoiceSearchRequestResponse struct {
 	Body         []byte
@@ -1396,6 +775,104 @@ func (r DoInvoiceSearchRequestResponse) StatusCode() int {
 	return 0
 }
 
+// newDoInvoiceSearchRequestRequestWithBody generates requests for DoInvoiceSearchRequest with any type of body
+func newDoInvoiceSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathDoInvoiceSearchRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// DoInvoiceSearchRequestWithBody request with arbitrary body returning *DoInvoiceSearchRequestResponse
+func (c *Client) DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
+	rsp, err := c.doDoInvoiceSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoInvoiceSearchRequestResponse(rsp)
+}
+
+func (c *Client) doDoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoInvoiceSearchRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
+	rsp, err := c.doDoInvoiceSearchRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoInvoiceSearchRequestResponse(rsp)
+}
+
+// newDoInvoiceSearchRequestRequest calls the generic DoInvoiceSearchRequest builder with application/json body.
+func newDoInvoiceSearchRequestRequest(baseURL *url.URL, requestId string, body DoInvoiceSearchRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDoInvoiceSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoInvoiceSearchRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDoInvoiceSearchRequestResponse parses an HTTP response from a DoInvoiceSearchRequest call.
+func parseDoInvoiceSearchRequestResponse(rsp *http.Response) (*DoInvoiceSearchRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DoInvoiceSearchRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetRequest: POST /crm/v3/extensions/accounting/callback/invoices/{requestId}
+
 type GetRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1416,6 +893,104 @@ func (r GetRequestResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newGetRequestRequestWithBody generates requests for GetRequest with any type of body
+func newGetRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// GetRequestWithBody request with arbitrary body returning *GetRequestResponse
+func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
+	rsp, err := c.doGetRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseGetRequestResponse(rsp)
+}
+
+func (c *Client) doGetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newGetRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
+	rsp, err := c.doGetRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseGetRequestResponse(rsp)
+}
+
+// newGetRequestRequest calls the generic GetRequest builder with application/json body.
+func newGetRequestRequest(baseURL *url.URL, requestId string, body GetRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newGetRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doGetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newGetRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseGetRequestResponse parses an HTTP response from a GetRequest call.
+func parseGetRequestResponse(rsp *http.Response) (*GetRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// DoProductSearchRequest: POST /crm/v3/extensions/accounting/callback/product-search/{requestId}
 
 type DoProductSearchRequestResponse struct {
 	Body         []byte
@@ -1438,6 +1013,104 @@ func (r DoProductSearchRequestResponse) StatusCode() int {
 	return 0
 }
 
+// newDoProductSearchRequestRequestWithBody generates requests for DoProductSearchRequest with any type of body
+func newDoProductSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathDoProductSearchRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// DoProductSearchRequestWithBody request with arbitrary body returning *DoProductSearchRequestResponse
+func (c *Client) DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
+	rsp, err := c.doDoProductSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoProductSearchRequestResponse(rsp)
+}
+
+func (c *Client) doDoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoProductSearchRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
+	rsp, err := c.doDoProductSearchRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoProductSearchRequestResponse(rsp)
+}
+
+// newDoProductSearchRequestRequest calls the generic DoProductSearchRequest builder with application/json body.
+func newDoProductSearchRequestRequest(baseURL *url.URL, requestId string, body DoProductSearchRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDoProductSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoProductSearchRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDoProductSearchRequestResponse parses an HTTP response from a DoProductSearchRequest call.
+func parseDoProductSearchRequestResponse(rsp *http.Response) (*DoProductSearchRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DoProductSearchRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// DoTaxSearchRequest: POST /crm/v3/extensions/accounting/callback/tax-search/{requestId}
+
 type DoTaxSearchRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1459,6 +1132,104 @@ func (r DoTaxSearchRequestResponse) StatusCode() int {
 	return 0
 }
 
+// newDoTaxSearchRequestRequestWithBody generates requests for DoTaxSearchRequest with any type of body
+func newDoTaxSearchRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathDoTaxSearchRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// DoTaxSearchRequestWithBody request with arbitrary body returning *DoTaxSearchRequestResponse
+func (c *Client) DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
+	rsp, err := c.doDoTaxSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoTaxSearchRequestResponse(rsp)
+}
+
+func (c *Client) doDoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoTaxSearchRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
+	rsp, err := c.doDoTaxSearchRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseDoTaxSearchRequestResponse(rsp)
+}
+
+// newDoTaxSearchRequestRequest calls the generic DoTaxSearchRequest builder with application/json body.
+func newDoTaxSearchRequestRequest(baseURL *url.URL, requestId string, body DoTaxSearchRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newDoTaxSearchRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doDoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newDoTaxSearchRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseDoTaxSearchRequestResponse parses an HTTP response from a DoTaxSearchRequest call.
+func parseDoTaxSearchRequestResponse(rsp *http.Response) (*DoTaxSearchRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &DoTaxSearchRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateTermRequest: POST /crm/v3/extensions/accounting/callback/terms/{requestId}
+
 type CreateTermRequestResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1479,6 +1250,104 @@ func (r CreateTermRequestResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateTermRequestRequestWithBody generates requests for CreateTermRequest with any type of body
+func newCreateTermRequestRequestWithBody(baseURL *url.URL, requestId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("requestId", requestId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateTermRequestFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateTermRequestWithBody request with arbitrary body returning *CreateTermRequestResponse
+func (c *Client) CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
+	rsp, err := c.doCreateTermRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateTermRequestResponse(rsp)
+}
+
+func (c *Client) doCreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateTermRequestRequestWithBody(c.BaseURL, requestId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
+	rsp, err := c.doCreateTermRequest(ctx, requestId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateTermRequestResponse(rsp)
+}
+
+// newCreateTermRequestRequest calls the generic CreateTermRequest builder with application/json body.
+func newCreateTermRequestRequest(baseURL *url.URL, requestId string, body CreateTermRequestJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateTermRequestRequestWithBody(baseURL, requestId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateTermRequestRequest(c.BaseURL, requestId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateTermRequestResponse parses an HTTP response from a CreateTermRequest call.
+func parseCreateTermRequestResponse(rsp *http.Response) (*CreateTermRequestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateTermRequestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetInvoice: GET /crm/v3/extensions/accounting/invoice/{invoiceId}
 
 type GetInvoiceResponse struct {
 	Body         []byte
@@ -1502,6 +1371,78 @@ func (r GetInvoiceResponse) StatusCode() int {
 	return 0
 }
 
+// newGetInvoiceRequest generates requests for GetInvoice
+func newGetInvoiceRequest(baseURL *url.URL, invoiceId string, params *GetInvoiceParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetInvoiceFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetInvoice request returning *GetInvoiceResponse
+func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*GetInvoiceResponse, error) {
+	req, err := newGetInvoiceRequest(c.BaseURL, invoiceId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetInvoiceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest InvoiceReadResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// UpdateInvoice: PATCH /crm/v3/extensions/accounting/invoice/{invoiceId}
+
 type UpdateInvoiceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1523,6 +1464,121 @@ func (r UpdateInvoiceResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newUpdateInvoiceRequestWithBody generates requests for UpdateInvoice with any type of body
+func newUpdateInvoiceRequestWithBody(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateInvoiceFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if err := client.AddQueryParam(q, "accountId", params.AccountId); err != nil {
+		return nil, err
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateInvoiceWithBody request with arbitrary body returning *UpdateInvoiceResponse
+func (c *Client) UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
+	rsp, err := c.doUpdateInvoiceWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateInvoiceResponse(rsp)
+}
+
+func (c *Client) doUpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateInvoiceRequestWithBody(c.BaseURL, invoiceId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
+	rsp, err := c.doUpdateInvoice(ctx, invoiceId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateInvoiceResponse(rsp)
+}
+
+// newUpdateInvoiceRequest calls the generic UpdateInvoice builder with application/json body.
+func newUpdateInvoiceRequest(baseURL *url.URL, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateInvoiceRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateInvoiceRequest(c.BaseURL, invoiceId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateInvoiceResponse parses an HTTP response from a UpdateInvoice call.
+func parseUpdateInvoiceResponse(rsp *http.Response) (*UpdateInvoiceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateInvoiceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest InvoiceUpdateResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreatePayment: POST /crm/v3/extensions/accounting/invoice/{invoiceId}/payment
 
 type CreatePaymentResponse struct {
 	Body         []byte
@@ -1546,6 +1602,123 @@ func (r CreatePaymentResponse) StatusCode() int {
 	return 0
 }
 
+// newCreatePaymentRequestWithBody generates requests for CreatePayment with any type of body
+func newCreatePaymentRequestWithBody(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("invoiceId", invoiceId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreatePaymentFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.AccountId != nil {
+		if err := client.AddQueryParam(q, "accountId", *params.AccountId); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreatePaymentWithBody request with arbitrary body returning *CreatePaymentResponse
+func (c *Client) CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
+	rsp, err := c.doCreatePaymentWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreatePaymentResponse(rsp)
+}
+
+func (c *Client) doCreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreatePaymentRequestWithBody(c.BaseURL, invoiceId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
+	rsp, err := c.doCreatePayment(ctx, invoiceId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreatePaymentResponse(rsp)
+}
+
+// newCreatePaymentRequest calls the generic CreatePayment builder with application/json body.
+func newCreatePaymentRequest(baseURL *url.URL, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreatePaymentRequestWithBody(baseURL, invoiceId, params, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreatePaymentRequest(c.BaseURL, invoiceId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreatePaymentResponse parses an HTTP response from a CreatePayment call.
+func parseCreatePaymentResponse(rsp *http.Response) (*CreatePaymentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreatePaymentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest InvoiceUpdateResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetApp: GET /crm/v3/extensions/accounting/settings/{appId}
+
 type GetAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1568,6 +1741,70 @@ func (r GetAppResponse) StatusCode() int {
 	return 0
 }
 
+// newGetAppRequest generates requests for GetApp
+func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetAppFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetApp request returning *GetAppResponse
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
+	req, err := newGetAppRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AccountingAppSettings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ReplaceApp: PUT /crm/v3/extensions/accounting/settings/{appId}
+
 type ReplaceAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1588,6 +1825,104 @@ func (r ReplaceAppResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
+func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathReplaceAppFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
+func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
+	rsp, err := c.doReplaceAppWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplaceAppResponse(rsp)
+}
+
+func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceAppRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
+	rsp, err := c.doReplaceApp(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplaceAppResponse(rsp)
+}
+
+// newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
+func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceAppRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseReplaceAppResponse parses an HTTP response from a ReplaceApp call.
+func parseReplaceAppResponse(rsp *http.Response) (*ReplaceAppResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ReplaceAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CreateContactContacts: POST /crm/v3/extensions/accounting/sync/{appId}/contacts
 
 type CreateContactContactsResponse struct {
 	Body         []byte
@@ -1611,6 +1946,113 @@ func (r CreateContactContactsResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateContactContactsRequestWithBody generates requests for CreateContactContacts with any type of body
+func newCreateContactContactsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateContactContactsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateContactContactsWithBody request with arbitrary body returning *CreateContactContactsResponse
+func (c *Client) CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
+	rsp, err := c.doCreateContactContactsWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateContactContactsResponse(rsp)
+}
+
+func (c *Client) doCreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateContactContactsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
+	rsp, err := c.doCreateContactContacts(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateContactContactsResponse(rsp)
+}
+
+// newCreateContactContactsRequest calls the generic CreateContactContacts builder with application/json body.
+func newCreateContactContactsRequest(baseURL *url.URL, appId int32, body CreateContactContactsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateContactContactsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateContactContactsRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateContactContactsResponse parses an HTTP response from a CreateContactContacts call.
+func parseCreateContactContactsResponse(rsp *http.Response) (*CreateContactContactsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateContactContactsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateProductProducts: POST /crm/v3/extensions/accounting/sync/{appId}/products
+
 type CreateProductProductsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1633,6 +2075,113 @@ func (r CreateProductProductsResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateProductProductsRequestWithBody generates requests for CreateProductProducts with any type of body
+func newCreateProductProductsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateProductProductsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateProductProductsWithBody request with arbitrary body returning *CreateProductProductsResponse
+func (c *Client) CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
+	rsp, err := c.doCreateProductProductsWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateProductProductsResponse(rsp)
+}
+
+func (c *Client) doCreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateProductProductsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
+	rsp, err := c.doCreateProductProducts(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateProductProductsResponse(rsp)
+}
+
+// newCreateProductProductsRequest calls the generic CreateProductProducts builder with application/json body.
+func newCreateProductProductsRequest(baseURL *url.URL, appId int32, body CreateProductProductsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateProductProductsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateProductProductsRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateProductProductsResponse parses an HTTP response from a CreateProductProducts call.
+func parseCreateProductProductsResponse(rsp *http.Response) (*CreateProductProductsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateProductProductsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ReplaceUserAccounts: PUT /crm/v3/extensions/accounting/user-accounts
+
 type ReplaceUserAccountsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1653,6 +2202,94 @@ func (r ReplaceUserAccountsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newReplaceUserAccountsRequestWithBody generates requests for ReplaceUserAccounts with any type of body
+func newReplaceUserAccountsRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathReplaceUserAccounts)
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// ReplaceUserAccountsWithBody request with arbitrary body returning *ReplaceUserAccountsResponse
+func (c *Client) ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
+	rsp, err := c.doReplaceUserAccountsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplaceUserAccountsResponse(rsp)
+}
+
+func (c *Client) doReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceUserAccountsRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
+	rsp, err := c.doReplaceUserAccounts(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplaceUserAccountsResponse(rsp)
+}
+
+// newReplaceUserAccountsRequest calls the generic ReplaceUserAccounts builder with application/json body.
+func newReplaceUserAccountsRequest(baseURL *url.URL, body ReplaceUserAccountsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newReplaceUserAccountsRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceUserAccountsRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseReplaceUserAccountsResponse parses an HTTP response from a ReplaceUserAccounts call.
+func parseReplaceUserAccountsResponse(rsp *http.Response) (*ReplaceUserAccountsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ReplaceUserAccountsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ArchiveAccount: DELETE /crm/v3/extensions/accounting/user-accounts/{accountId}
 
 type ArchiveAccountResponse struct {
 	Body         []byte
@@ -1675,654 +2312,50 @@ func (r ArchiveAccountResponse) StatusCode() int {
 	return 0
 }
 
-// CreateCustomerRequestWithBody request with arbitrary body returning *CreateCustomerRequestResponse
-func (c *Client) CreateCustomerRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
-	rsp, err := c.doCreateCustomerRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+// newArchiveAccountRequest generates requests for ArchiveAccount
+func newArchiveAccountRequest(baseURL *url.URL, accountId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("accountId", accountId)
 	if err != nil {
 		return nil, err
 	}
-	return parseCreateCustomerRequestResponse(rsp)
-}
 
-func (c *Client) CreateCustomerRequest(ctx context.Context, requestId string, body CreateCustomerRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateCustomerRequestResponse, error) {
-	rsp, err := c.doCreateCustomerRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateCustomerRequestResponse(rsp)
-}
+	opPath := fmt.Sprintf(opPathArchiveAccountFormat, pathParam0)
 
-// DoCustomerSearchRequestWithBody request with arbitrary body returning *DoCustomerSearchRequestResponse
-func (c *Client) DoCustomerSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
-	rsp, err := c.doDoCustomerSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
-	return parseDoCustomerSearchRequestResponse(rsp)
-}
 
-func (c *Client) DoCustomerSearchRequest(ctx context.Context, requestId string, body DoCustomerSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoCustomerSearchRequestResponse, error) {
-	rsp, err := c.doDoCustomerSearchRequest(ctx, requestId, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-	return parseDoCustomerSearchRequestResponse(rsp)
-}
 
-// CreateExchangeRateRequestWithBody request with arbitrary body returning *CreateExchangeRateRequestResponse
-func (c *Client) CreateExchangeRateRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
-	rsp, err := c.doCreateExchangeRateRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateExchangeRateRequestResponse(rsp)
-}
-
-func (c *Client) CreateExchangeRateRequest(ctx context.Context, requestId string, body CreateExchangeRateRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateExchangeRateRequestResponse, error) {
-	rsp, err := c.doCreateExchangeRateRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateExchangeRateRequestResponse(rsp)
-}
-
-// CreateInvoiceRequestWithBody request with arbitrary body returning *CreateInvoiceRequestResponse
-func (c *Client) CreateInvoiceRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
-	rsp, err := c.doCreateInvoiceRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateInvoiceRequestResponse(rsp)
-}
-
-func (c *Client) CreateInvoiceRequest(ctx context.Context, requestId string, body CreateInvoiceRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateInvoiceRequestResponse, error) {
-	rsp, err := c.doCreateInvoiceRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateInvoiceRequestResponse(rsp)
-}
-
-// InvoicePdfRequestWithBody request with arbitrary body returning *InvoicePdfRequestResponse
-func (c *Client) InvoicePdfRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
-	rsp, err := c.doInvoicePdfRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseInvoicePdfRequestResponse(rsp)
-}
-
-func (c *Client) InvoicePdfRequest(ctx context.Context, requestId string, body InvoicePdfRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*InvoicePdfRequestResponse, error) {
-	rsp, err := c.doInvoicePdfRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseInvoicePdfRequestResponse(rsp)
-}
-
-// DoInvoiceSearchRequestWithBody request with arbitrary body returning *DoInvoiceSearchRequestResponse
-func (c *Client) DoInvoiceSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
-	rsp, err := c.doDoInvoiceSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoInvoiceSearchRequestResponse(rsp)
-}
-
-func (c *Client) DoInvoiceSearchRequest(ctx context.Context, requestId string, body DoInvoiceSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoInvoiceSearchRequestResponse, error) {
-	rsp, err := c.doDoInvoiceSearchRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoInvoiceSearchRequestResponse(rsp)
-}
-
-// GetRequestWithBody request with arbitrary body returning *GetRequestResponse
-func (c *Client) GetRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
-	rsp, err := c.doGetRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetRequestResponse(rsp)
-}
-
-func (c *Client) GetRequest(ctx context.Context, requestId string, body GetRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GetRequestResponse, error) {
-	rsp, err := c.doGetRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetRequestResponse(rsp)
-}
-
-// DoProductSearchRequestWithBody request with arbitrary body returning *DoProductSearchRequestResponse
-func (c *Client) DoProductSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
-	rsp, err := c.doDoProductSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoProductSearchRequestResponse(rsp)
-}
-
-func (c *Client) DoProductSearchRequest(ctx context.Context, requestId string, body DoProductSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoProductSearchRequestResponse, error) {
-	rsp, err := c.doDoProductSearchRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoProductSearchRequestResponse(rsp)
-}
-
-// DoTaxSearchRequestWithBody request with arbitrary body returning *DoTaxSearchRequestResponse
-func (c *Client) DoTaxSearchRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
-	rsp, err := c.doDoTaxSearchRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoTaxSearchRequestResponse(rsp)
-}
-
-func (c *Client) DoTaxSearchRequest(ctx context.Context, requestId string, body DoTaxSearchRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*DoTaxSearchRequestResponse, error) {
-	rsp, err := c.doDoTaxSearchRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseDoTaxSearchRequestResponse(rsp)
-}
-
-// CreateTermRequestWithBody request with arbitrary body returning *CreateTermRequestResponse
-func (c *Client) CreateTermRequestWithBody(ctx context.Context, requestId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
-	rsp, err := c.doCreateTermRequestWithBody(ctx, requestId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateTermRequestResponse(rsp)
-}
-
-func (c *Client) CreateTermRequest(ctx context.Context, requestId string, body CreateTermRequestJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateTermRequestResponse, error) {
-	rsp, err := c.doCreateTermRequest(ctx, requestId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateTermRequestResponse(rsp)
-}
-
-// GetInvoice request returning *GetInvoiceResponse
-func (c *Client) GetInvoice(ctx context.Context, invoiceId string, params *GetInvoiceParams, reqEditors ...client.RequestEditorFn) (*GetInvoiceResponse, error) {
-	rsp, err := c.doGetInvoice(ctx, invoiceId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetInvoiceResponse(rsp)
-}
-
-// UpdateInvoiceWithBody request with arbitrary body returning *UpdateInvoiceResponse
-func (c *Client) UpdateInvoiceWithBody(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
-	rsp, err := c.doUpdateInvoiceWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateInvoiceResponse(rsp)
-}
-
-func (c *Client) UpdateInvoice(ctx context.Context, invoiceId string, params *UpdateInvoiceParams, body UpdateInvoiceJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateInvoiceResponse, error) {
-	rsp, err := c.doUpdateInvoice(ctx, invoiceId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateInvoiceResponse(rsp)
-}
-
-// CreatePaymentWithBody request with arbitrary body returning *CreatePaymentResponse
-func (c *Client) CreatePaymentWithBody(ctx context.Context, invoiceId string, params *CreatePaymentParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
-	rsp, err := c.doCreatePaymentWithBody(ctx, invoiceId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreatePaymentResponse(rsp)
-}
-
-func (c *Client) CreatePayment(ctx context.Context, invoiceId string, params *CreatePaymentParams, body CreatePaymentJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreatePaymentResponse, error) {
-	rsp, err := c.doCreatePayment(ctx, invoiceId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreatePaymentResponse(rsp)
-}
-
-// GetApp request returning *GetAppResponse
-func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
-	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAppResponse(rsp)
-}
-
-// ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
-func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
-	rsp, err := c.doReplaceAppWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplaceAppResponse(rsp)
-}
-
-func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
-	rsp, err := c.doReplaceApp(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplaceAppResponse(rsp)
-}
-
-// CreateContactContactsWithBody request with arbitrary body returning *CreateContactContactsResponse
-func (c *Client) CreateContactContactsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
-	rsp, err := c.doCreateContactContactsWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateContactContactsResponse(rsp)
-}
-
-func (c *Client) CreateContactContacts(ctx context.Context, appId int32, body CreateContactContactsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateContactContactsResponse, error) {
-	rsp, err := c.doCreateContactContacts(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateContactContactsResponse(rsp)
-}
-
-// CreateProductProductsWithBody request with arbitrary body returning *CreateProductProductsResponse
-func (c *Client) CreateProductProductsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
-	rsp, err := c.doCreateProductProductsWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateProductProductsResponse(rsp)
-}
-
-func (c *Client) CreateProductProducts(ctx context.Context, appId int32, body CreateProductProductsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateProductProductsResponse, error) {
-	rsp, err := c.doCreateProductProducts(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateProductProductsResponse(rsp)
-}
-
-// ReplaceUserAccountsWithBody request with arbitrary body returning *ReplaceUserAccountsResponse
-func (c *Client) ReplaceUserAccountsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
-	rsp, err := c.doReplaceUserAccountsWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplaceUserAccountsResponse(rsp)
-}
-
-func (c *Client) ReplaceUserAccounts(ctx context.Context, body ReplaceUserAccountsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceUserAccountsResponse, error) {
-	rsp, err := c.doReplaceUserAccounts(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplaceUserAccountsResponse(rsp)
+	return req, nil
 }
 
 // ArchiveAccount request returning *ArchiveAccountResponse
 func (c *Client) ArchiveAccount(ctx context.Context, accountId string, reqEditors ...client.RequestEditorFn) (*ArchiveAccountResponse, error) {
-	rsp, err := c.doArchiveAccount(ctx, accountId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveAccountResponse(rsp)
-}
-
-// parseCreateCustomerRequestResponse parses an HTTP response from a CreateCustomerRequest call.
-func parseCreateCustomerRequestResponse(rsp *http.Response) (*CreateCustomerRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	req, err := newArchiveAccountRequest(c.BaseURL, accountId)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateCustomerRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	return response, nil
-}
-
-// parseDoCustomerSearchRequestResponse parses an HTTP response from a DoCustomerSearchRequest call.
-func parseDoCustomerSearchRequestResponse(rsp *http.Response) (*DoCustomerSearchRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &DoCustomerSearchRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateExchangeRateRequestResponse parses an HTTP response from a CreateExchangeRateRequest call.
-func parseCreateExchangeRateRequestResponse(rsp *http.Response) (*CreateExchangeRateRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &CreateExchangeRateRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateInvoiceRequestResponse parses an HTTP response from a CreateInvoiceRequest call.
-func parseCreateInvoiceRequestResponse(rsp *http.Response) (*CreateInvoiceRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateInvoiceRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseInvoicePdfRequestResponse parses an HTTP response from a InvoicePdfRequest call.
-func parseInvoicePdfRequestResponse(rsp *http.Response) (*InvoicePdfRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &InvoicePdfRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseDoInvoiceSearchRequestResponse parses an HTTP response from a DoInvoiceSearchRequest call.
-func parseDoInvoiceSearchRequestResponse(rsp *http.Response) (*DoInvoiceSearchRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DoInvoiceSearchRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetRequestResponse parses an HTTP response from a GetRequest call.
-func parseGetRequestResponse(rsp *http.Response) (*GetRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseDoProductSearchRequestResponse parses an HTTP response from a DoProductSearchRequest call.
-func parseDoProductSearchRequestResponse(rsp *http.Response) (*DoProductSearchRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DoProductSearchRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseDoTaxSearchRequestResponse parses an HTTP response from a DoTaxSearchRequest call.
-func parseDoTaxSearchRequestResponse(rsp *http.Response) (*DoTaxSearchRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DoTaxSearchRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateTermRequestResponse parses an HTTP response from a CreateTermRequest call.
-func parseCreateTermRequestResponse(rsp *http.Response) (*CreateTermRequestResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateTermRequestResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetInvoiceResponse parses an HTTP response from a GetInvoice call.
-func parseGetInvoiceResponse(rsp *http.Response) (*GetInvoiceResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetInvoiceResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest InvoiceReadResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateInvoiceResponse parses an HTTP response from a UpdateInvoice call.
-func parseUpdateInvoiceResponse(rsp *http.Response) (*UpdateInvoiceResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateInvoiceResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest InvoiceUpdateResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreatePaymentResponse parses an HTTP response from a CreatePayment call.
-func parseCreatePaymentResponse(rsp *http.Response) (*CreatePaymentResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreatePaymentResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest InvoiceUpdateResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetAppResponse parses an HTTP response from a GetApp call.
-func parseGetAppResponse(rsp *http.Response) (*GetAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest AccountingAppSettings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseReplaceAppResponse parses an HTTP response from a ReplaceApp call.
-func parseReplaceAppResponse(rsp *http.Response) (*ReplaceAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ReplaceAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseCreateContactContactsResponse parses an HTTP response from a CreateContactContacts call.
-func parseCreateContactContactsResponse(rsp *http.Response) (*CreateContactContactsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateContactContactsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateProductProductsResponse parses an HTTP response from a CreateProductProducts call.
-func parseCreateProductProductsResponse(rsp *http.Response) (*CreateProductProductsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateProductProductsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseReplaceUserAccountsResponse parses an HTTP response from a ReplaceUserAccounts call.
-func parseReplaceUserAccountsResponse(rsp *http.Response) (*ReplaceUserAccountsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ReplaceUserAccountsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseArchiveAccountResponse parses an HTTP response from a ArchiveAccount call.
-func parseArchiveAccountResponse(rsp *http.Response) (*ArchiveAccountResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
+	defer rsp.Body.Close()
 
 	response := &ArchiveAccountResponse{
 		Body:         bodyBytes,

@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,913 +16,30 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteBatchRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
+// operation paths
 
-func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteBatchRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteCallbackRequestWithBody(c.baseURL, callbackId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCompleteCallbackRequest(c.baseURL, callbackId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListAppRequest(c.baseURL, appId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateAppRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveDefinitionRequest(c.baseURL, appId, definitionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetDefinitionRequest(c.baseURL, appId, definitionId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateDefinitionRequestWithBody(c.baseURL, appId, definitionId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateDefinitionRequest(c.baseURL, appId, definitionId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListFunctionsRequest(c.baseURL, appId, definitionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveByFunctionTypeRequest(c.baseURL, appId, definitionId, functionType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetByFunctionTypeRequest(c.baseURL, appId, definitionId, functionType)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateOrReplaceByFunctionTypeRequestWithBody(c.baseURL, appId, definitionId, functionType, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveFunctionRequest(c.baseURL, appId, definitionId, functionType, functionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetFunctionRequest(c.baseURL, appId, definitionId, functionType, functionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateOrReplaceFunctionRequestWithBody(c.baseURL, appId, definitionId, functionType, functionId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newListRevisionsRequest(c.baseURL, appId, definitionId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetRevisionRequest(c.baseURL, appId, definitionId, revisionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-// newCompleteBatchRequest calls the generic CompleteBatch builder with application/json body.
-func newCompleteBatchRequest(baseURL *url.URL, body CompleteBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCompleteBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
+const (
+	opPathCompleteCallbackFormat              = "./automation/v4/actions/callbacks/%s/complete"
+	opPathListAppFormat                       = "./automation/v4/actions/%s"
+	opPathCreateAppFormat                     = "./automation/v4/actions/%s"
+	opPathArchiveDefinitionFormat             = "./automation/v4/actions/%s/%s"
+	opPathGetDefinitionFormat                 = "./automation/v4/actions/%s/%s"
+	opPathUpdateDefinitionFormat              = "./automation/v4/actions/%s/%s"
+	opPathListFunctionsFormat                 = "./automation/v4/actions/%s/%s/functions"
+	opPathArchiveByFunctionTypeFormat         = "./automation/v4/actions/%s/%s/functions/%s"
+	opPathGetByFunctionTypeFormat             = "./automation/v4/actions/%s/%s/functions/%s"
+	opPathCreateOrReplaceByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
+	opPathArchiveFunctionFormat               = "./automation/v4/actions/%s/%s/functions/%s/%s"
+	opPathGetFunctionFormat                   = "./automation/v4/actions/%s/%s/functions/%s/%s"
+	opPathCreateOrReplaceFunctionFormat       = "./automation/v4/actions/%s/%s/functions/%s/%s"
+	opPathListRevisionsFormat                 = "./automation/v4/actions/%s/%s/revisions"
+	opPathGetRevisionFormat                   = "./automation/v4/actions/%s/%s/revisions/%s"
+)
 
 var opPathCompleteBatch = client.MustParseURL("./automation/v4/actions/callbacks/complete")
 
-// newCompleteBatchRequestWithBody generates requests for CompleteBatch with any type of body
-func newCompleteBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathCompleteBatch)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newCompleteCallbackRequest calls the generic CompleteCallback builder with application/json body.
-func newCompleteCallbackRequest(baseURL *url.URL, callbackId string, body CompleteCallbackJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCompleteCallbackRequestWithBody(baseURL, callbackId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCompleteCallbackFormat = "./automation/v4/actions/callbacks/%s/complete"
-
-// newCompleteCallbackRequestWithBody generates requests for CompleteCallback with any type of body
-func newCompleteCallbackRequestWithBody(baseURL *url.URL, callbackId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("callbackId", callbackId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCompleteCallbackFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathListAppFormat = "./automation/v4/actions/%s"
-
-// newListAppRequest generates requests for ListApp
-func newListAppRequest(baseURL *url.URL, appId int32, params *ListAppParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathListAppFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Limit != nil {
-		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
-			return nil, err
-		}
-	}
-
-	if params.After != nil {
-		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
-			return nil, err
-		}
-	}
-
-	if params.Archived != nil {
-		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newCreateAppRequest calls the generic CreateApp builder with application/json body.
-func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateAppFormat = "./automation/v4/actions/%s"
-
-// newCreateAppRequestWithBody generates requests for CreateApp with any type of body
-func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateAppFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveDefinitionFormat = "./automation/v4/actions/%s/%s"
-
-// newArchiveDefinitionRequest generates requests for ArchiveDefinition
-func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveDefinitionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetDefinitionFormat = "./automation/v4/actions/%s/%s"
-
-// newGetDefinitionRequest generates requests for GetDefinition
-func newGetDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetDefinitionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Archived != nil {
-		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateDefinitionRequest calls the generic UpdateDefinition builder with application/json body.
-func newUpdateDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateDefinitionRequestWithBody(baseURL, appId, definitionId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateDefinitionFormat = "./automation/v4/actions/%s/%s"
-
-// newUpdateDefinitionRequestWithBody generates requests for UpdateDefinition with any type of body
-func newUpdateDefinitionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateDefinitionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathListFunctionsFormat = "./automation/v4/actions/%s/%s/functions"
-
-// newListFunctionsRequest generates requests for ListFunctions
-func newListFunctionsRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathListFunctionsFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathArchiveByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
-
-// newArchiveByFunctionTypeRequest generates requests for ArchiveByFunctionType
-func newArchiveByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
-
-// newGetByFunctionTypeRequest generates requests for GetByFunctionType
-func newGetByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathCreateOrReplaceByFunctionTypeFormat = "./automation/v4/actions/%s/%s/functions/%s"
-
-// newCreateOrReplaceByFunctionTypeRequestWithBody generates requests for CreateOrReplaceByFunctionType with any type of body
-func newCreateOrReplaceByFunctionTypeRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateOrReplaceByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
-
-// newArchiveFunctionRequest generates requests for ArchiveFunction
-func newArchiveFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam3, err := client.GetPathParam("functionId", functionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
-
-// newGetFunctionRequest generates requests for GetFunction
-func newGetFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam3, err := client.GetPathParam("functionId", functionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathCreateOrReplaceFunctionFormat = "./automation/v4/actions/%s/%s/functions/%s/%s"
-
-// newCreateOrReplaceFunctionRequestWithBody generates requests for CreateOrReplaceFunction with any type of body
-func newCreateOrReplaceFunctionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("functionType", functionType)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam3, err := client.GetPathParam("functionId", functionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateOrReplaceFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathListRevisionsFormat = "./automation/v4/actions/%s/%s/revisions"
-
-// newListRevisionsRequest generates requests for ListRevisions
-func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathListRevisionsFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	q := queryURL.Query()
-
-	if params.Limit != nil {
-		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
-			return nil, err
-		}
-	}
-
-	if params.After != nil {
-		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
-			return nil, err
-		}
-	}
-
-	queryURL.RawQuery = q.Encode()
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetRevisionFormat = "./automation/v4/actions/%s/%s/revisions/%s"
-
-// newGetRevisionRequest generates requests for GetRevision
-func newGetRevisionRequest(baseURL *url.URL, appId int32, definitionId string, revisionId string) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("definitionId", definitionId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam2, err := client.GetPathParam("revisionId", revisionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetRevisionFormat, pathParam0, pathParam1, pathParam2)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// CompleteBatch request with any body
 	CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)
 	CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error)
@@ -977,6 +93,48 @@ type ClientInterface interface {
 	GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*GetRevisionResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CompleteBatch: POST /automation/v4/actions/callbacks/complete
+
 type CompleteBatchResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -998,6 +156,94 @@ func (r CompleteBatchResponse) StatusCode() int {
 	return 0
 }
 
+// newCompleteBatchRequestWithBody generates requests for CompleteBatch with any type of body
+func newCompleteBatchRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathCompleteBatch)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CompleteBatchWithBody request with arbitrary body returning *CompleteBatchResponse
+func (c *Client) CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
+	rsp, err := c.doCompleteBatchWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCompleteBatchResponse(rsp)
+}
+
+func (c *Client) doCompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCompleteBatchRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
+	rsp, err := c.doCompleteBatch(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCompleteBatchResponse(rsp)
+}
+
+// newCompleteBatchRequest calls the generic CompleteBatch builder with application/json body.
+func newCompleteBatchRequest(baseURL *url.URL, body CompleteBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCompleteBatchRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCompleteBatchRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCompleteBatchResponse parses an HTTP response from a CompleteBatch call.
+func parseCompleteBatchResponse(rsp *http.Response) (*CompleteBatchResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CompleteBatchResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// CompleteCallback: POST /automation/v4/actions/callbacks/{callbackId}/complete
+
 type CompleteCallbackResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1018,6 +264,104 @@ func (r CompleteCallbackResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCompleteCallbackRequestWithBody generates requests for CompleteCallback with any type of body
+func newCompleteCallbackRequestWithBody(baseURL *url.URL, callbackId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("callbackId", callbackId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCompleteCallbackFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CompleteCallbackWithBody request with arbitrary body returning *CompleteCallbackResponse
+func (c *Client) CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
+	rsp, err := c.doCompleteCallbackWithBody(ctx, callbackId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCompleteCallbackResponse(rsp)
+}
+
+func (c *Client) doCompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCompleteCallbackRequestWithBody(c.BaseURL, callbackId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
+	rsp, err := c.doCompleteCallback(ctx, callbackId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCompleteCallbackResponse(rsp)
+}
+
+// newCompleteCallbackRequest calls the generic CompleteCallback builder with application/json body.
+func newCompleteCallbackRequest(baseURL *url.URL, callbackId string, body CompleteCallbackJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCompleteCallbackRequestWithBody(baseURL, callbackId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCompleteCallbackRequest(c.BaseURL, callbackId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCompleteCallbackResponse parses an HTTP response from a CompleteCallback call.
+func parseCompleteCallbackResponse(rsp *http.Response) (*CompleteCallbackResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CompleteCallbackResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ListApp: GET /automation/v4/actions/{appId}
 
 type ListAppResponse struct {
 	Body         []byte
@@ -1041,6 +385,92 @@ func (r ListAppResponse) StatusCode() int {
 	return 0
 }
 
+// newListAppRequest generates requests for ListApp
+func newListAppRequest(baseURL *url.URL, appId int32, params *ListAppParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathListAppFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Limit != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
+			return nil, err
+		}
+	}
+
+	if params.After != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
+			return nil, err
+		}
+	}
+
+	if params.Archived != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ListApp request returning *ListAppResponse
+func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*ListAppResponse, error) {
+	req, err := newListAppRequest(c.BaseURL, appId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ListAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseExtensionActionDefinitionForwardPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateApp: POST /automation/v4/actions/{appId}
+
 type CreateAppResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1063,6 +493,113 @@ func (r CreateAppResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateAppRequestWithBody generates requests for CreateApp with any type of body
+func newCreateAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateAppFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateAppWithBody request with arbitrary body returning *CreateAppResponse
+func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
+	rsp, err := c.doCreateAppWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateAppResponse(rsp)
+}
+
+func (c *Client) doCreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateAppRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
+	rsp, err := c.doCreateApp(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateAppResponse(rsp)
+}
+
+// newCreateAppRequest calls the generic CreateApp builder with application/json body.
+func newCreateAppRequest(baseURL *url.URL, appId int32, body CreateAppJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateAppRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateAppResponse parses an HTTP response from a CreateApp call.
+func parseCreateAppResponse(rsp *http.Response) (*CreateAppResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest ExtensionActionDefinition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveDefinition: DELETE /automation/v4/actions/{appId}/{definitionId}
+
 type ArchiveDefinitionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1083,6 +620,66 @@ func (r ArchiveDefinitionResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newArchiveDefinitionRequest generates requests for ArchiveDefinition
+func newArchiveDefinitionRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveDefinitionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveDefinition request returning *ArchiveDefinitionResponse
+func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ArchiveDefinitionResponse, error) {
+	req, err := newArchiveDefinitionRequest(c.BaseURL, appId, definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveDefinitionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetDefinition: GET /automation/v4/actions/{appId}/{definitionId}
 
 type GetDefinitionResponse struct {
 	Body         []byte
@@ -1106,6 +703,85 @@ func (r GetDefinitionResponse) StatusCode() int {
 	return 0
 }
 
+// newGetDefinitionRequest generates requests for GetDefinition
+func newGetDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, params *GetDefinitionParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetDefinitionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Archived != nil {
+		if err := client.AddQueryParam(q, "archived", *params.Archived); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetDefinition request returning *GetDefinitionResponse
+func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*GetDefinitionResponse, error) {
+	req, err := newGetDefinitionRequest(c.BaseURL, appId, definitionId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetDefinitionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ExtensionActionDefinition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// UpdateDefinition: PATCH /automation/v4/actions/{appId}/{definitionId}
+
 type UpdateDefinitionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1127,6 +803,118 @@ func (r UpdateDefinitionResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newUpdateDefinitionRequestWithBody generates requests for UpdateDefinition with any type of body
+func newUpdateDefinitionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateDefinitionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateDefinitionWithBody request with arbitrary body returning *UpdateDefinitionResponse
+func (c *Client) UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
+	rsp, err := c.doUpdateDefinitionWithBody(ctx, appId, definitionId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateDefinitionResponse(rsp)
+}
+
+func (c *Client) doUpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateDefinitionRequestWithBody(c.BaseURL, appId, definitionId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
+	rsp, err := c.doUpdateDefinition(ctx, appId, definitionId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateDefinitionResponse(rsp)
+}
+
+// newUpdateDefinitionRequest calls the generic UpdateDefinition builder with application/json body.
+func newUpdateDefinitionRequest(baseURL *url.URL, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateDefinitionRequestWithBody(baseURL, appId, definitionId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateDefinitionRequest(c.BaseURL, appId, definitionId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateDefinitionResponse parses an HTTP response from a UpdateDefinition call.
+func parseUpdateDefinitionResponse(rsp *http.Response) (*UpdateDefinitionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateDefinitionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ExtensionActionDefinition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ListFunctions: GET /automation/v4/actions/{appId}/{definitionId}/functions
 
 type ListFunctionsResponse struct {
 	Body         []byte
@@ -1150,6 +938,75 @@ func (r ListFunctionsResponse) StatusCode() int {
 	return 0
 }
 
+// newListFunctionsRequest generates requests for ListFunctions
+func newListFunctionsRequest(baseURL *url.URL, appId int32, definitionId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathListFunctionsFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ListFunctions request returning *ListFunctionsResponse
+func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ListFunctionsResponse, error) {
+	req, err := newListFunctionsRequest(c.BaseURL, appId, definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ListFunctionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseActionFunctionIdentifierNoPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveByFunctionType: DELETE /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}
+
 type ArchiveByFunctionTypeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1170,6 +1027,71 @@ func (r ArchiveByFunctionTypeResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newArchiveByFunctionTypeRequest generates requests for ArchiveByFunctionType
+func newArchiveByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveByFunctionType request returning *ArchiveByFunctionTypeResponse
+func (c *Client) ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*ArchiveByFunctionTypeResponse, error) {
+	req, err := newArchiveByFunctionTypeRequest(c.BaseURL, appId, definitionId, functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveByFunctionTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetByFunctionType: GET /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}
 
 type GetByFunctionTypeResponse struct {
 	Body         []byte
@@ -1193,6 +1115,80 @@ func (r GetByFunctionTypeResponse) StatusCode() int {
 	return 0
 }
 
+// newGetByFunctionTypeRequest generates requests for GetByFunctionType
+func newGetByFunctionTypeRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetByFunctionType request returning *GetByFunctionTypeResponse
+func (c *Client) GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*GetByFunctionTypeResponse, error) {
+	req, err := newGetByFunctionTypeRequest(c.BaseURL, appId, definitionId, functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetByFunctionTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionFunction
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateOrReplaceByFunctionType: PUT /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}
+
 type CreateOrReplaceByFunctionTypeResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1215,6 +1211,82 @@ func (r CreateOrReplaceByFunctionTypeResponse) StatusCode() int {
 	return 0
 }
 
+// newCreateOrReplaceByFunctionTypeRequestWithBody generates requests for CreateOrReplaceByFunctionType with any type of body
+func newCreateOrReplaceByFunctionTypeRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateOrReplaceByFunctionTypeFormat, pathParam0, pathParam1, pathParam2)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateOrReplaceByFunctionTypeWithBody request with arbitrary body returning *CreateOrReplaceByFunctionTypeResponse
+func (c *Client) CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error) {
+	req, err := newCreateOrReplaceByFunctionTypeRequestWithBody(c.BaseURL, appId, definitionId, functionType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateOrReplaceByFunctionTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionFunctionIdentifier
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveFunction: DELETE /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}/{functionId}
+
 type ArchiveFunctionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1235,6 +1307,76 @@ func (r ArchiveFunctionResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newArchiveFunctionRequest generates requests for ArchiveFunction
+func newArchiveFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam3, err := client.GetPathParam("functionId", functionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveFunction request returning *ArchiveFunctionResponse
+func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*ArchiveFunctionResponse, error) {
+	req, err := newArchiveFunctionRequest(c.BaseURL, appId, definitionId, functionType, functionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveFunctionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetFunction: GET /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}/{functionId}
 
 type GetFunctionResponse struct {
 	Body         []byte
@@ -1258,6 +1400,85 @@ func (r GetFunctionResponse) StatusCode() int {
 	return 0
 }
 
+// newGetFunctionRequest generates requests for GetFunction
+func newGetFunctionRequest(baseURL *url.URL, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam3, err := client.GetPathParam("functionId", functionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetFunction request returning *GetFunctionResponse
+func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*GetFunctionResponse, error) {
+	req, err := newGetFunctionRequest(c.BaseURL, appId, definitionId, functionType, functionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetFunctionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionFunction
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateOrReplaceFunction: PUT /automation/v4/actions/{appId}/{definitionId}/functions/{functionType}/{functionId}
+
 type CreateOrReplaceFunctionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1279,6 +1500,87 @@ func (r CreateOrReplaceFunctionResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateOrReplaceFunctionRequestWithBody generates requests for CreateOrReplaceFunction with any type of body
+func newCreateOrReplaceFunctionRequestWithBody(baseURL *url.URL, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam2, err := client.GetPathParam("functionType", functionType)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam3, err := client.GetPathParam("functionId", functionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateOrReplaceFunctionFormat, pathParam0, pathParam1, pathParam2, pathParam3)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateOrReplaceFunctionWithBody request with arbitrary body returning *CreateOrReplaceFunctionResponse
+func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceFunctionResponse, error) {
+	req, err := newCreateOrReplaceFunctionRequestWithBody(c.BaseURL, appId, definitionId, functionType, functionId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateOrReplaceFunctionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActionFunctionIdentifier
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ListRevisions: GET /automation/v4/actions/{appId}/{definitionId}/revisions
 
 type ListRevisionsResponse struct {
 	Body         []byte
@@ -1302,6 +1604,91 @@ func (r ListRevisionsResponse) StatusCode() int {
 	return 0
 }
 
+// newListRevisionsRequest generates requests for ListRevisions
+func newListRevisionsRequest(baseURL *url.URL, appId int32, definitionId string, params *ListRevisionsParams) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathListRevisionsFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	q := queryURL.Query()
+
+	if params.Limit != nil {
+		if err := client.AddQueryParam(q, "limit", *params.Limit); err != nil {
+			return nil, err
+		}
+	}
+
+	if params.After != nil {
+		if err := client.AddQueryParam(q, "after", *params.After); err != nil {
+			return nil, err
+		}
+	}
+
+	queryURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ListRevisions request returning *ListRevisionsResponse
+func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*ListRevisionsResponse, error) {
+	req, err := newListRevisionsRequest(c.BaseURL, appId, definitionId, params)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ListRevisionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponseActionRevisionForwardPaging
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetRevision: GET /automation/v4/actions/{appId}/{definitionId}/revisions/{revisionId}
+
 type GetRevisionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -1324,519 +1711,60 @@ func (r GetRevisionResponse) StatusCode() int {
 	return 0
 }
 
-// CompleteBatchWithBody request with arbitrary body returning *CompleteBatchResponse
-func (c *Client) CompleteBatchWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
-	rsp, err := c.doCompleteBatchWithBody(ctx, contentType, body, reqEditors...)
+// newGetRevisionRequest generates requests for GetRevision
+func newGetRevisionRequest(baseURL *url.URL, appId int32, definitionId string, revisionId string) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
-	return parseCompleteBatchResponse(rsp)
-}
 
-func (c *Client) CompleteBatch(ctx context.Context, body CompleteBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteBatchResponse, error) {
-	rsp, err := c.doCompleteBatch(ctx, body, reqEditors...)
+	pathParam1, err := client.GetPathParam("definitionId", definitionId)
 	if err != nil {
 		return nil, err
 	}
-	return parseCompleteBatchResponse(rsp)
-}
 
-// CompleteCallbackWithBody request with arbitrary body returning *CompleteCallbackResponse
-func (c *Client) CompleteCallbackWithBody(ctx context.Context, callbackId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
-	rsp, err := c.doCompleteCallbackWithBody(ctx, callbackId, contentType, body, reqEditors...)
+	pathParam2, err := client.GetPathParam("revisionId", revisionId)
 	if err != nil {
 		return nil, err
 	}
-	return parseCompleteCallbackResponse(rsp)
-}
 
-func (c *Client) CompleteCallback(ctx context.Context, callbackId string, body CompleteCallbackJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CompleteCallbackResponse, error) {
-	rsp, err := c.doCompleteCallback(ctx, callbackId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCompleteCallbackResponse(rsp)
-}
+	opPath := fmt.Sprintf(opPathGetRevisionFormat, pathParam0, pathParam1, pathParam2)
 
-// ListApp request returning *ListAppResponse
-func (c *Client) ListApp(ctx context.Context, appId int32, params *ListAppParams, reqEditors ...client.RequestEditorFn) (*ListAppResponse, error) {
-	rsp, err := c.doListApp(ctx, appId, params, reqEditors...)
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
-	return parseListAppResponse(rsp)
-}
 
-// CreateAppWithBody request with arbitrary body returning *CreateAppResponse
-func (c *Client) CreateAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
-	rsp, err := c.doCreateAppWithBody(ctx, appId, contentType, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-	return parseCreateAppResponse(rsp)
-}
 
-func (c *Client) CreateApp(ctx context.Context, appId int32, body CreateAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateAppResponse, error) {
-	rsp, err := c.doCreateApp(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateAppResponse(rsp)
-}
-
-// ArchiveDefinition request returning *ArchiveDefinitionResponse
-func (c *Client) ArchiveDefinition(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ArchiveDefinitionResponse, error) {
-	rsp, err := c.doArchiveDefinition(ctx, appId, definitionId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveDefinitionResponse(rsp)
-}
-
-// GetDefinition request returning *GetDefinitionResponse
-func (c *Client) GetDefinition(ctx context.Context, appId int32, definitionId string, params *GetDefinitionParams, reqEditors ...client.RequestEditorFn) (*GetDefinitionResponse, error) {
-	rsp, err := c.doGetDefinition(ctx, appId, definitionId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetDefinitionResponse(rsp)
-}
-
-// UpdateDefinitionWithBody request with arbitrary body returning *UpdateDefinitionResponse
-func (c *Client) UpdateDefinitionWithBody(ctx context.Context, appId int32, definitionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
-	rsp, err := c.doUpdateDefinitionWithBody(ctx, appId, definitionId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateDefinitionResponse(rsp)
-}
-
-func (c *Client) UpdateDefinition(ctx context.Context, appId int32, definitionId string, body UpdateDefinitionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateDefinitionResponse, error) {
-	rsp, err := c.doUpdateDefinition(ctx, appId, definitionId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateDefinitionResponse(rsp)
-}
-
-// ListFunctions request returning *ListFunctionsResponse
-func (c *Client) ListFunctions(ctx context.Context, appId int32, definitionId string, reqEditors ...client.RequestEditorFn) (*ListFunctionsResponse, error) {
-	rsp, err := c.doListFunctions(ctx, appId, definitionId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseListFunctionsResponse(rsp)
-}
-
-// ArchiveByFunctionType request returning *ArchiveByFunctionTypeResponse
-func (c *Client) ArchiveByFunctionType(ctx context.Context, appId int32, definitionId string, functionType ArchiveByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*ArchiveByFunctionTypeResponse, error) {
-	rsp, err := c.doArchiveByFunctionType(ctx, appId, definitionId, functionType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveByFunctionTypeResponse(rsp)
-}
-
-// GetByFunctionType request returning *GetByFunctionTypeResponse
-func (c *Client) GetByFunctionType(ctx context.Context, appId int32, definitionId string, functionType GetByFunctionTypeParamsFunctionType, reqEditors ...client.RequestEditorFn) (*GetByFunctionTypeResponse, error) {
-	rsp, err := c.doGetByFunctionType(ctx, appId, definitionId, functionType, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetByFunctionTypeResponse(rsp)
-}
-
-// CreateOrReplaceByFunctionTypeWithBody request with arbitrary body returning *CreateOrReplaceByFunctionTypeResponse
-func (c *Client) CreateOrReplaceByFunctionTypeWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceByFunctionTypeParamsFunctionType, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceByFunctionTypeResponse, error) {
-	rsp, err := c.doCreateOrReplaceByFunctionTypeWithBody(ctx, appId, definitionId, functionType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateOrReplaceByFunctionTypeResponse(rsp)
-}
-
-// ArchiveFunction request returning *ArchiveFunctionResponse
-func (c *Client) ArchiveFunction(ctx context.Context, appId int32, definitionId string, functionType ArchiveFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*ArchiveFunctionResponse, error) {
-	rsp, err := c.doArchiveFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveFunctionResponse(rsp)
-}
-
-// GetFunction request returning *GetFunctionResponse
-func (c *Client) GetFunction(ctx context.Context, appId int32, definitionId string, functionType GetFunctionParamsFunctionType, functionId string, reqEditors ...client.RequestEditorFn) (*GetFunctionResponse, error) {
-	rsp, err := c.doGetFunction(ctx, appId, definitionId, functionType, functionId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetFunctionResponse(rsp)
-}
-
-// CreateOrReplaceFunctionWithBody request with arbitrary body returning *CreateOrReplaceFunctionResponse
-func (c *Client) CreateOrReplaceFunctionWithBody(ctx context.Context, appId int32, definitionId string, functionType CreateOrReplaceFunctionParamsFunctionType, functionId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateOrReplaceFunctionResponse, error) {
-	rsp, err := c.doCreateOrReplaceFunctionWithBody(ctx, appId, definitionId, functionType, functionId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateOrReplaceFunctionResponse(rsp)
-}
-
-// ListRevisions request returning *ListRevisionsResponse
-func (c *Client) ListRevisions(ctx context.Context, appId int32, definitionId string, params *ListRevisionsParams, reqEditors ...client.RequestEditorFn) (*ListRevisionsResponse, error) {
-	rsp, err := c.doListRevisions(ctx, appId, definitionId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseListRevisionsResponse(rsp)
+	return req, nil
 }
 
 // GetRevision request returning *GetRevisionResponse
 func (c *Client) GetRevision(ctx context.Context, appId int32, definitionId string, revisionId string, reqEditors ...client.RequestEditorFn) (*GetRevisionResponse, error) {
-	rsp, err := c.doGetRevision(ctx, appId, definitionId, revisionId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetRevisionResponse(rsp)
-}
-
-// parseCompleteBatchResponse parses an HTTP response from a CompleteBatch call.
-func parseCompleteBatchResponse(rsp *http.Response) (*CompleteBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	req, err := newGetRevisionRequest(c.BaseURL, appId, definitionId, revisionId)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CompleteBatchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	return response, nil
-}
-
-// parseCompleteCallbackResponse parses an HTTP response from a CompleteCallback call.
-func parseCompleteCallbackResponse(rsp *http.Response) (*CompleteCallbackResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	rsp, err := c.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CompleteCallbackResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseListAppResponse parses an HTTP response from a ListApp call.
-func parseListAppResponse(rsp *http.Response) (*ListAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &ListAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseExtensionActionDefinitionForwardPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateAppResponse parses an HTTP response from a CreateApp call.
-func parseCreateAppResponse(rsp *http.Response) (*CreateAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ExtensionActionDefinition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveDefinitionResponse parses an HTTP response from a ArchiveDefinition call.
-func parseArchiveDefinitionResponse(rsp *http.Response) (*ArchiveDefinitionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveDefinitionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetDefinitionResponse parses an HTTP response from a GetDefinition call.
-func parseGetDefinitionResponse(rsp *http.Response) (*GetDefinitionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetDefinitionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ExtensionActionDefinition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateDefinitionResponse parses an HTTP response from a UpdateDefinition call.
-func parseUpdateDefinitionResponse(rsp *http.Response) (*UpdateDefinitionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateDefinitionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ExtensionActionDefinition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseListFunctionsResponse parses an HTTP response from a ListFunctions call.
-func parseListFunctionsResponse(rsp *http.Response) (*ListFunctionsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListFunctionsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseActionFunctionIdentifierNoPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveByFunctionTypeResponse parses an HTTP response from a ArchiveByFunctionType call.
-func parseArchiveByFunctionTypeResponse(rsp *http.Response) (*ArchiveByFunctionTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveByFunctionTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetByFunctionTypeResponse parses an HTTP response from a GetByFunctionType call.
-func parseGetByFunctionTypeResponse(rsp *http.Response) (*GetByFunctionTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetByFunctionTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionFunction
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateOrReplaceByFunctionTypeResponse parses an HTTP response from a CreateOrReplaceByFunctionType call.
-func parseCreateOrReplaceByFunctionTypeResponse(rsp *http.Response) (*CreateOrReplaceByFunctionTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOrReplaceByFunctionTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionFunctionIdentifier
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveFunctionResponse parses an HTTP response from a ArchiveFunction call.
-func parseArchiveFunctionResponse(rsp *http.Response) (*ArchiveFunctionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveFunctionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetFunctionResponse parses an HTTP response from a GetFunction call.
-func parseGetFunctionResponse(rsp *http.Response) (*GetFunctionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetFunctionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionFunction
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateOrReplaceFunctionResponse parses an HTTP response from a CreateOrReplaceFunction call.
-func parseCreateOrReplaceFunctionResponse(rsp *http.Response) (*CreateOrReplaceFunctionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateOrReplaceFunctionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ActionFunctionIdentifier
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseListRevisionsResponse parses an HTTP response from a ListRevisions call.
-func parseListRevisionsResponse(rsp *http.Response) (*ListRevisionsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListRevisionsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponseActionRevisionForwardPaging
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetRevisionResponse parses an HTTP response from a GetRevision call.
-func parseGetRevisionResponse(rsp *http.Response) (*GetRevisionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
+	defer rsp.Body.Close()
 
 	response := &GetRevisionResponse{
 		Body:         bodyBytes,

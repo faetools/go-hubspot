@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,524 +16,22 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newClearSettingsRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSettingsRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newConfigureSettingsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newConfigureSettingsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllSubscriptionsRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSubscriptionsRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateSubscriptionsRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateBatchRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveSubscriptionRequest(c.baseURL, appId, subscriptionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetSubscriptionRequest(c.baseURL, appId, subscriptionId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSubscriptionRequestWithBody(c.baseURL, appId, subscriptionId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateSubscriptionRequest(c.baseURL, appId, subscriptionId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-const opPathClearSettingsFormat = "./webhooks/v3/%s/settings"
-
-// newClearSettingsRequest generates requests for ClearSettings
-func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathClearSettingsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetAllSettingsFormat = "./webhooks/v3/%s/settings"
-
-// newGetAllSettingsRequest generates requests for GetAllSettings
-func newGetAllSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAllSettingsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newConfigureSettingsRequest calls the generic ConfigureSettings builder with application/json body.
-func newConfigureSettingsRequest(baseURL *url.URL, appId int32, body ConfigureSettingsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newConfigureSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathConfigureSettingsFormat = "./webhooks/v3/%s/settings"
-
-// newConfigureSettingsRequestWithBody generates requests for ConfigureSettings with any type of body
-func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathConfigureSettingsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathGetAllSubscriptionsFormat = "./webhooks/v3/%s/subscriptions"
-
-// newGetAllSubscriptionsRequest generates requests for GetAllSubscriptions
-func newGetAllSubscriptionsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetAllSubscriptionsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newCreateSubscriptionsRequest calls the generic CreateSubscriptions builder with application/json body.
-func newCreateSubscriptionsRequest(baseURL *url.URL, appId int32, body CreateSubscriptionsJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateSubscriptionsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathCreateSubscriptionsFormat = "./webhooks/v3/%s/subscriptions"
-
-// newCreateSubscriptionsRequestWithBody generates requests for CreateSubscriptions with any type of body
-func newCreateSubscriptionsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathCreateSubscriptionsFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-// newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
-func newUpdateBatchRequest(baseURL *url.URL, appId int32, body UpdateBatchJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateBatchRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateBatchFormat = "./webhooks/v3/%s/subscriptions/batch/update"
-
-// newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
-func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateBatchFormat, pathParam0)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-const opPathArchiveSubscriptionFormat = "./webhooks/v3/%s/subscriptions/%s"
-
-// newArchiveSubscriptionRequest generates requests for ArchiveSubscription
-func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathArchiveSubscriptionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-const opPathGetSubscriptionFormat = "./webhooks/v3/%s/subscriptions/%s"
-
-// newGetSubscriptionRequest generates requests for GetSubscription
-func newGetSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathGetSubscriptionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// newUpdateSubscriptionRequest calls the generic UpdateSubscription builder with application/json body.
-func newUpdateSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateSubscriptionRequestWithBody(baseURL, appId, subscriptionId, client.MIMEApplicationJSON, bodyReader)
-}
-
-const opPathUpdateSubscriptionFormat = "./webhooks/v3/%s/subscriptions/%s"
-
-// newUpdateSubscriptionRequestWithBody generates requests for UpdateSubscription with any type of body
-func newUpdateSubscriptionRequestWithBody(baseURL *url.URL, appId int32, subscriptionId int32, contentType string, body io.Reader) (*http.Request, error) {
-	pathParam0, err := client.GetPathParam("appId", appId)
-	if err != nil {
-		return nil, err
-	}
-
-	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
-	if err != nil {
-		return nil, err
-	}
-
-	opPath := fmt.Sprintf(opPathUpdateSubscriptionFormat, pathParam0, pathParam1)
-
-	queryURL, err := baseURL.Parse(opPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
-}
-
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
+// operation paths
+
+const (
+	opPathClearSettingsFormat       = "./webhooks/v3/%s/settings"
+	opPathGetAllSettingsFormat      = "./webhooks/v3/%s/settings"
+	opPathConfigureSettingsFormat   = "./webhooks/v3/%s/settings"
+	opPathGetAllSubscriptionsFormat = "./webhooks/v3/%s/subscriptions"
+	opPathCreateSubscriptionsFormat = "./webhooks/v3/%s/subscriptions"
+	opPathUpdateBatchFormat         = "./webhooks/v3/%s/subscriptions/batch/update"
+	opPathArchiveSubscriptionFormat = "./webhooks/v3/%s/subscriptions/%s"
+	opPathGetSubscriptionFormat     = "./webhooks/v3/%s/subscriptions/%s"
+	opPathUpdateSubscriptionFormat  = "./webhooks/v3/%s/subscriptions/%s"
+)
 
 // ClientInterface interface specification for the client.
 type ClientInterface interface {
-	client.Client
 	// ClearSettings request
 	ClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ClearSettingsResponse, error)
 
@@ -567,6 +64,48 @@ type ClientInterface interface {
 	UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error)
 }
 
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
+	}
+
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ClearSettings: DELETE /webhooks/v3/{appId}/settings
+
 type ClearSettingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -587,6 +126,61 @@ func (r ClearSettingsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newClearSettingsRequest generates requests for ClearSettings
+func newClearSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathClearSettingsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ClearSettings request returning *ClearSettingsResponse
+func (c *Client) ClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ClearSettingsResponse, error) {
+	req, err := newClearSettingsRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ClearSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetAllSettings: GET /webhooks/v3/{appId}/settings
 
 type GetAllSettingsResponse struct {
 	Body         []byte
@@ -610,6 +204,70 @@ func (r GetAllSettingsResponse) StatusCode() int {
 	return 0
 }
 
+// newGetAllSettingsRequest generates requests for GetAllSettings
+func newGetAllSettingsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetAllSettingsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAllSettings request returning *GetAllSettingsResponse
+func (c *Client) GetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSettingsResponse, error) {
+	req, err := newGetAllSettingsRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SettingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ConfigureSettings: PUT /webhooks/v3/{appId}/settings
+
 type ConfigureSettingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -631,6 +289,113 @@ func (r ConfigureSettingsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newConfigureSettingsRequestWithBody generates requests for ConfigureSettings with any type of body
+func newConfigureSettingsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathConfigureSettingsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// ConfigureSettingsWithBody request with arbitrary body returning *ConfigureSettingsResponse
+func (c *Client) ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
+	rsp, err := c.doConfigureSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseConfigureSettingsResponse(rsp)
+}
+
+func (c *Client) doConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newConfigureSettingsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
+	rsp, err := c.doConfigureSettings(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseConfigureSettingsResponse(rsp)
+}
+
+// newConfigureSettingsRequest calls the generic ConfigureSettings builder with application/json body.
+func newConfigureSettingsRequest(baseURL *url.URL, appId int32, body ConfigureSettingsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newConfigureSettingsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newConfigureSettingsRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseConfigureSettingsResponse parses an HTTP response from a ConfigureSettings call.
+func parseConfigureSettingsResponse(rsp *http.Response) (*ConfigureSettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ConfigureSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SettingsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetAllSubscriptions: GET /webhooks/v3/{appId}/subscriptions
 
 type GetAllSubscriptionsResponse struct {
 	Body         []byte
@@ -654,6 +419,70 @@ func (r GetAllSubscriptionsResponse) StatusCode() int {
 	return 0
 }
 
+// newGetAllSubscriptionsRequest generates requests for GetAllSubscriptions
+func newGetAllSubscriptionsRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetAllSubscriptionsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetAllSubscriptions request returning *GetAllSubscriptionsResponse
+func (c *Client) GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSubscriptionsResponse, error) {
+	req, err := newGetAllSubscriptionsRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllSubscriptionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SubscriptionListResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// CreateSubscriptions: POST /webhooks/v3/{appId}/subscriptions
+
 type CreateSubscriptionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -675,6 +504,113 @@ func (r CreateSubscriptionsResponse) StatusCode() int {
 	}
 	return 0
 }
+
+// newCreateSubscriptionsRequestWithBody generates requests for CreateSubscriptions with any type of body
+func newCreateSubscriptionsRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathCreateSubscriptionsFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// CreateSubscriptionsWithBody request with arbitrary body returning *CreateSubscriptionsResponse
+func (c *Client) CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
+	rsp, err := c.doCreateSubscriptionsWithBody(ctx, appId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateSubscriptionsResponse(rsp)
+}
+
+func (c *Client) doCreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSubscriptionsRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
+	rsp, err := c.doCreateSubscriptions(ctx, appId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateSubscriptionsResponse(rsp)
+}
+
+// newCreateSubscriptionsRequest calls the generic CreateSubscriptions builder with application/json body.
+func newCreateSubscriptionsRequest(baseURL *url.URL, appId int32, body CreateSubscriptionsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateSubscriptionsRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateSubscriptionsRequest(c.BaseURL, appId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateSubscriptionsResponse parses an HTTP response from a CreateSubscriptions call.
+func parseCreateSubscriptionsResponse(rsp *http.Response) (*CreateSubscriptionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateSubscriptionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SubscriptionResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// UpdateBatch: POST /webhooks/v3/{appId}/subscriptions/batch/update
 
 type UpdateBatchResponse struct {
 	Body         []byte
@@ -699,130 +635,28 @@ func (r UpdateBatchResponse) StatusCode() int {
 	return 0
 }
 
-type ArchiveSubscriptionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveSubscriptionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveSubscriptionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetSubscriptionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SubscriptionResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r GetSubscriptionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetSubscriptionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateSubscriptionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *SubscriptionResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateSubscriptionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateSubscriptionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ClearSettings request returning *ClearSettingsResponse
-func (c *Client) ClearSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ClearSettingsResponse, error) {
-	rsp, err := c.doClearSettings(ctx, appId, reqEditors...)
+// newUpdateBatchRequestWithBody generates requests for UpdateBatch with any type of body
+func newUpdateBatchRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
-	return parseClearSettingsResponse(rsp)
-}
 
-// GetAllSettings request returning *GetAllSettingsResponse
-func (c *Client) GetAllSettings(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSettingsResponse, error) {
-	rsp, err := c.doGetAllSettings(ctx, appId, reqEditors...)
+	opPath := fmt.Sprintf(opPathUpdateBatchFormat, pathParam0)
+
+	queryURL, err := baseURL.Parse(opPath)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetAllSettingsResponse(rsp)
-}
 
-// ConfigureSettingsWithBody request with arbitrary body returning *ConfigureSettingsResponse
-func (c *Client) ConfigureSettingsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
-	rsp, err := c.doConfigureSettingsWithBody(ctx, appId, contentType, body, reqEditors...)
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
-	return parseConfigureSettingsResponse(rsp)
-}
 
-func (c *Client) ConfigureSettings(ctx context.Context, appId int32, body ConfigureSettingsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ConfigureSettingsResponse, error) {
-	rsp, err := c.doConfigureSettings(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseConfigureSettingsResponse(rsp)
-}
+	req.Header.Add(client.ContentType, contentType)
 
-// GetAllSubscriptions request returning *GetAllSubscriptionsResponse
-func (c *Client) GetAllSubscriptions(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAllSubscriptionsResponse, error) {
-	rsp, err := c.doGetAllSubscriptions(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllSubscriptionsResponse(rsp)
-}
-
-// CreateSubscriptionsWithBody request with arbitrary body returning *CreateSubscriptionsResponse
-func (c *Client) CreateSubscriptionsWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
-	rsp, err := c.doCreateSubscriptionsWithBody(ctx, appId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateSubscriptionsResponse(rsp)
-}
-
-func (c *Client) CreateSubscriptions(ctx context.Context, appId int32, body CreateSubscriptionsJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateSubscriptionsResponse, error) {
-	rsp, err := c.doCreateSubscriptions(ctx, appId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateSubscriptionsResponse(rsp)
+	return req, nil
 }
 
 // UpdateBatchWithBody request with arbitrary body returning *UpdateBatchResponse
@@ -831,7 +665,21 @@ func (c *Client) UpdateBatchWithBody(ctx context.Context, appId int32, contentTy
 	if err != nil {
 		return nil, err
 	}
+
 	return parseUpdateBatchResponse(rsp)
+}
+
+func (c *Client) doUpdateBatchWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateBatchRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateBatchResponse, error) {
@@ -839,167 +687,41 @@ func (c *Client) UpdateBatch(ctx context.Context, appId int32, body UpdateBatchJ
 	if err != nil {
 		return nil, err
 	}
+
 	return parseUpdateBatchResponse(rsp)
 }
 
-// ArchiveSubscription request returning *ArchiveSubscriptionResponse
-func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSubscriptionResponse, error) {
-	rsp, err := c.doArchiveSubscription(ctx, appId, subscriptionId, reqEditors...)
+// newUpdateBatchRequest calls the generic UpdateBatch builder with application/json body.
+func newUpdateBatchRequest(baseURL *url.URL, appId int32, body UpdateBatchJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-	return parseArchiveSubscriptionResponse(rsp)
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateBatchRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
 
-// GetSubscription request returning *GetSubscriptionResponse
-func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*GetSubscriptionResponse, error) {
-	rsp, err := c.doGetSubscription(ctx, appId, subscriptionId, reqEditors...)
+func (c *Client) doUpdateBatch(ctx context.Context, appId int32, body UpdateBatchJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateBatchRequest(c.BaseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
-	return parseGetSubscriptionResponse(rsp)
-}
-
-// UpdateSubscriptionWithBody request with arbitrary body returning *UpdateSubscriptionResponse
-func (c *Client) UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
-	rsp, err := c.doUpdateSubscriptionWithBody(ctx, appId, subscriptionId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateSubscriptionResponse(rsp)
-}
-
-func (c *Client) UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
-	rsp, err := c.doUpdateSubscription(ctx, appId, subscriptionId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateSubscriptionResponse(rsp)
-}
-
-// parseClearSettingsResponse parses an HTTP response from a ClearSettings call.
-func parseClearSettingsResponse(rsp *http.Response) (*ClearSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &ClearSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetAllSettingsResponse parses an HTTP response from a GetAllSettings call.
-func parseGetAllSettingsResponse(rsp *http.Response) (*GetAllSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAllSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SettingsResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseConfigureSettingsResponse parses an HTTP response from a ConfigureSettings call.
-func parseConfigureSettingsResponse(rsp *http.Response) (*ConfigureSettingsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ConfigureSettingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SettingsResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetAllSubscriptionsResponse parses an HTTP response from a GetAllSubscriptions call.
-func parseGetAllSubscriptionsResponse(rsp *http.Response) (*GetAllSubscriptionsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAllSubscriptionsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest SubscriptionListResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateSubscriptionsResponse parses an HTTP response from a CreateSubscriptions call.
-func parseCreateSubscriptionsResponse(rsp *http.Response) (*CreateSubscriptionsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateSubscriptionsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest SubscriptionResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseUpdateBatchResponse parses an HTTP response from a UpdateBatch call.
 func parseUpdateBatchResponse(rsp *http.Response) (*UpdateBatchResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &UpdateBatchResponse{
 		Body:         bodyBytes,
@@ -1026,13 +748,78 @@ func parseUpdateBatchResponse(rsp *http.Response) (*UpdateBatchResponse, error) 
 	return response, nil
 }
 
-// parseArchiveSubscriptionResponse parses an HTTP response from a ArchiveSubscription call.
-func parseArchiveSubscriptionResponse(rsp *http.Response) (*ArchiveSubscriptionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// ArchiveSubscription: DELETE /webhooks/v3/{appId}/subscriptions/{subscriptionId}
+
+type ArchiveSubscriptionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveSubscriptionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveSubscriptionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newArchiveSubscriptionRequest generates requests for ArchiveSubscription
+func newArchiveSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathArchiveSubscriptionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// ArchiveSubscription request returning *ArchiveSubscriptionResponse
+func (c *Client) ArchiveSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*ArchiveSubscriptionResponse, error) {
+	req, err := newArchiveSubscriptionRequest(c.BaseURL, appId, subscriptionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &ArchiveSubscriptionResponse{
 		Body:         bodyBytes,
@@ -1042,13 +829,79 @@ func parseArchiveSubscriptionResponse(rsp *http.Response) (*ArchiveSubscriptionR
 	return response, nil
 }
 
-// parseGetSubscriptionResponse parses an HTTP response from a GetSubscription call.
-func parseGetSubscriptionResponse(rsp *http.Response) (*GetSubscriptionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetSubscription: GET /webhooks/v3/{appId}/subscriptions/{subscriptionId}
+
+type GetSubscriptionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SubscriptionResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSubscriptionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSubscriptionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newGetSubscriptionRequest generates requests for GetSubscription
+func newGetSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathGetSubscriptionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// GetSubscription request returning *GetSubscriptionResponse
+func (c *Client) GetSubscription(ctx context.Context, appId int32, subscriptionId int32, reqEditors ...client.RequestEditorFn) (*GetSubscriptionResponse, error) {
+	req, err := newGetSubscriptionRequest(c.BaseURL, appId, subscriptionId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &GetSubscriptionResponse{
 		Body:         bodyBytes,
@@ -1067,13 +920,122 @@ func parseGetSubscriptionResponse(rsp *http.Response) (*GetSubscriptionResponse,
 	return response, nil
 }
 
-// parseUpdateSubscriptionResponse parses an HTTP response from a UpdateSubscription call.
-func parseUpdateSubscriptionResponse(rsp *http.Response) (*UpdateSubscriptionResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// UpdateSubscription: PATCH /webhooks/v3/{appId}/subscriptions/{subscriptionId}
+
+type UpdateSubscriptionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SubscriptionResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateSubscriptionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateSubscriptionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// newUpdateSubscriptionRequestWithBody generates requests for UpdateSubscription with any type of body
+func newUpdateSubscriptionRequestWithBody(baseURL *url.URL, appId int32, subscriptionId int32, contentType string, body io.Reader) (*http.Request, error) {
+	pathParam0, err := client.GetPathParam("appId", appId)
 	if err != nil {
 		return nil, err
 	}
+
+	pathParam1, err := client.GetPathParam("subscriptionId", subscriptionId)
+	if err != nil {
+		return nil, err
+	}
+
+	opPath := fmt.Sprintf(opPathUpdateSubscriptionFormat, pathParam0, pathParam1)
+
+	queryURL, err := baseURL.Parse(opPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
+// UpdateSubscriptionWithBody request with arbitrary body returning *UpdateSubscriptionResponse
+func (c *Client) UpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
+	rsp, err := c.doUpdateSubscriptionWithBody(ctx, appId, subscriptionId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateSubscriptionResponse(rsp)
+}
+
+func (c *Client) doUpdateSubscriptionWithBody(ctx context.Context, appId int32, subscriptionId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateSubscriptionRequestWithBody(c.BaseURL, appId, subscriptionId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateSubscriptionResponse, error) {
+	rsp, err := c.doUpdateSubscription(ctx, appId, subscriptionId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateSubscriptionResponse(rsp)
+}
+
+// newUpdateSubscriptionRequest calls the generic UpdateSubscription builder with application/json body.
+func newUpdateSubscriptionRequest(baseURL *url.URL, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newUpdateSubscriptionRequestWithBody(baseURL, appId, subscriptionId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doUpdateSubscription(ctx context.Context, appId int32, subscriptionId int32, body UpdateSubscriptionJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateSubscriptionRequest(c.BaseURL, appId, subscriptionId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateSubscriptionResponse parses an HTTP response from a UpdateSubscription call.
+func parseUpdateSubscriptionResponse(rsp *http.Response) (*UpdateSubscriptionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
 
 	response := &UpdateSubscriptionResponse{
 		Body:         bodyBytes,

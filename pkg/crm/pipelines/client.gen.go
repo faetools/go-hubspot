@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,223 +16,131 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doGetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllObjectTypeRequest(c.baseURL, objectType, params)
+// operation paths
+
+const (
+	opPathGetAllObjectTypeFormat = "./crm/v3/pipelines/%s"
+	opPathCreateObjectTypeFormat = "./crm/v3/pipelines/%s"
+	opPathArchivePipelineFormat  = "./crm/v3/pipelines/%s/%s"
+	opPathGetPipelineFormat      = "./crm/v3/pipelines/%s/%s"
+	opPathUpdatePipelineFormat   = "./crm/v3/pipelines/%s/%s"
+	opPathReplacePipelineFormat  = "./crm/v3/pipelines/%s/%s"
+	opPathGetAllStagesFormat     = "./crm/v3/pipelines/%s/%s/stages"
+	opPathCreateStagesFormat     = "./crm/v3/pipelines/%s/%s/stages"
+	opPathArchiveStageFormat     = "./crm/v3/pipelines/%s/%s/stages/%s"
+	opPathGetStageFormat         = "./crm/v3/pipelines/%s/%s/stages/%s"
+	opPathUpdateStageFormat      = "./crm/v3/pipelines/%s/%s/stages/%s"
+	opPathReplaceStageFormat     = "./crm/v3/pipelines/%s/%s/stages/%s"
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// GetAllObjectType request
+	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error)
+
+	// CreateObjectType request with any body
+	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
+	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
+
+	// ArchivePipeline request
+	ArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*ArchivePipelineResponse, error)
+
+	// GetPipeline request
+	GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*GetPipelineResponse, error)
+
+	// UpdatePipeline request with any body
+	UpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error)
+	UpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error)
+
+	// ReplacePipeline request with any body
+	ReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error)
+	ReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error)
+
+	// GetAllStages request
+	GetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*GetAllStagesResponse, error)
+
+	// CreateStages request with any body
+	CreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error)
+	CreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error)
+
+	// ArchiveStage request
+	ArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*ArchiveStageResponse, error)
+
+	// GetStage request
+	GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*GetStageResponse, error)
+
+	// UpdateStage request with any body
+	UpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error)
+	UpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error)
+
+	// ReplaceStage request with any body
+	ReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error)
+	ReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequestWithBody(c.baseURL, objectType, contentType, body)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateObjectTypeRequest(c.baseURL, objectType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// GetAllObjectType: GET /crm/v3/pipelines/{objectType}
+
+type GetAllObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponsePipeline
 }
 
-func (c *Client) doArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchivePipelineRequest(c.baseURL, objectType, pipelineId)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r GetAllObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-func (c *Client) doGetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetPipelineRequest(c.baseURL, objectType, pipelineId, params)
-	if err != nil {
-		return nil, err
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return 0
 }
-
-func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePipelineRequestWithBody(c.baseURL, objectType, pipelineId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdatePipelineRequest(c.baseURL, objectType, pipelineId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplacePipelineRequestWithBody(c.baseURL, objectType, pipelineId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplacePipelineRequest(c.baseURL, objectType, pipelineId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAllStagesRequest(c.baseURL, objectType, pipelineId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateStagesRequestWithBody(c.baseURL, objectType, pipelineId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doCreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newCreateStagesRequest(c.baseURL, objectType, pipelineId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveStageRequest(c.baseURL, objectType, pipelineId, stageId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetStageRequest(c.baseURL, objectType, pipelineId, stageId, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateStageRequestWithBody(c.baseURL, objectType, pipelineId, stageId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newUpdateStageRequest(c.baseURL, objectType, pipelineId, stageId, params, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceStageRequestWithBody(c.baseURL, objectType, pipelineId, stageId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceStageRequest(c.baseURL, objectType, pipelineId, stageId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-const opPathGetAllObjectTypeFormat = "./crm/v3/pipelines/%s"
 
 // newGetAllObjectTypeRequest generates requests for GetAllObjectType
 func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *GetAllObjectTypeParams) (*http.Request, error) {
@@ -267,18 +174,69 @@ func newGetAllObjectTypeRequest(baseURL *url.URL, objectType string, params *Get
 	return req, nil
 }
 
-// newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
-func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetAllObjectType request returning *GetAllObjectTypeResponse
+func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error) {
+	req, err := newGetAllObjectTypeRequest(c.BaseURL, objectType, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponsePipeline
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathCreateObjectTypeFormat = "./crm/v3/pipelines/%s"
+// CreateObjectType: POST /crm/v3/pipelines/{objectType}
+
+type CreateObjectTypeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Pipeline
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateObjectTypeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateObjectTypeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateObjectTypeRequestWithBody generates requests for CreateObjectType with any type of body
 func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, contentType string, body io.Reader) (*http.Request, error) {
@@ -304,7 +262,109 @@ func newCreateObjectTypeRequestWithBody(baseURL *url.URL, objectType string, con
 	return req, nil
 }
 
-const opPathArchivePipelineFormat = "./crm/v3/pipelines/%s/%s"
+// CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
+func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
+	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateObjectTypeResponse(rsp)
+}
+
+func (c *Client) doCreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateObjectTypeRequestWithBody(c.BaseURL, objectType, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
+	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateObjectTypeResponse(rsp)
+}
+
+// newCreateObjectTypeRequest calls the generic CreateObjectType builder with application/json body.
+func newCreateObjectTypeRequest(baseURL *url.URL, objectType string, body CreateObjectTypeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateObjectTypeRequestWithBody(baseURL, objectType, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateObjectTypeRequest(c.BaseURL, objectType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateObjectTypeResponse parses an HTTP response from a CreateObjectType call.
+func parseCreateObjectTypeResponse(rsp *http.Response) (*CreateObjectTypeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateObjectTypeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Pipeline
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchivePipeline: DELETE /crm/v3/pipelines/{objectType}/{pipelineId}
+
+type ArchivePipelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchivePipelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchivePipelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchivePipelineRequest generates requests for ArchivePipeline
 func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId string) (*http.Request, error) {
@@ -333,7 +393,60 @@ func newArchivePipelineRequest(baseURL *url.URL, objectType string, pipelineId s
 	return req, nil
 }
 
-const opPathGetPipelineFormat = "./crm/v3/pipelines/%s/%s"
+// ArchivePipeline request returning *ArchivePipelineResponse
+func (c *Client) ArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*ArchivePipelineResponse, error) {
+	req, err := newArchivePipelineRequest(c.BaseURL, objectType, pipelineId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchivePipelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetPipeline: GET /crm/v3/pipelines/{objectType}/{pipelineId}
+
+type GetPipelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Pipeline
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPipelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPipelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetPipelineRequest generates requests for GetPipeline
 func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetPipelineParams) (*http.Request, error) {
@@ -372,18 +485,69 @@ func newGetPipelineRequest(baseURL *url.URL, objectType string, pipelineId strin
 	return req, nil
 }
 
-// newUpdatePipelineRequest calls the generic UpdatePipeline builder with application/json body.
-func newUpdatePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetPipeline request returning *GetPipelineResponse
+func (c *Client) GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*GetPipelineResponse, error) {
+	req, err := newGetPipelineRequest(c.BaseURL, objectType, pipelineId, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdatePipelineRequestWithBody(baseURL, objectType, pipelineId, params, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetPipelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Pipeline
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathUpdatePipelineFormat = "./crm/v3/pipelines/%s/%s"
+// UpdatePipeline: PATCH /crm/v3/pipelines/{objectType}/{pipelineId}
+
+type UpdatePipelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Pipeline
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdatePipelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdatePipelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdatePipelineRequestWithBody generates requests for UpdatePipeline with any type of body
 func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader) (*http.Request, error) {
@@ -424,18 +588,110 @@ func newUpdatePipelineRequestWithBody(baseURL *url.URL, objectType string, pipel
 	return req, nil
 }
 
-// newReplacePipelineRequest calls the generic ReplacePipeline builder with application/json body.
-func newReplacePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody) (*http.Request, error) {
+// UpdatePipelineWithBody request with arbitrary body returning *UpdatePipelineResponse
+func (c *Client) UpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error) {
+	rsp, err := c.doUpdatePipelineWithBody(ctx, objectType, pipelineId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdatePipelineResponse(rsp)
+}
+
+func (c *Client) doUpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdatePipelineRequestWithBody(c.BaseURL, objectType, pipelineId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error) {
+	rsp, err := c.doUpdatePipeline(ctx, objectType, pipelineId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdatePipelineResponse(rsp)
+}
+
+// newUpdatePipelineRequest calls the generic UpdatePipeline builder with application/json body.
+func newUpdatePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplacePipelineRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
+	return newUpdatePipelineRequestWithBody(baseURL, objectType, pipelineId, params, client.MIMEApplicationJSON, bodyReader)
 }
 
-const opPathReplacePipelineFormat = "./crm/v3/pipelines/%s/%s"
+func (c *Client) doUpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdatePipelineRequest(c.BaseURL, objectType, pipelineId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdatePipelineResponse parses an HTTP response from a UpdatePipeline call.
+func parseUpdatePipelineResponse(rsp *http.Response) (*UpdatePipelineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdatePipelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Pipeline
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ReplacePipeline: PUT /crm/v3/pipelines/{objectType}/{pipelineId}
+
+type ReplacePipelineResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Pipeline
+}
+
+// Status returns HTTPResponse.Status
+func (r ReplacePipelineResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReplacePipelineResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newReplacePipelineRequestWithBody generates requests for ReplacePipeline with any type of body
 func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
@@ -466,7 +722,110 @@ func newReplacePipelineRequestWithBody(baseURL *url.URL, objectType string, pipe
 	return req, nil
 }
 
-const opPathGetAllStagesFormat = "./crm/v3/pipelines/%s/%s/stages"
+// ReplacePipelineWithBody request with arbitrary body returning *ReplacePipelineResponse
+func (c *Client) ReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error) {
+	rsp, err := c.doReplacePipelineWithBody(ctx, objectType, pipelineId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplacePipelineResponse(rsp)
+}
+
+func (c *Client) doReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplacePipelineRequestWithBody(c.BaseURL, objectType, pipelineId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error) {
+	rsp, err := c.doReplacePipeline(ctx, objectType, pipelineId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseReplacePipelineResponse(rsp)
+}
+
+// newReplacePipelineRequest calls the generic ReplacePipeline builder with application/json body.
+func newReplacePipelineRequest(baseURL *url.URL, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newReplacePipelineRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplacePipelineRequest(c.BaseURL, objectType, pipelineId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseReplacePipelineResponse parses an HTTP response from a ReplacePipeline call.
+func parseReplacePipelineResponse(rsp *http.Response) (*ReplacePipelineResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ReplacePipelineResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Pipeline
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// GetAllStages: GET /crm/v3/pipelines/{objectType}/{pipelineId}/stages
+
+type GetAllStagesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *CollectionResponsePipelineStage
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllStagesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllStagesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetAllStagesRequest generates requests for GetAllStages
 func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId string, params *GetAllStagesParams) (*http.Request, error) {
@@ -505,18 +864,69 @@ func newGetAllStagesRequest(baseURL *url.URL, objectType string, pipelineId stri
 	return req, nil
 }
 
-// newCreateStagesRequest calls the generic CreateStages builder with application/json body.
-func newCreateStagesRequest(baseURL *url.URL, objectType string, pipelineId string, body CreateStagesJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetAllStages request returning *GetAllStagesResponse
+func (c *Client) GetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*GetAllStagesResponse, error) {
+	req, err := newGetAllStagesRequest(c.BaseURL, objectType, pipelineId, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newCreateStagesRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAllStagesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest CollectionResponsePipelineStage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathCreateStagesFormat = "./crm/v3/pipelines/%s/%s/stages"
+// CreateStages: POST /crm/v3/pipelines/{objectType}/{pipelineId}/stages
+
+type CreateStagesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *PipelineStage
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateStagesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateStagesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newCreateStagesRequestWithBody generates requests for CreateStages with any type of body
 func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, contentType string, body io.Reader) (*http.Request, error) {
@@ -547,7 +957,109 @@ func newCreateStagesRequestWithBody(baseURL *url.URL, objectType string, pipelin
 	return req, nil
 }
 
-const opPathArchiveStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
+// CreateStagesWithBody request with arbitrary body returning *CreateStagesResponse
+func (c *Client) CreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error) {
+	rsp, err := c.doCreateStagesWithBody(ctx, objectType, pipelineId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateStagesResponse(rsp)
+}
+
+func (c *Client) doCreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateStagesRequestWithBody(c.BaseURL, objectType, pipelineId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error) {
+	rsp, err := c.doCreateStages(ctx, objectType, pipelineId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseCreateStagesResponse(rsp)
+}
+
+// newCreateStagesRequest calls the generic CreateStages builder with application/json body.
+func newCreateStagesRequest(baseURL *url.URL, objectType string, pipelineId string, body CreateStagesJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newCreateStagesRequestWithBody(baseURL, objectType, pipelineId, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doCreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newCreateStagesRequest(c.BaseURL, objectType, pipelineId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseCreateStagesResponse parses an HTTP response from a CreateStages call.
+func parseCreateStagesResponse(rsp *http.Response) (*CreateStagesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &CreateStagesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest PipelineStage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+	}
+
+	return response, nil
+}
+
+// ArchiveStage: DELETE /crm/v3/pipelines/{objectType}/{pipelineId}/stages/{stageId}
+
+type ArchiveStageResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ArchiveStageResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveStageResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveStageRequest generates requests for ArchiveStage
 func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string) (*http.Request, error) {
@@ -581,7 +1093,60 @@ func newArchiveStageRequest(baseURL *url.URL, objectType string, pipelineId stri
 	return req, nil
 }
 
-const opPathGetStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
+// ArchiveStage request returning *ArchiveStageResponse
+func (c *Client) ArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*ArchiveStageResponse, error) {
+	req, err := newArchiveStageRequest(c.BaseURL, objectType, pipelineId, stageId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveStageResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetStage: GET /crm/v3/pipelines/{objectType}/{pipelineId}/stages/{stageId}
+
+type GetStageResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PipelineStage
+}
+
+// Status returns HTTPResponse.Status
+func (r GetStageResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetStageResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetStageRequest generates requests for GetStage
 func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *GetStageParams) (*http.Request, error) {
@@ -625,18 +1190,69 @@ func newGetStageRequest(baseURL *url.URL, objectType string, pipelineId string, 
 	return req, nil
 }
 
-// newUpdateStageRequest calls the generic UpdateStage builder with application/json body.
-func newUpdateStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetStage request returning *GetStageResponse
+func (c *Client) GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*GetStageResponse, error) {
+	req, err := newGetStageRequest(c.BaseURL, objectType, pipelineId, stageId, params)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newUpdateStageRequestWithBody(baseURL, objectType, pipelineId, stageId, params, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetStageResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PipelineStage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathUpdateStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
+// UpdateStage: PATCH /crm/v3/pipelines/{objectType}/{pipelineId}/stages/{stageId}
+
+type UpdateStageResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PipelineStage
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateStageResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateStageResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newUpdateStageRequestWithBody generates requests for UpdateStage with any type of body
 func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader) (*http.Request, error) {
@@ -682,18 +1298,110 @@ func newUpdateStageRequestWithBody(baseURL *url.URL, objectType string, pipeline
 	return req, nil
 }
 
-// newReplaceStageRequest calls the generic ReplaceStage builder with application/json body.
-func newReplaceStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody) (*http.Request, error) {
+// UpdateStageWithBody request with arbitrary body returning *UpdateStageResponse
+func (c *Client) UpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error) {
+	rsp, err := c.doUpdateStageWithBody(ctx, objectType, pipelineId, stageId, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateStageResponse(rsp)
+}
+
+func (c *Client) doUpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateStageRequestWithBody(c.BaseURL, objectType, pipelineId, stageId, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error) {
+	rsp, err := c.doUpdateStage(ctx, objectType, pipelineId, stageId, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseUpdateStageResponse(rsp)
+}
+
+// newUpdateStageRequest calls the generic UpdateStage builder with application/json body.
+func newUpdateStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return newReplaceStageRequestWithBody(baseURL, objectType, pipelineId, stageId, client.MIMEApplicationJSON, bodyReader)
+	return newUpdateStageRequestWithBody(baseURL, objectType, pipelineId, stageId, params, client.MIMEApplicationJSON, bodyReader)
 }
 
-const opPathReplaceStageFormat = "./crm/v3/pipelines/%s/%s/stages/%s"
+func (c *Client) doUpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newUpdateStageRequest(c.BaseURL, objectType, pipelineId, stageId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
+}
+
+// parseUpdateStageResponse parses an HTTP response from a UpdateStage call.
+func parseUpdateStageResponse(rsp *http.Response) (*UpdateStageResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &UpdateStageResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PipelineStage
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
+}
+
+// ReplaceStage: PUT /crm/v3/pipelines/{objectType}/{pipelineId}/stages/{stageId}
+
+type ReplaceStageResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PipelineStage
+}
+
+// Status returns HTTPResponse.Status
+func (r ReplaceStageResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReplaceStageResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newReplaceStageRequestWithBody generates requests for ReplaceStage with any type of body
 func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelineId string, stageId string, contentType string, body io.Reader) (*http.Request, error) {
@@ -729,536 +1437,27 @@ func newReplaceStageRequestWithBody(baseURL *url.URL, objectType string, pipelin
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// GetAllObjectType request
-	GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error)
-
-	// CreateObjectType request with any body
-	CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
-	CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error)
-
-	// ArchivePipeline request
-	ArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*ArchivePipelineResponse, error)
-
-	// GetPipeline request
-	GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*GetPipelineResponse, error)
-
-	// UpdatePipeline request with any body
-	UpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error)
-	UpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error)
-
-	// ReplacePipeline request with any body
-	ReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error)
-	ReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error)
-
-	// GetAllStages request
-	GetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*GetAllStagesResponse, error)
-
-	// CreateStages request with any body
-	CreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error)
-	CreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error)
-
-	// ArchiveStage request
-	ArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*ArchiveStageResponse, error)
-
-	// GetStage request
-	GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*GetStageResponse, error)
-
-	// UpdateStage request with any body
-	UpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error)
-	UpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error)
-
-	// ReplaceStage request with any body
-	ReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error)
-	ReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error)
-}
-
-type GetAllObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponsePipeline
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateObjectTypeResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Pipeline
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateObjectTypeResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateObjectTypeResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchivePipelineResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchivePipelineResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchivePipelineResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetPipelineResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Pipeline
-}
-
-// Status returns HTTPResponse.Status
-func (r GetPipelineResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetPipelineResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdatePipelineResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Pipeline
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdatePipelineResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdatePipelineResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ReplacePipelineResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Pipeline
-}
-
-// Status returns HTTPResponse.Status
-func (r ReplacePipelineResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ReplacePipelineResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetAllStagesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *CollectionResponsePipelineStage
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAllStagesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAllStagesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateStagesResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *PipelineStage
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateStagesResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateStagesResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ArchiveStageResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveStageResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveStageResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetStageResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PipelineStage
-}
-
-// Status returns HTTPResponse.Status
-func (r GetStageResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetStageResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type UpdateStageResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PipelineStage
-}
-
-// Status returns HTTPResponse.Status
-func (r UpdateStageResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r UpdateStageResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ReplaceStageResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PipelineStage
-}
-
-// Status returns HTTPResponse.Status
-func (r ReplaceStageResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ReplaceStageResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// GetAllObjectType request returning *GetAllObjectTypeResponse
-func (c *Client) GetAllObjectType(ctx context.Context, objectType string, params *GetAllObjectTypeParams, reqEditors ...client.RequestEditorFn) (*GetAllObjectTypeResponse, error) {
-	rsp, err := c.doGetAllObjectType(ctx, objectType, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllObjectTypeResponse(rsp)
-}
-
-// CreateObjectTypeWithBody request with arbitrary body returning *CreateObjectTypeResponse
-func (c *Client) CreateObjectTypeWithBody(ctx context.Context, objectType string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
-	rsp, err := c.doCreateObjectTypeWithBody(ctx, objectType, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateObjectTypeResponse(rsp)
-}
-
-func (c *Client) CreateObjectType(ctx context.Context, objectType string, body CreateObjectTypeJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateObjectTypeResponse, error) {
-	rsp, err := c.doCreateObjectType(ctx, objectType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateObjectTypeResponse(rsp)
-}
-
-// ArchivePipeline request returning *ArchivePipelineResponse
-func (c *Client) ArchivePipeline(ctx context.Context, objectType string, pipelineId string, reqEditors ...client.RequestEditorFn) (*ArchivePipelineResponse, error) {
-	rsp, err := c.doArchivePipeline(ctx, objectType, pipelineId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchivePipelineResponse(rsp)
-}
-
-// GetPipeline request returning *GetPipelineResponse
-func (c *Client) GetPipeline(ctx context.Context, objectType string, pipelineId string, params *GetPipelineParams, reqEditors ...client.RequestEditorFn) (*GetPipelineResponse, error) {
-	rsp, err := c.doGetPipeline(ctx, objectType, pipelineId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetPipelineResponse(rsp)
-}
-
-// UpdatePipelineWithBody request with arbitrary body returning *UpdatePipelineResponse
-func (c *Client) UpdatePipelineWithBody(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error) {
-	rsp, err := c.doUpdatePipelineWithBody(ctx, objectType, pipelineId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdatePipelineResponse(rsp)
-}
-
-func (c *Client) UpdatePipeline(ctx context.Context, objectType string, pipelineId string, params *UpdatePipelineParams, body UpdatePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdatePipelineResponse, error) {
-	rsp, err := c.doUpdatePipeline(ctx, objectType, pipelineId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdatePipelineResponse(rsp)
-}
-
-// ReplacePipelineWithBody request with arbitrary body returning *ReplacePipelineResponse
-func (c *Client) ReplacePipelineWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error) {
-	rsp, err := c.doReplacePipelineWithBody(ctx, objectType, pipelineId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplacePipelineResponse(rsp)
-}
-
-func (c *Client) ReplacePipeline(ctx context.Context, objectType string, pipelineId string, body ReplacePipelineJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplacePipelineResponse, error) {
-	rsp, err := c.doReplacePipeline(ctx, objectType, pipelineId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseReplacePipelineResponse(rsp)
-}
-
-// GetAllStages request returning *GetAllStagesResponse
-func (c *Client) GetAllStages(ctx context.Context, objectType string, pipelineId string, params *GetAllStagesParams, reqEditors ...client.RequestEditorFn) (*GetAllStagesResponse, error) {
-	rsp, err := c.doGetAllStages(ctx, objectType, pipelineId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAllStagesResponse(rsp)
-}
-
-// CreateStagesWithBody request with arbitrary body returning *CreateStagesResponse
-func (c *Client) CreateStagesWithBody(ctx context.Context, objectType string, pipelineId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error) {
-	rsp, err := c.doCreateStagesWithBody(ctx, objectType, pipelineId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateStagesResponse(rsp)
-}
-
-func (c *Client) CreateStages(ctx context.Context, objectType string, pipelineId string, body CreateStagesJSONRequestBody, reqEditors ...client.RequestEditorFn) (*CreateStagesResponse, error) {
-	rsp, err := c.doCreateStages(ctx, objectType, pipelineId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseCreateStagesResponse(rsp)
-}
-
-// ArchiveStage request returning *ArchiveStageResponse
-func (c *Client) ArchiveStage(ctx context.Context, objectType string, pipelineId string, stageId string, reqEditors ...client.RequestEditorFn) (*ArchiveStageResponse, error) {
-	rsp, err := c.doArchiveStage(ctx, objectType, pipelineId, stageId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveStageResponse(rsp)
-}
-
-// GetStage request returning *GetStageResponse
-func (c *Client) GetStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *GetStageParams, reqEditors ...client.RequestEditorFn) (*GetStageResponse, error) {
-	rsp, err := c.doGetStage(ctx, objectType, pipelineId, stageId, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetStageResponse(rsp)
-}
-
-// UpdateStageWithBody request with arbitrary body returning *UpdateStageResponse
-func (c *Client) UpdateStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error) {
-	rsp, err := c.doUpdateStageWithBody(ctx, objectType, pipelineId, stageId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateStageResponse(rsp)
-}
-
-func (c *Client) UpdateStage(ctx context.Context, objectType string, pipelineId string, stageId string, params *UpdateStageParams, body UpdateStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*UpdateStageResponse, error) {
-	rsp, err := c.doUpdateStage(ctx, objectType, pipelineId, stageId, params, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseUpdateStageResponse(rsp)
-}
-
 // ReplaceStageWithBody request with arbitrary body returning *ReplaceStageResponse
 func (c *Client) ReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error) {
 	rsp, err := c.doReplaceStageWithBody(ctx, objectType, pipelineId, stageId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
+
 	return parseReplaceStageResponse(rsp)
+}
+
+func (c *Client) doReplaceStageWithBody(ctx context.Context, objectType string, pipelineId string, stageId string, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceStageRequestWithBody(c.BaseURL, objectType, pipelineId, stageId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) ReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceStageResponse, error) {
@@ -1266,273 +1465,41 @@ func (c *Client) ReplaceStage(ctx context.Context, objectType string, pipelineId
 	if err != nil {
 		return nil, err
 	}
+
 	return parseReplaceStageResponse(rsp)
 }
 
-// parseGetAllObjectTypeResponse parses an HTTP response from a GetAllObjectType call.
-func parseGetAllObjectTypeResponse(rsp *http.Response) (*GetAllObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// newReplaceStageRequest calls the generic ReplaceStage builder with application/json body.
+func newReplaceStageRequest(baseURL *url.URL, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &GetAllObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponsePipeline
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	bodyReader = bytes.NewReader(buf)
+	return newReplaceStageRequestWithBody(baseURL, objectType, pipelineId, stageId, client.MIMEApplicationJSON, bodyReader)
 }
 
-// parseCreateObjectTypeResponse parses an HTTP response from a CreateObjectType call.
-func parseCreateObjectTypeResponse(rsp *http.Response) (*CreateObjectTypeResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+func (c *Client) doReplaceStage(ctx context.Context, objectType string, pipelineId string, stageId string, body ReplaceStageJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceStageRequest(c.BaseURL, objectType, pipelineId, stageId, body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &CreateObjectTypeResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Pipeline
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchivePipelineResponse parses an HTTP response from a ArchivePipeline call.
-func parseArchivePipelineResponse(rsp *http.Response) (*ArchivePipelineResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
 
-	response := &ArchivePipelineResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetPipelineResponse parses an HTTP response from a GetPipeline call.
-func parseGetPipelineResponse(rsp *http.Response) (*GetPipelineResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetPipelineResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Pipeline
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdatePipelineResponse parses an HTTP response from a UpdatePipeline call.
-func parseUpdatePipelineResponse(rsp *http.Response) (*UpdatePipelineResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdatePipelineResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Pipeline
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseReplacePipelineResponse parses an HTTP response from a ReplacePipeline call.
-func parseReplacePipelineResponse(rsp *http.Response) (*ReplacePipelineResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ReplacePipelineResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Pipeline
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseGetAllStagesResponse parses an HTTP response from a GetAllStages call.
-func parseGetAllStagesResponse(rsp *http.Response) (*GetAllStagesResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetAllStagesResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest CollectionResponsePipelineStage
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseCreateStagesResponse parses an HTTP response from a CreateStages call.
-func parseCreateStagesResponse(rsp *http.Response) (*CreateStagesResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateStagesResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest PipelineStage
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-	}
-
-	return response, nil
-}
-
-// parseArchiveStageResponse parses an HTTP response from a ArchiveStage call.
-func parseArchiveStageResponse(rsp *http.Response) (*ArchiveStageResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ArchiveStageResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// parseGetStageResponse parses an HTTP response from a GetStage call.
-func parseGetStageResponse(rsp *http.Response) (*GetStageResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetStageResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest PipelineStage
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
-}
-
-// parseUpdateStageResponse parses an HTTP response from a UpdateStage call.
-func parseUpdateStageResponse(rsp *http.Response) (*UpdateStageResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &UpdateStageResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest PipelineStage
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseReplaceStageResponse parses an HTTP response from a ReplaceStage call.
 func parseReplaceStageResponse(rsp *http.Response) (*ReplaceStageResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &ReplaceStageResponse{
 		Body:         bodyBytes,

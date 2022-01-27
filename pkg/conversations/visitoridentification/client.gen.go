@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -16,140 +15,58 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGenerateTokenCreateRequestWithBody(c.baseURL, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGenerateTokenCreateRequest(c.baseURL, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
-}
-
-// newGenerateTokenCreateRequest calls the generic GenerateTokenCreate builder with application/json body.
-func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return newGenerateTokenCreateRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
-}
+// operation paths
 
 var opPathGenerateTokenCreate = client.MustParseURL("./conversations/v3/visitor-identification/tokens/create")
 
-// newGenerateTokenCreateRequestWithBody generates requests for GenerateTokenCreate with any type of body
-func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
-	queryURL := baseURL.ResolveReference(opPathGenerateTokenCreate)
-
-	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add(client.ContentType, contentType)
-
-	return req, nil
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// GenerateTokenCreate request with any body
+	GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
+	GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
+// Client definition
 
 // compile time assert that it fulfils the interface
 var _ ClientInterface = (*Client)(nil)
 
 // Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
+type Client client.Client
 
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
+// NewClient creates a new Client with reasonable defaults.
 func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
+	c, err := client.NewClient(opts...)
+	if err != nil {
+		return nil, err
+	}
 
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
 			return nil, err
 		}
 	}
 
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
+	return (*Client)(c), nil
+}
+
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
 		}
 	}
 
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
 
-	return &c, nil
+	return nil
 }
 
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// GenerateTokenCreate request with any body
-	GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
-	GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error)
-}
+// GenerateTokenCreate: POST /conversations/v3/visitor-identification/tokens/create
 
 type GenerateTokenCreateResponse struct {
 	Body         []byte
@@ -173,13 +90,41 @@ func (r GenerateTokenCreateResponse) StatusCode() int {
 	return 0
 }
 
+// newGenerateTokenCreateRequestWithBody generates requests for GenerateTokenCreate with any type of body
+func newGenerateTokenCreateRequestWithBody(baseURL *url.URL, contentType string, body io.Reader) (*http.Request, error) {
+	queryURL := baseURL.ResolveReference(opPathGenerateTokenCreate)
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add(client.ContentType, contentType)
+
+	return req, nil
+}
+
 // GenerateTokenCreateWithBody request with arbitrary body returning *GenerateTokenCreateResponse
 func (c *Client) GenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error) {
 	rsp, err := c.doGenerateTokenCreateWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
+
 	return parseGenerateTokenCreateResponse(rsp)
+}
+
+func (c *Client) doGenerateTokenCreateWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newGenerateTokenCreateRequestWithBody(c.BaseURL, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) GenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*GenerateTokenCreateResponse, error) {
@@ -187,16 +132,41 @@ func (c *Client) GenerateTokenCreate(ctx context.Context, body GenerateTokenCrea
 	if err != nil {
 		return nil, err
 	}
+
 	return parseGenerateTokenCreateResponse(rsp)
+}
+
+// newGenerateTokenCreateRequest calls the generic GenerateTokenCreate builder with application/json body.
+func newGenerateTokenCreateRequest(baseURL *url.URL, body GenerateTokenCreateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return newGenerateTokenCreateRequestWithBody(baseURL, client.MIMEApplicationJSON, bodyReader)
+}
+
+func (c *Client) doGenerateTokenCreate(ctx context.Context, body GenerateTokenCreateJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newGenerateTokenCreateRequest(c.BaseURL, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 // parseGenerateTokenCreateResponse parses an HTTP response from a GenerateTokenCreate call.
 func parseGenerateTokenCreateResponse(rsp *http.Response) (*GenerateTokenCreateResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &GenerateTokenCreateResponse{
 		Body:         bodyBytes,

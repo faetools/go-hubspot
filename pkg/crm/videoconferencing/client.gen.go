@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,55 +16,89 @@ import (
 	"github.com/faetools/client"
 )
 
-func (c *Client) doArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newArchiveAppRequest(c.baseURL, appId)
+// operation paths
+
+const (
+	opPathArchiveAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+	opPathGetAppFormat     = "./crm/v3/extensions/videoconferencing/settings/%s"
+	opPathReplaceAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+)
+
+// ClientInterface interface specification for the client.
+type ClientInterface interface {
+	// ArchiveApp request
+	ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error)
+
+	// GetApp request
+	GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error)
+
+	// ReplaceApp request with any body
+	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
+	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
+}
+
+// Client definition
+
+// compile time assert that it fulfils the interface
+var _ ClientInterface = (*Client)(nil)
+
+// Client conforms to the OpenAPI3 specification for this service.
+type Client client.Client
+
+// NewClient creates a new Client with reasonable defaults.
+func NewClient(opts ...client.Option) (*Client, error) {
+	c, err := client.NewClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	if c.BaseURL == nil {
+		if err := client.WithBaseURL(DefaultServer)(c); err != nil {
+			return nil, err
+		}
 	}
-	return c.client.Do(req)
+
+	return (*Client)(c), nil
 }
 
-func (c *Client) doGetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newGetAppRequest(c.baseURL, appId)
-	if err != nil {
-		return nil, err
+func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
+	for _, r := range c.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
+
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
 	}
-	return c.client.Do(req)
+
+	return nil
 }
 
-func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequestWithBody(c.baseURL, appId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+// ArchiveApp: DELETE /crm/v3/extensions/videoconferencing/settings/{appId}
+
+type ArchiveAppResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
 }
 
-func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
-	req, err := newReplaceAppRequest(c.baseURL, appId, body)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r ArchiveAppResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.client.Do(req)
+	return http.StatusText(0)
 }
 
-const opPathArchiveAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+// StatusCode returns HTTPResponse.StatusCode
+func (r ArchiveAppResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newArchiveAppRequest generates requests for ArchiveApp
 func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
@@ -89,7 +122,60 @@ func newArchiveAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) 
 	return req, nil
 }
 
-const opPathGetAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+// ArchiveApp request returning *ArchiveAppResponse
+func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error) {
+	req, err := newArchiveAppRequest(c.BaseURL, appId)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &ArchiveAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// GetApp: GET /crm/v3/extensions/videoconferencing/settings/{appId}
+
+type GetAppResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ExternalSettings
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAppResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAppResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newGetAppRequest generates requests for GetApp
 func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
@@ -113,18 +199,69 @@ func newGetAppRequest(baseURL *url.URL, appId int32) (*http.Request, error) {
 	return req, nil
 }
 
-// newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
-func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
+// GetApp request returning *GetAppResponse
+func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
+	req, err := newGetAppRequest(c.BaseURL, appId)
 	if err != nil {
 		return nil, err
 	}
-	bodyReader = bytes.NewReader(buf)
-	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
+
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	rsp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		return nil, err
+	}
+	defer rsp.Body.Close()
+
+	response := &GetAppResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ExternalSettings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+	}
+
+	return response, nil
 }
 
-const opPathReplaceAppFormat = "./crm/v3/extensions/videoconferencing/settings/%s"
+// ReplaceApp: PUT /crm/v3/extensions/videoconferencing/settings/{appId}
+
+type ReplaceAppResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ExternalSettings
+}
+
+// Status returns HTTPResponse.Status
+func (r ReplaceAppResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReplaceAppResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
 
 // newReplaceAppRequestWithBody generates requests for ReplaceApp with any type of body
 func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType string, body io.Reader) (*http.Request, error) {
@@ -150,186 +287,27 @@ func newReplaceAppRequestWithBody(baseURL *url.URL, appId int32, contentType str
 	return req, nil
 }
 
-func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []client.RequestEditorFn) error {
-	for _, r := range c.requestEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	for _, r := range additionalEditors {
-		if err := r(ctx, req); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// compile time assert that it fulfils the interface
-var _ ClientInterface = (*Client)(nil)
-
-// Client conforms to the OpenAPI3 specification for this service.
-type Client struct {
-	// The endpoint of the server conforming to this interface, with scheme,
-	// https://api.deepmap.com for example. This can contain a path relative
-	// to the server, such as https://api.deepmap.com/dev-test, and all the
-	// paths in the swagger spec will be appended to the server.
-	baseURL *url.URL
-
-	// Doer for performing requests, typically a *http.Client with any
-	// customized settings, such as certificate chains.
-	client client.HTTPRequestDoer
-
-	// A list of callbacks for modifying requests which are generated before sending over
-	// the network.
-	requestEditors []client.RequestEditorFn
-}
-
-// SetClient sets the underlying client.
-func (c *Client) SetClient(doer client.HTTPRequestDoer) {
-	c.client = doer
-}
-
-// AddRequestEditor adds a request editor to the client.
-func (c *Client) AddRequestEditor(fn client.RequestEditorFn) {
-	c.requestEditors = append(c.requestEditors, fn)
-}
-
-// SetBaseURL overrides the baseURL.
-func (c *Client) SetBaseURL(baseURL *url.URL) {
-	c.baseURL = baseURL
-}
-
-// NewClient creates a new Client, with reasonable defaults.
-func NewClient(opts ...client.Option) (*Client, error) {
-	// create a client
-	c := Client{}
-
-	// mutate client and add all optional params
-	for _, o := range opts {
-		if err := o(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// add default server
-	if c.baseURL == nil {
-		if err := client.WithBaseURL(DefaultServer)(&c); err != nil {
-			return nil, err
-		}
-	}
-
-	// create httpClient, if not already present
-	if c.client == nil {
-		c.client = &http.Client{}
-	}
-
-	return &c, nil
-}
-
-// ClientInterface interface specification for the client.
-type ClientInterface interface {
-	client.Client
-	// ArchiveApp request
-	ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error)
-
-	// GetApp request
-	GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error)
-
-	// ReplaceApp request with any body
-	ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
-	ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error)
-}
-
-type ArchiveAppResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r ArchiveAppResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ArchiveAppResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetAppResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ExternalSettings
-}
-
-// Status returns HTTPResponse.Status
-func (r GetAppResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetAppResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ReplaceAppResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ExternalSettings
-}
-
-// Status returns HTTPResponse.Status
-func (r ReplaceAppResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ReplaceAppResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// ArchiveApp request returning *ArchiveAppResponse
-func (c *Client) ArchiveApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*ArchiveAppResponse, error) {
-	rsp, err := c.doArchiveApp(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseArchiveAppResponse(rsp)
-}
-
-// GetApp request returning *GetAppResponse
-func (c *Client) GetApp(ctx context.Context, appId int32, reqEditors ...client.RequestEditorFn) (*GetAppResponse, error) {
-	rsp, err := c.doGetApp(ctx, appId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return parseGetAppResponse(rsp)
-}
-
 // ReplaceAppWithBody request with arbitrary body returning *ReplaceAppResponse
 func (c *Client) ReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
 	rsp, err := c.doReplaceAppWithBody(ctx, appId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
+
 	return parseReplaceAppResponse(rsp)
+}
+
+func (c *Client) doReplaceAppWithBody(ctx context.Context, appId int32, contentType string, body io.Reader, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceAppRequestWithBody(c.BaseURL, appId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+
+	return c.Client.Do(req)
 }
 
 func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*ReplaceAppResponse, error) {
@@ -337,57 +315,41 @@ func (c *Client) ReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSO
 	if err != nil {
 		return nil, err
 	}
+
 	return parseReplaceAppResponse(rsp)
 }
 
-// parseArchiveAppResponse parses an HTTP response from a ArchiveApp call.
-func parseArchiveAppResponse(rsp *http.Response) (*ArchiveAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// newReplaceAppRequest calls the generic ReplaceApp builder with application/json body.
+func newReplaceAppRequest(baseURL *url.URL, appId int32, body ReplaceAppJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &ArchiveAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
+	bodyReader = bytes.NewReader(buf)
+	return newReplaceAppRequestWithBody(baseURL, appId, client.MIMEApplicationJSON, bodyReader)
 }
 
-// parseGetAppResponse parses an HTTP response from a GetApp call.
-func parseGetAppResponse(rsp *http.Response) (*GetAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+func (c *Client) doReplaceApp(ctx context.Context, appId int32, body ReplaceAppJSONRequestBody, reqEditors ...client.RequestEditorFn) (*http.Response, error) {
+	req, err := newReplaceAppRequest(c.BaseURL, appId, body)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &GetAppResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ExternalSettings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-	}
-
-	return response, nil
+	return c.Client.Do(req)
 }
 
 // parseReplaceAppResponse parses an HTTP response from a ReplaceApp call.
 func parseReplaceAppResponse(rsp *http.Response) (*ReplaceAppResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+	bodyBytes, err := io.ReadAll(rsp.Body)
 	if err != nil {
 		return nil, err
 	}
+	defer rsp.Body.Close()
 
 	response := &ReplaceAppResponse{
 		Body:         bodyBytes,
