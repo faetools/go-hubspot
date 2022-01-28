@@ -16,20 +16,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/faetools/go-hubspot/options"
 	"github.com/faetools/go-hubspot/pkg/crm/contacts"
 )
-
-func addAPIKey(ctx context.Context, req *http.Request) error {
-	q := req.URL.Query()
-	q.Add("hapikey", os.Getenv("HUBSPOT_API_KEY"))
-	req.URL.RawQuery = q.Encode()
-	return nil
-}
 
 func main() {
 	ctx := context.Background()
 
-	c, err := contacts.NewClient(contacts.WithRequestEditorFn(addAPIKey))
+	c, err := contacts.NewClient(options.WithAPIKey(os.Getenv("HUBSPOT_API_KEY")))
 	checkErr(err)
 
 	resp, err := c.ListContacts(ctx, &contacts.ListContactsParams{
@@ -43,7 +37,7 @@ func main() {
 	}
 
 	for _, res := range resp.JSON200.Results {
-		fmt.Printf("%s %s (%s)\n", res.FirstName(), res.LastName(), res.Email())
+		fmt.Printf("%s %s (%s)\n", res.FirstName(), res.LastName(), res.Emails())
 	}
 }
 
