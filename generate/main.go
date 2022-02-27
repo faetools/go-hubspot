@@ -15,7 +15,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-// NOTE: The code below is just the code to generate the openapis.
+// The code below generates the openapis.
 
 const (
 	apiCatalogEndpoint = "https://api.hubspot.com/api-catalog-public/v1/apis"
